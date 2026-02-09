@@ -38,7 +38,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "git_desc=$GIT_DESC" >> $GITHUB_OUTPUT
           echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
-          echo "file_prefix=EcoPaste_${GIT_DESC}" >> $GITHUB_OUTPUT
+          echo "file_prefix=EcoPaste_${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -83,16 +83,27 @@ jobs:
         if: github.event.inputs.create_release != 'false'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: sync-${{ steps.version.outputs.build_time }}
-          name: "自动同步构建 v${{ steps.version.outputs.version }} (${{ steps.version.outputs.build_time }})"
+          tag_name: v${{ steps.version.outputs.version }}
+          name: "v${{ steps.version.outputs.version }}"
           body: |
-            ## 自动同步构建
+            ## EcoPaste Plus 增强版
             
-            此版本由自动同步工作流构建，包含上游最新更改和自定义修改。
+            基于官方 EcoPaste 的增强 Fork 版本，包含以下改进：
             
+            ### ✨ 增强功能
+            - **文本显示行数可配置**：可设置剪贴板列表中文本的显示行数（1-10 行）
+            - **图片显示高度可配置**：可设置图片预览的最大高度（50-500px）
+            - **展开/收起功能**：内容超出显示范围时，可点击展开查看完整内容
+            - **跟随光标窗口位置**（Windows）：窗口可跟随输入光标位置显示
+            
+            ### 📋 版本信息
             - **版本**: ${{ steps.version.outputs.version }}
             - **构建时间**: ${{ steps.version.outputs.build_time }}
             - **Git 描述**: ${{ steps.version.outputs.git_desc }}
+            
+            ### ⚠️ 注意事项
+            - 此版本禁用了自动更新功能，避免与官方版本冲突
+            - 配置文件与官方版本兼容，可直接替换使用
           draft: false
           prerelease: true
           files: dist/*.exe
