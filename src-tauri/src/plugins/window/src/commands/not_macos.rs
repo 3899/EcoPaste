@@ -15,7 +15,7 @@ pub struct CaretPosition {
 pub fn get_caret_position() -> CaretPosition {
     use windows::Win32::Foundation::POINT;
     use windows::Win32::UI::WindowsAndMessaging::{
-        GetCaretPos, GetForegroundWindow, GetWindowThreadProcessId, GetFocus,
+        GetCaretPos, GetForegroundWindow, GetWindowThreadProcessId,
     };
     use windows::Win32::System::Threading::{GetCurrentThreadId, AttachThreadInput};
     use windows::Win32::Graphics::Gdi::ClientToScreen;
@@ -25,7 +25,7 @@ pub fn get_caret_position() -> CaretPosition {
         
         // 获取前台窗口
         let foreground = GetForegroundWindow();
-        if foreground.0 == std::ptr::null_mut() {
+        if foreground.is_invalid() {
             return CaretPosition { x: 0, y: 0, success: false };
         }
         
@@ -43,14 +43,8 @@ pub fn get_caret_position() -> CaretPosition {
         let _ = AttachThreadInput(current_thread, foreground_thread, false);
         
         if result.is_ok() {
-            // 转换为屏幕坐标
-            let focus_window = GetFocus();
-            if focus_window.0 != std::ptr::null_mut() {
-                let _ = ClientToScreen(focus_window, &mut point);
-            } else {
-                let _ = ClientToScreen(foreground, &mut point);
-            }
-            
+            // 转换为屏幕坐标（使用前台窗口）
+            let _ = ClientToScreen(foreground, &mut point);
             CaretPosition { x: point.x, y: point.y, success: true }
         } else {
             CaretPosition { x: 0, y: 0, success: false }
