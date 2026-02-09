@@ -18,6 +18,8 @@ pub fn get_caret_position() -> CaretPosition {
         GetCaretPos, GetForegroundWindow, GetWindowThreadProcessId,
     };
     use windows::Win32::System::Threading::GetCurrentThreadId;
+    use windows::Win32::UI::Input::KeyboardAndMouse::{AttachThreadInput, GetFocus};
+    use windows::Win32::Graphics::Gdi::ClientToScreen;
 
     unsafe {
         let mut point = POINT { x: 0, y: 0 };
@@ -33,7 +35,6 @@ pub fn get_caret_position() -> CaretPosition {
         let current_thread = GetCurrentThreadId();
         
         // 附加线程输入以获取正确的光标位置
-        use windows::Win32::UI::WindowsAndMessaging::AttachThreadInput;
         let _ = AttachThreadInput(current_thread, foreground_thread, true);
         
         // 获取光标位置
@@ -44,9 +45,6 @@ pub fn get_caret_position() -> CaretPosition {
         
         if result.is_ok() {
             // 转换为屏幕坐标
-            use windows::Win32::UI::WindowsAndMessaging::ClientToScreen;
-            use windows::Win32::UI::WindowsAndMessaging::GetFocus;
-            
             let focus_window = GetFocus();
             if focus_window.0 != std::ptr::null_mut() {
                 let _ = ClientToScreen(focus_window, &mut point);
