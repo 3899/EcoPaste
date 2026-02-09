@@ -51,8 +51,8 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         // 访问文件系统插件：https://github.com/tauri-apps/tauri-plugin-fs
         .plugin(tauri_plugin_fs::init())
-        // 更新插件：https://github.com/tauri-apps/tauri-plugin-updater
-        .plugin(tauri_plugin_updater::Builder::new().build())
+        // 更新插件已禁用（Fork 版本不需要自动更新）
+        // .plugin(tauri_plugin_updater::Builder::new().build())
         // 进程相关插件：https://github.com/tauri-apps/tauri-plugin-process
         .plugin(tauri_plugin_process::init())
         // 检查和请求 macos 系统权限：https://github.com/ayangweb/tauri-plugin-macos-permissions
