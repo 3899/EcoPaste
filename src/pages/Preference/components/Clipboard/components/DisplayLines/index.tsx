@@ -28,6 +28,7 @@ const DisplayLines = () => {
       options={options}
       title={t("preference.clipboard.content_settings.label.display_lines")}
       value={content.displayLines}
+      className="w-30"
     />
   );
 };

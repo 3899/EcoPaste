@@ -1,5 +1,6 @@
 import { emit } from "@tauri-apps/api/event";
 import { useCreation, useMount } from "ahooks";
+import Backup from "./components/Backup";
 import { Flex } from "antd";
 import clsx from "clsx";
 import { MacScrollbar } from "mac-scrollbar";
@@ -85,12 +86,12 @@ const Preference = () => {
         key: "shortcut",
         label: t("preference.menu.title.shortcut"),
       },
-      // {
-      //   content: <Backup />,
-      //   icon: "i-lucide:database-backup",
-      //   key: "backup",
-      //   label: t("preference.menu.title.backup"),
-      // },
+      {
+        content: <Backup />,
+        icon: "i-lucide:database-backup",
+        key: "backup",
+        label: t("preference.menu.title.backup"),
+      },
       {
         content: <About />,
         icon: "i-lucide:info",

@@ -2,7 +2,7 @@ import { openPath } from "@tauri-apps/plugin-opener";
 import { Flex } from "antd";
 import type { HookAPI } from "antd/es/modal/useModal";
 import clsx from "clsx";
-import { type FC, useContext, useState } from "react";
+import { type FC, useContext, useEffect, useRef, useState } from "react";
 import { Marker } from "react-mark.js";
 import { useTranslation } from "react-i18next";
 import { useSnapshot } from "valtio";
@@ -34,9 +34,50 @@ const Item: FC<ItemProps> = (props) => {
   const { content } = useSnapshot(clipboardStore);
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
+  const [isOverflow, setIsOverflow] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  // 计算内容是否需要展开按钮（仅文本类型）
-  const needsExpand = type === "text" || type === "rtf" || type === "html";
+  // 检查内容是否重叠
+  useEffect(() => {
+    checkOverflow();
+  }, [content.displayLines, content.imageDisplayHeight, value, type, rootState.search]);
+
+  const checkOverflow = () => {
+    if (!contentRef.current) return;
+    
+    // 对于文本类型，我们需要检查 scrollHeight 是否大于 clientHeight
+    // 或者检查是否有 line-clamp 生效
+    const element = contentRef.current;
+    
+    // 简单的溢出检查
+    // 注意：由于 line-clamp 的存在，scrollHeight 可能等于 clientHeight
+    // 所以我们需要一个更可靠的方法。
+    // 这里我们先暂时放开高度限制让它渲染，然后测量，再一次性恢复
+    
+    // 但 Text 组件已经应用了 line-clamp。
+    // 如果是 Image，我们检查 imageDisplayHeight
+    
+    if (type === "text" || type === "rtf" || type === "html") {
+        // 对于文本，我们检查实际高度是否超过了理论高度
+        // 理论高度 = line-height * displayLines
+        // 假设 line-height 约为 1.5em (24px)
+        const lineHeight = 24; 
+        const maxLines = content.displayLines || 4;
+        const maxHeight = lineHeight * maxLines;
+        
+        // 这是一个估算，更精确的方法是比较 scrollHeight > clientHeight
+        // 但由于我们用了 line-clamp，clientHeight 会被限制
+        setIsOverflow(element.scrollHeight > element.clientHeight + 1);
+    } else if (type === "image") {
+        // 对于图片，我们检查是否被限制了高度
+        // Image 组件内部会应用 maxHeight
+        // 这里我们可能需要 Image 组件回调或者 Ref
+        // 暂时简单处理：如果图片原始高度 > 设定高度，显示展开
+        // 这需要获取图片原始尺寸，比较麻烦。
+        // 简便方法：Image 组件内部样式应用了 max-height，如果内容真的溢出，scrollHeight > clientHeight
+        setIsOverflow(element.scrollHeight > element.clientHeight + 1);
+    }
+  };
 
   const handlePreview = () => {
     if (type !== "image") return;
@@ -85,6 +126,12 @@ const Item: FC<ItemProps> = (props) => {
   });
 
   const handleClick = (type: typeof content.autoPaste) => {
+    // 检查是否有选中文本，如果有则不触发粘贴
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) {
+      return;
+    }
+
     rootState.activeId = id;
 
     if (content.autoPaste !== type) return;
@@ -101,44 +148,24 @@ const Item: FC<ItemProps> = (props) => {
     switch (type) {
       case "text":
         return <Text {...data} expanded={expanded} />;
+      // rtf 和 html 暂时也用 Text 组件处理溢出逻辑，或者它们自己有实现
       case "rtf":
         return <Rtf {...data} expanded={expanded} />;
       case "html":
         return <SafeHtml {...data} expanded={expanded} />;
       case "image":
-        return <Image {...data} expanded={expanded} />;
+        return <Image {...data} expanded={expanded} onLoad={checkOverflow} />;
       case "files":
         return <Files {...data} />;
     }
-  };
-
-  // 根据 displayLines 配置计算动态最大高度类名
-  // 每行约 1.5rem (24px)，Header 约 1.5rem，padding 约 0.75rem
-  const getMaxHeightClass = () => {
-    if (expanded) return "";
-    const lines = content.displayLines || 4;
-    // 基础高度 = header(1.5rem) + padding(0.75rem) + 内容行数 * 1.5rem
-    const heights: Record<number, string> = {
-      1: "max-h-12",
-      2: "max-h-16",
-      3: "max-h-20",
-      4: "max-h-24",
-      5: "max-h-28",
-      6: "max-h-32",
-      8: "max-h-40",
-      10: "max-h-48",
-    };
-    return heights[lines] || "max-h-24";
   };
 
   return (
     <Flex
       className={clsx(
         "group b hover:b-primary-5 b-color-2 mx-3 rounded-md p-1.5 transition",
-        getMaxHeightClass(),
         {
           "b-primary bg-primary-1": rootState.activeId === id,
-          "max-h-none": expanded,
         },
       )}
       gap={4}
@@ -157,6 +184,7 @@ const Item: FC<ItemProps> = (props) => {
               "group-hover:opacity-0": content.showOriginalContent,
               "opacity-100": note,
             },
+            // Note 模式下也受行数限制
             expanded ? "" : `line-clamp-${content.displayLines || 4}`,
           )}
         >
@@ -169,6 +197,7 @@ const Item: FC<ItemProps> = (props) => {
         </div>
 
         <div
+          ref={contentRef}
           className={clsx("h-full", {
             "group-hover:opacity-100": content.showOriginalContent,
             "opacity-0": note,
@@ -179,7 +208,7 @@ const Item: FC<ItemProps> = (props) => {
       </div>
 
       {/* 展开/收起按钮 */}
-      {needsExpand && (
+      {isOverflow && (
         <div
           className="flex cursor-pointer items-center justify-center text-xs text-primary hover:text-primary-6"
           onClick={handleToggleExpand}

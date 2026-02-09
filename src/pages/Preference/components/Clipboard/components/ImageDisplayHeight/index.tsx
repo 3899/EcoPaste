@@ -21,6 +21,7 @@ const ImageDisplayHeight = () => {
         addonAfter={t(
           "preference.clipboard.content_settings.label.image_display_height_unit",
         )}
+        className="w-30"
         min={50}
         max={500}
         onChange={(value) => {

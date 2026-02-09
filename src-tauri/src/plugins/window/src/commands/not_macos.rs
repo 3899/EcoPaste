@@ -13,9 +13,10 @@ pub struct CaretPosition {
 #[cfg(target_os = "windows")]
 #[command]
 pub fn get_caret_position() -> CaretPosition {
-    use windows::Win32::Foundation::POINT;
+    use windows::Win32::Foundation::{POINT, RECT};
     use windows::Win32::UI::WindowsAndMessaging::{
         GetCaretPos, GetForegroundWindow, GetWindowThreadProcessId,
+        GetGUIThreadInfo, GUITHREADINFO,
     };
     use windows::Win32::System::Threading::{GetCurrentThreadId, AttachThreadInput};
     use windows::Win32::Graphics::Gdi::ClientToScreen;
@@ -36,14 +37,43 @@ pub fn get_caret_position() -> CaretPosition {
         // 附加线程输入以获取正确的光标位置
         let _ = AttachThreadInput(current_thread, foreground_thread, true);
         
-        // 获取光标位置
-        let result = GetCaretPos(&mut point);
+        let mut success = false;
+
+        // 尝试方法 1: GetCaretPos
+        if GetCaretPos(&mut point).is_ok() && (point.x != 0 || point.y != 0) {
+            success = true;
+        } 
+        
+        // 尝试方法 2: GetGUIThreadInfo (如果在方法 1 失败或返回 0,0 时)
+        if !success {
+            let mut gui_info = GUITHREADINFO::default();
+            gui_info.cbSize = std::mem::size_of::<GUITHREADINFO>() as u32;
+            
+            if GetGUIThreadInfo(foreground_thread, &mut gui_info).is_ok() {
+                // rcCaret 是相对于 carets 所在窗口的客户区坐标
+                // 如果 rcCaret 有效
+                if gui_info.rcCaret.right > gui_info.rcCaret.left {
+                    point.x = gui_info.rcCaret.left;
+                    point.y = gui_info.rcCaret.bottom;
+                    success = true;
+                    // 注意：GetGUIThreadInfo 的 rcCaret 坐标是基于 hwndCaret 的
+                    // 我们需要将它转换到屏幕坐标
+                    if !gui_info.hwndCaret.is_invalid() {
+                         let _ = ClientToScreen(gui_info.hwndCaret, &mut point);
+                         // ClientToScreen 已经转换了 point，我们不需要再做下面的 ClientToScreen(foreground)
+                         // 但我们需要分离线程输入并返回
+                         let _ = AttachThreadInput(current_thread, foreground_thread, false);
+                         return CaretPosition { x: point.x, y: point.y, success: true };
+                    }
+                }
+            }
+        }
         
         // 分离线程输入
         let _ = AttachThreadInput(current_thread, foreground_thread, false);
         
-        if result.is_ok() {
-            // 转换为屏幕坐标（使用前台窗口）
+        if success {
+            // 转换为屏幕坐标（使用前台窗口，如果是 GetCaretPos 获取的）
             let _ = ClientToScreen(foreground, &mut point);
             CaretPosition { x: point.x, y: point.y, success: true }
         } else {

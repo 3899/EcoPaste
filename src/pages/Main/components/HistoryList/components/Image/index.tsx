@@ -6,10 +6,11 @@ import type { DatabaseSchemaHistory } from "@/types/database";
 
 interface ImageProps extends DatabaseSchemaHistory<"image"> {
   expanded?: boolean;
+  onLoad?: () => void;
 }
 
 const Image: FC<ImageProps> = (props) => {
-  const { value, expanded } = props;
+  const { value, expanded, onLoad } = props;
   const { content } = useSnapshot(clipboardStore);
 
   const imageDisplayHeight = content.imageDisplayHeight || 100;
@@ -24,10 +25,11 @@ const Image: FC<ImageProps> = (props) => {
     }
     return {
       maxHeight: `${imageDisplayHeight}px`,
+      objectFit: "contain",
     };
   };
 
-  return <LocalImage style={getImageStyle()} src={value} />;
+  return <LocalImage style={getImageStyle()} src={value} onLoad={onLoad} />;
 };
 
 export default Image;

@@ -55,13 +55,18 @@ const Text: FC<TextProps> = (props) => {
   // 动态 line-clamp 样式
   const getLineClampStyle = (): CSSProperties => {
     if (expanded) {
-      return {};
+      return {
+        wordBreak: "break-all",
+        whiteSpace: "pre-wrap",
+      };
     }
     return {
       display: "-webkit-box",
       WebkitLineClamp: displayLines,
       WebkitBoxOrient: "vertical",
       overflow: "hidden",
+      wordBreak: "break-all",
+      whiteSpace: "pre-wrap", // 确保换行符被尊重
     };
   };
 
