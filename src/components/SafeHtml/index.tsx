@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { type CSSProperties, type FC, type MouseEvent, useContext } from "react";
+import { type CSSProperties, type MouseEvent, forwardRef, useContext } from "react";
 import { Marker } from "react-mark.js";
 import { useSnapshot } from "valtio";
 import { MainContext } from "@/pages/Main";
@@ -10,7 +10,7 @@ interface SafeHtmlProps {
   expanded?: boolean;
 }
 
-const SafeHtml: FC<SafeHtmlProps> = (props) => {
+const SafeHtml = forwardRef<HTMLDivElement, SafeHtmlProps>((props, ref) => {
   const { value, expanded } = props;
   const { rootState } = useContext(MainContext);
   const { content } = useSnapshot(clipboardStore);
@@ -44,6 +44,7 @@ const SafeHtml: FC<SafeHtmlProps> = (props) => {
   return (
     <Marker mark={rootState.search}>
       <div
+        ref={ref}
         className="translate-z-0"
         dangerouslySetInnerHTML={{
           __html: DOMPurify.sanitize(value, {
@@ -55,6 +56,8 @@ const SafeHtml: FC<SafeHtmlProps> = (props) => {
       />
     </Marker>
   );
-};
+});
+
+SafeHtml.displayName = "SafeHtml";
 
 export default SafeHtml;

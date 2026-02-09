@@ -62,18 +62,7 @@
 ## 下载
 
 ### Windows
-
-手动下载：[x86](https://api.ecopaste.cn/download?platform=windows-x86) | [x64](https://api.ecopaste.cn/download?platform=windows-x64) | [ARM64](https://api.ecopaste.cn/download?platform=windows-arm)
-
-### MacOS
-
-手动下载：[Apple Silicon](https://api.ecopaste.cn/download?platform=macos-arm) | [Intel](https://api.ecopaste.cn/download?platform=macos-x64)
-
-HomeBrew：[点击查看](https://ecopaste.cn/guide/install#%E4%BD%BF%E7%94%A8-homebrew-%E5%AE%89%E8%A3%85)
-
-### Linux(x11)
-
-手动下载：[deb](https://api.ecopaste.cn/download?platform=linux-deb) | [AppImage](https://api.ecopaste.cn/download?platform=linux-appimage) | [rpm](https://api.ecopaste.cn/download?platform=linux-rpm)
+最新版本: [EcoPaste_0.6.0-beta.3-plus](https://github.com/EcoPasteHub/EcoPaste/releases/download/v0.6.0-beta.3-plus/EcoPaste_0.6.0-beta.3-plus_x64-setup.exe)
 
 安装指南：[点击查看](https://ecopaste.cn/guide/install#linux)
 
@@ -97,7 +86,7 @@ HomeBrew：[点击查看](https://ecopaste.cn/guide/install#%E4%BD%BF%E7%94%A8-h
 
 - **功能说明**：可自定义剪贴板条目的文本显示行数
 - **配置位置**：偏好设置 → 剪贴板 → 内容设置 → 文本显示行数
-- **可选范围**：1 - 10 行（默认 4 行）
+- **可选范围**：1 - 20 行（默认 4 行）
 - **效果**：
   - 内容行数 ≤ 设定值时，按实际行数显示
   - 内容行数 > 设定值时，按设定行数截断显示
@@ -146,70 +135,3 @@ HomeBrew：[点击查看](https://ecopaste.cn/guide/install#%E4%BD%BF%E7%94%A8-h
 1. 🔍 优先查阅[常见问题](https://ecopaste.cn/problem/macos/damage)或浏览已有 [issues](https://github.com/EcoPasteHub/EcoPaste/issues)。
 
 2. ❓ 如果问题仍未解决，请提交新的 [issue](https://github.com/EcoPasteHub/EcoPaste/issues/new/choose)，并附上详细描述，方便我们快速定位和解决。
-
-## 历史星标
-
-<a href="https://star-history.com/#EcoPasteHub/EcoPaste&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date" />
- </picture>
-</a>
-
-## 社区交流
-
-⚠️ 温馨提示：群聊仅限日常讨论和经验分享，如需反馈问题或提交新需求，请查看[问题反馈](#问题反馈)。
-
-<table>
-  <thead>
-    <tr>
-      <th width="33.3%">微信群</th>
-      <th width="33.3%">QQ 群</th>
-      <th width="33.3%">Telegram</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/wechat-group-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/wechat-group-light.png" />
-          <img src="https://ecopaste.cn/community/wechat-group-light.png" />
-        </picture>
-      </td>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/qq-group-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/qq-group-light.png" />
-          <img src="https://ecopaste.cn/community/qq-group-light.png" />
-        </picture>
-      </td>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/telegram-chat-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/telegram-chat-light.png" />
-          <img src="https://ecopaste.cn/community/telegram-chat-light.png" />
-        </picture>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-## 贡献者
-
-感谢大家为 EcoPaste 做出的宝贵贡献！如果你也希望为 EcoPaste 做出贡献，请查阅[贡献指南](./.github/CONTRIBUTING/zh-CN.md)。
-
-<a href="https://openomy.com/EcoPasteHub/EcoPaste" target="_blank" style="display: block; width: 100%;" align="center">
-  <img src="https://openomy.com/svg?repo=EcoPasteHub/EcoPaste&chart=bubble" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
-</a>
-
-## 赞助
-
-如果您觉得这个项目对您有帮助，可以考虑赞助支持我们！您的支持将帮助我们更好地维护和发展项目，让 EcoPaste 持续为社区创造价值。
-
-赞助时请务必填写留言，以便我们收录到[赞助名单](https://ecopaste.cn/sponsor/list)中，感谢您的支持与鼓励！
-
-|                           微信                            |                       支付宝                        |
-| :-------------------------------------------------------: | :-------------------------------------------------: |
-| ![wehcat-pay](https://ecopaste.cn/sponsor/wechat-pay.png) | ![ali-pay](https://ecopaste.cn/sponsor/ali-pay.png) |

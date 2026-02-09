@@ -34,10 +34,10 @@ jobs:
         run: |
           VERSION=$(node -p "require('./package.json').version")
           GIT_DESC=$(git describe --long --tags --always --dirty | sed 's/-g/-/')
-          BUILD_TIME=$(date +%Y%m%d%H%M)
+          BUILD_TIME=$(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "git_desc=$GIT_DESC" >> $GITHUB_OUTPUT
-          echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
+          echo "build_time=$BUILD_TIME (Beijing Time)" >> $GITHUB_OUTPUT
           echo "file_prefix=EcoPaste_${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Install pnpm
@@ -79,6 +79,32 @@ jobs:
           retention-days: 7
           compression-level: 0
 
+      - name: Update README download link
+        shell: bash
+        run: |
+          # 配置 git 用户
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # 获取版本号
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # 构建新的下载链接行
+          NEW_LINK="最新版本: [EcoPaste_${VERSION}](https://github.com/EcoPasteHub/EcoPaste/releases/download/v${VERSION}/EcoPaste_${VERSION}_x64-setup.exe)"
+          
+          # 使用 sed 替换 README.md 中的旧链接
+          # 匹配模式：以 "最新版本: " 开头的行
+          sed -i "s|^最新版本: .*|$NEW_LINK|" README.md
+          
+          # 提交更改
+          if [[ -n $(git status -s README.md) ]]; then
+            git add README.md
+            git commit -m "docs: auto update download link to v${VERSION} [skip ci]"
+            git push
+          else
+            echo "No changes to README.md"
+          fi
+
       - name: Create Release
         if: github.event.inputs.create_release != 'false'
         uses: softprops/action-gh-release@v2
@@ -91,7 +117,7 @@ jobs:
             基于官方 EcoPaste 的增强 Fork 版本，包含以下改进：
             
             ### ✨ 增强功能
-            - **文本显示行数可配置**：可设置剪贴板列表中文本的显示行数（1-10 行）
+            - **文本显示行数可配置**：可设置剪贴板列表中纯文本、富文本、HTML的显示行数（1-20 行）
             - **图片显示高度可配置**：可设置图片预览的最大高度（50-500px）
             - **展开/收起功能**：内容超出显示范围时，可点击展开查看完整内容
             - **跟随光标窗口位置**（Windows）：窗口可跟随输入光标位置显示

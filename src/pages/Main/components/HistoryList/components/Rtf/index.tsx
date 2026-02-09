@@ -1,5 +1,5 @@
 import { useMount } from "ahooks";
-import { type CSSProperties, type FC, useContext, useState } from "react";
+import { type CSSProperties, forwardRef, useState } from "react";
 import { EMFJS, RTFJS, WMFJS } from "rtf.js";
 import { useSnapshot } from "valtio";
 import SafeHtml from "@/components/SafeHtml";
@@ -12,10 +12,11 @@ EMFJS.loggingEnabled(false);
 
 interface RtfProps extends DatabaseSchemaHistory<"rtf"> {
   expanded?: boolean;
+  onLoad?: () => void;
 }
 
-const Rtf: FC<RtfProps> = (props) => {
-  const { value, expanded } = props;
+const Rtf = forwardRef<HTMLDivElement, RtfProps>((props, ref) => {
+  const { value, expanded, onLoad } = props;
   const { content } = useSnapshot(clipboardStore);
 
   const [parsedHTML, setParsedHTML] = useState("");
@@ -32,6 +33,7 @@ const Rtf: FC<RtfProps> = (props) => {
     const parsedHTML = elements.map(({ outerHTML }) => outerHTML).join("");
 
     setParsedHTML(parsedHTML);
+    onLoad?.();
   });
 
   const stringToArrayBuffer = (value: string) => {
@@ -72,10 +74,12 @@ const Rtf: FC<RtfProps> = (props) => {
   };
 
   return (
-    <div style={getLineClampStyle()}>
+    <div ref={ref} style={getLineClampStyle()}>
       <SafeHtml value={parsedHTML} expanded={expanded} />
     </div>
   );
-};
+});
+
+Rtf.displayName = "Rtf";
 
 export default Rtf;

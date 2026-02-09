@@ -12,10 +12,12 @@ const DisplayLines = () => {
   const { content } = useSnapshot(clipboardStore);
   const { t } = useTranslation();
 
-  const options: Option[] = [1, 2, 3, 4, 5, 6, 8, 10].map((value) => ({
-    label: String(value),
-    value,
-  }));
+  const options: Option[] = Array.from({ length: 20 }, (_, i) => i + 1).map(
+    (value) => ({
+      label: String(value),
+      value,
+    }),
+  );
 
   return (
     <ProSelect

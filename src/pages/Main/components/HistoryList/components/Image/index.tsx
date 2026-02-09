@@ -1,4 +1,4 @@
-import { type CSSProperties, type FC } from "react";
+import { type CSSProperties, forwardRef } from "react";
 import { useSnapshot } from "valtio";
 import LocalImage from "@/components/LocalImage";
 import { clipboardStore } from "@/stores/clipboard";
@@ -9,7 +9,7 @@ interface ImageProps extends DatabaseSchemaHistory<"image"> {
   onLoad?: () => void;
 }
 
-const Image: FC<ImageProps> = (props) => {
+const Image = forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
   const { value, expanded, onLoad } = props;
   const { content } = useSnapshot(clipboardStore);
 
@@ -29,7 +29,9 @@ const Image: FC<ImageProps> = (props) => {
     };
   };
 
-  return <LocalImage style={getImageStyle()} src={value} onLoad={onLoad} />;
-};
+  return <LocalImage ref={ref} style={getImageStyle()} src={value} onLoad={onLoad} />;
+});
+
+Image.displayName = "Image";
 
 export default Image;
