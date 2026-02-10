@@ -82,27 +82,28 @@ jobs:
       - name: Update README download link
         shell: bash
         run: |
-          # 配置 git 用户
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
-          # 获取版本号
           VERSION="${{ steps.version.outputs.version }}"
           
-          # 构建新的下载链接行
-          NEW_LINK="最新版本: [EcoPaste_${VERSION}](https://github.com/EcoPasteHub/EcoPaste/releases/download/v${VERSION}/EcoPaste_${VERSION}_x64-setup.exe)"
+          # 使用 node 替换（避免 sed 在 Windows 上处理中文的编码问题）
+          node -e "
+            const fs = require('fs');
+            let content = fs.readFileSync('README.md', 'utf8');
+            const v = '${VERSION}';
+            const newLink = '最新版本: [EcoPaste_' + v + '](https://github.com/EcoPasteHub/EcoPaste/releases/download/v' + v + '/EcoPaste_' + v + '_x64-setup.exe)';
+            content = content.replace(/^最新版本: .*/m, newLink);
+            fs.writeFileSync('README.md', content, 'utf8');
+          "
           
-          # 使用 sed 替换 README.md 中的旧链接
-          # 匹配模式：以 "最新版本: " 开头的行
-          sed -i "s|^最新版本: .*|$NEW_LINK|" README.md
-          
-          # 提交更改
+          # 提交更改（--no-verify 跳过 pre-commit hook）
           if [[ -n $(git status -s README.md) ]]; then
             git add README.md
-            git commit -m "docs: auto update download link to v${VERSION} [skip ci]"
+            git commit --no-verify -m "docs: auto update download link to v${VERSION} [skip ci]"
             git push
           else
-            echo "No changes to README.md"
+            echo "README.md already up to date"
           fi
 
       - name: Create Release
@@ -120,7 +121,7 @@ jobs:
             - **文本显示行数可配置**：可设置剪贴板列表中纯文本、富文本、HTML的显示行数（1-20 行）
             - **图片显示高度可配置**：可设置图片预览的最大高度（50-500px）
             - **展开/收起功能**：内容超出显示范围时，可点击展开查看完整内容
-            - **跟随光标窗口位置**（Windows）：窗口可跟随输入光标位置显示
+            - **窗口跟随光标位置**（Windows）：窗口可跟随输入光标位置显示
             
             ### 📋 版本信息
             - **版本**: ${{ steps.version.outputs.version }}
