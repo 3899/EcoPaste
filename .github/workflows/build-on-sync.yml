@@ -81,29 +81,35 @@ jobs:
 
       - name: Update README download link
         shell: bash
+        env:
+          HUSKY: '0'
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
           VERSION="${{ steps.version.outputs.version }}"
           
-          # 使用 node 替换（避免 sed 在 Windows 上处理中文的编码问题）
+          # 使用 node 替换，并保持原始行尾格式
           node -e "
             const fs = require('fs');
-            let content = fs.readFileSync('README.md', 'utf8');
+            const buf = fs.readFileSync('README.md');
+            let content = buf.toString('utf8');
+            const hasCRLF = content.includes('\r\n');
             const v = '${VERSION}';
             const newLink = '最新版本: [EcoPaste_' + v + '](https://github.com/EcoPasteHub/EcoPaste/releases/download/v' + v + '/EcoPaste_' + v + '_x64-setup.exe)';
             content = content.replace(/^最新版本: .*/m, newLink);
-            fs.writeFileSync('README.md', content, 'utf8');
+            if (hasCRLF) content = content.replace(/(?<!\r)\n/g, '\r\n');
+            fs.writeFileSync('README.md', content);
           "
           
-          # 提交更改（--no-verify 跳过 pre-commit hook）
-          if [[ -n $(git status -s README.md) ]]; then
-            git add README.md
+          # 使用 git diff --cached 检测真正的内容变更（排除 CRLF 假差异）
+          git add README.md
+          if ! git diff --cached --quiet README.md; then
             git commit --no-verify -m "docs: auto update download link to v${VERSION} [skip ci]"
             git push
           else
-            echo "README.md already up to date"
+            echo "README.md already up to date, skipping commit"
+            git reset HEAD README.md 2>/dev/null || true
           fi
 
       - name: Create Release
