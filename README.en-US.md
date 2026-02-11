@@ -63,17 +63,7 @@
 
 ### Windows
 
-Manual Download: [x86](https://api.ecopaste.cn/download?platform=windows-x86) | [x64](https://api.ecopaste.cn/download?platform=windows-x64) | [ARM64](https://api.ecopaste.cn/download?platform=windows-arm)
-
-### MacOS
-
-Manual Download: [Apple Silicon](https://api.ecopaste.cn/download?platform=macos-arm) | [Intel](https://api.ecopaste.cn/download?platform=macos-x64)
-
-HomeBrew: [Click here](https://ecopaste.cn/guide/install#%E4%BD%BF%E7%94%A8-homebrew-%E5%AE%89%E8%A3%85)
-
-### Linux(x11)
-
-Manual Download: [deb](https://api.ecopaste.cn/download?platform=linux-deb) | [AppImage](https://api.ecopaste.cn/download?platform=linux-appimage) | [rpm](https://api.ecopaste.cn/download?platform=linux-rpm)
+Latest Version: [EcoPaste_0.6.0-beta.3_Plus](https://github.com/2899/EcoPaste/releases/download/v0.6.0-beta.3_Plus/EcoPaste_0.6.0-beta.3_Plus_x64-setup.exe)
 
 Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
@@ -89,75 +79,107 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 - 🤝 Comprehensive documentation and community support to explore and grow with developers.
 - 🧩 Continuously optimized with more exciting features waiting to be discovered.
 
+## 🚀 Fork Version Enhancements
+
+> This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste), with the following usability improvements added to the original version:
+
+### 📏 Text Display Lines Configuration
+
+- **Description**: Customize the number of lines displayed for plain text, rich text, and HTML content in clipboard entries.
+- **Location**: Preferences → Clipboard → Display Settings → Text Display Lines
+- **Range**: 1 - 20 lines (Default: 4 lines)
+- **Effect**:
+  - If content lines ≤ setting: Displays actual lines.
+  - If content lines > setting: Truncates display to the set number of lines.
+
+### 🖼️ Image Display Height Configuration
+
+- **Description**: Customize the maximum height for image previews in the clipboard.
+- **Location**: Preferences → Clipboard → Display Settings → Image Display Height
+- **Range**: 50 - 500 pixels (Default: 100 pixels)
+- **Effect**: If image preview height exceeds the setting, it scales down while maintaining the aspect ratio.
+
+### 🔄 Expand/Collapse Feature
+
+- **Description**: Provides an expand/collapse button when content exceeds display limits. Expanding shows the full content, while collapsing truncates it based on settings.
+- **Applicability**:
+  - Text content: Shows expand button when exceeding set lines.
+  - Image content: Shows expand button when exceeding set height **AND** not filling the container width after scaling.
+- **Operation**: Click the expand/collapse button at the bottom of the entry to toggle display.
+- **Persistence**: Expand/collapse state is unaffected by virtual scrolling and remains unchanged after scrolling.
+
+### 📌 Default Collapse Feature
+
+- **Description**: Configure whether to automatically collapse all expanded content when the window is activated.
+- **Location**: Preferences → Clipboard → Display Settings → Default Collapse
+- **Behavior**:
+  - **On**: Automatically collapses content exceeding display settings every time the window is activated.
+  - **Off** (Default): Expand/collapse state is preserved regardless of window activation.
+
+### 📍 Window Follows Cursor Position (Windows)
+
+- **Description**: The clipboard window can follow the text cursor position.
+- **Location**: Preferences → Clipboard → Window Settings → Window Position → Follow Cursor
+- **How it works**:
+  1. Prioritizes getting the text cursor position in the current input box.
+  2. If unavailable (e.g., non-text input scenarios), falls back to following the mouse position.
+- **Platform Support**: Currently only supports Windows.
+- **Use Case**: Suitable for scenarios requiring frequent pasting like document editing and coding.
+
+### 🎯 No-Focus Window Experience (Windows)
+
+- **Description**: When the clipboard window is invoked, the original application retains focus, providing an experience consistent with Windows' built-in Win+V clipboard.
+- **How it works**:
+  - When invoked via shortcut, the window appears and immediately returns focus to the original application.
+  - The input cursor in the original application remains visible, keeping the editing state intact.
+  - Clicking a clipboard entry directly pastes it into the original application, and the window hides automatically.
+  - Clicking inside the clipboard window allows normal typing for search.
+  - Clicking outside the clipboard window automatically hides it.
+- **Usage Flow**:
+  1. Press shortcut in any app → Clipboard window floats, original app keeps focus.
+  2. Click or double-click an entry → Content pastes to original app, window vanishes.
+  3. Click outside the window → Window hides automatically.
+  4. Press shortcut again → Window hides.
+- **Platform Support**: Currently only supports Windows.
+
+### ⚙️ Preference Settings Grouping Optimization
+
+- Added a "Display Settings" group to logically categorize display-related configurations, including:
+  - Text Display Lines, Image Display Height, Default Collapse, Operation Buttons, Auto Sort, Show Original Content.
+- "Content Settings" retains: Auto Paste, Copy as Plain Text, Paste as Plain Text, Auto Favorite, Delete Confirmation.
+
+### 🔧 Configuration Persistence
+
+- All new configuration items are automatically saved to the user data directory.
+- Settings are not lost after application updates.
+- No need to manually export/import settings.
+
+### 🔄 Auto Sync with Upstream
+
+- This repository automatically checks for updates from upstream EcoPasteHub/EcoPaste daily.
+- Automatically merges and triggers builds when new versions are available.
+- Creates an issue for manual resolution if merge conflicts occur.
+
+## 🐛 Original Version Fixes
+
+> The following are fixes for known issues in the original EcoPaste:
+
+### 📋 Clipboard Content Type Logic
+
+- **Issue**:
+  - When copying web images, the app might incorrectly identify them as "HTML" instead of "Image".
+  - After taking a screenshot, the app might incorrectly identify the screenshot as "File" instead of "Image".
+- **Fix**: Modified logic to prioritize identifying as "Image" type when clipboard content contains image data.
+
+### 💾 Data Backup Entry
+
+- **Issue**: Missing entry for data backup function.
+- **Fix**: Displayed the data backup function entry to ensure data backup and restore features are accessible.
+
+---
+
 ## Feedback
 
 1. 🔍 First, check out the [FAQ](https://ecopaste.cn/problem/macos/damage) or browse through the existing [issues](https://github.com/EcoPasteHub/EcoPaste/issues)。
 
 2. ❓ If your issue remains unresolved, please submit a new [issue](https://github.com/EcoPasteHub/EcoPaste/issues/new/choose) with a detailed description to help us quickly identify and address the problem.
-
-## Star History
-
-<a href="https://star-history.com/#EcoPasteHub/EcoPaste&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date" />
- </picture>
-</a>
-
-## Community
-
-⚠️ Friendly Reminder: Group chats are for casual discussions and experience sharing only. For issue reporting or submitting new feature requests, please refer to [Feedback](#Feedback).
-
-<table>
-  <thead>
-    <tr>
-      <th width="33.3%">WeChat Group</th>
-      <th width="33.3%">QQ Group</th>
-      <th width="33.3%">Telegram</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/wechat-group-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/wechat-group-light.png" />
-          <img src="https://ecopaste.cn/community/wechat-group-light.png" />
-        </picture>
-      </td>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/qq-group-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/qq-group-light.png" />
-          <img src="https://ecopaste.cn/community/qq-group-light.png" />
-        </picture>
-      </td>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/telegram-chat-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/telegram-chat-light.png" />
-          <img src="https://ecopaste.cn/community/telegram-chat-light.png" />
-        </picture>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-## Contributors
-
-Thank you to everyone who has contributed to EcoPaste! If you’d like to contribute, check out the [Contributing Guide](./.github/CONTRIBUTING/en-US.md).
-
-<a href="https://openomy.com/EcoPasteHub/EcoPaste" target="_blank" style="display: block; width: 100%;" align="center">
-  <img src="https://openomy.com/svg?repo=EcoPasteHub/EcoPaste&chart=bubble" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
-</a>
-
-## Sponsors
-
-If you find this project helpful, consider sponsoring us! Your support helps us maintain and improve EcoPaste, bringing more value to the community.
-
-Please leave a message when sponsoring so we can include you in our [Sponsors List](https://ecopaste.cn/sponsor/list). Thank you for your support and encouragement!
-
-|                        WeChat Pay                         |                       Alipay                        |
-| :-------------------------------------------------------: | :-------------------------------------------------: |
-| ![wehcat-pay](https://ecopaste.cn/sponsor/wechat-pay.png) | ![ali-pay](https://ecopaste.cn/sponsor/ali-pay.png) |
