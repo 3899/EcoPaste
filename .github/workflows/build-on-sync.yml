@@ -36,7 +36,8 @@ jobs:
           # 添加后缀
           FULL_VERSION="${VERSION}_Plus"
           GIT_DESC=$(git describe --long --tags --always --dirty | sed 's/-g/-/')
-          BUILD_TIME=$(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M UTC+8')
+          # GitHub Actions 运行在 UTC 环境，手动加 8 小时
+          BUILD_TIME=$(date -u -d '+8 hours' +'%Y-%m-%d %H:%M:%S UTC+8')
           echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
           echo "git_desc=$GIT_DESC" >> $GITHUB_OUTPUT
           echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
