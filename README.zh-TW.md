@@ -63,7 +63,7 @@
 
 ### Windows
 
-手動下載：[x86](https://api.ecopaste.cn/download?platform=windows-x86) | [x64](https://api.ecopaste.cn/download?platform=windows-x64) | [ARM64](https://api.ecopaste.cn/download?platform=windows-arm)
+最新版本: [EcoPaste_0.6.0-beta.3_Plus](https://github.com/2899/EcoPaste/releases/download/v0.6.0-beta.3_Plus/EcoPaste_0.6.0-beta.3_Plus_x64-setup.exe)
 
 ### MacOS
 
@@ -89,75 +89,107 @@ HomeBrew：[點擊查看](https://ecopaste.cn/guide/install#%E4%BD%BF%E7%94%A8-h
 - 🤝 完善的檔案與社區支持，與開發者共同探索與成長。
 - 🧩 持續優化中，更多驚喜功能等你發現。
 
+## 🚀 Fork 版本增強功能
+
+> 本倉庫是 [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) 的 Fork 版本，在原版基礎上增加了以下易用性改進：
+
+### 📏 文字顯示行數配置
+
+- **功能說明**：可自定義剪貼板條目中純文字、富文字、HTML 格式內容的顯示行數
+- **配置位置**：偏好設定 → 剪貼板 → 顯示設定 → 文字顯示行數
+- **可選範圍**：1 - 20 行（預設 4 行）
+- **效果**：
+  - 內容行數 ≤ 設定值時，按實際行數顯示
+  - 內容行數 > 設定值時，按設定行數截斷顯示
+
+### 🖼️ 圖片顯示高度配置
+
+- **功能說明**：可自定義剪貼板中圖片預覽的最大高度
+- **配置位置**：偏好設定 → 剪貼板 → 顯示設定 → 圖片顯示高度
+- **可選範圍**：50 - 500 像素（預設 100 像素）
+- **效果**：圖片預覽高度超過設定值時，保持寬高比縮放顯示
+
+### 🔄 展開/收起功能
+
+- **功能說明**：當內容超過顯示限制時，提供展開/收起按鈕，展開後可預覽完整內容，收起後按設定限制截斷顯示
+- **適用範圍**：
+  - 文字內容：超過設定行數時顯示展開按鈕
+  - 圖片內容：超過設定高度 **且** 縮放後未佈滿容器寬度時顯示展開按鈕
+- **操作方式**：點擊條目底部的展開/收起按鈕切換顯示狀態
+- **狀態持久化**：展開/收起狀態不受虛擬滾動影響，滾動後狀態保持不變
+
+### 📌 預設收起功能
+
+- **功能說明**：可配置激活窗口時是否自動收起所有已展開的內容
+- **配置位置**：偏好設定 → 剪貼板 → 顯示設定 → 預設收起
+- **行為**：
+  - **開啟**：每次激活窗口時，超出容器顯示設定的內容自動收起
+  - **關閉**（預設）：展開/收起狀態始終保持，不受窗口激活影響
+
+### 📍 視窗跟隨游標位置（Windows）
+
+- **功能說明**：剪貼板視窗可跟隨輸入游標位置顯示
+- **配置位置**：偏好設定 → 剪貼板 → 視窗設定 → 視窗位置 → 跟隨游標
+- **工作原理**：
+  1. 優先獲取當前輸入框中的文字游標位置
+  2. 如無法獲取（如非文字輸入場景），則回退到跟隨滑鼠位置
+- **平臺支持**：目前僅支持 Windows 系統
+- **使用場景**：適合在文檔編輯、代碼編寫等需要頻繁粘貼的場景使用
+
+### 🎯 不奪焦視窗體驗（Windows）
+
+- **功能說明**：呼出剪貼板視窗時，原應用保持焦點不變，體驗與 Windows 自帶 Win+V 剪貼板一致
+- **工作原理**：
+  - 按快捷鍵呼出視窗時，視窗顯示後立即將焦點歸還給原應用
+  - 原應用中的輸入游標不會消失，編輯狀態完整保留
+  - 點擊剪貼板條目後直接粘貼到原應用，視窗自動隱藏
+  - 需要搜尋時，點擊剪貼板視窗即可正常輸入
+  - 點擊剪貼板視窗以外的區域自動隱藏視窗
+- **使用流程**：
+  1. 在任意應用中按快捷鍵 → 剪貼板視窗浮現，原應用焦點不變
+  2. 滑鼠點擊或雙擊條目 → 內容粘貼到原應用，視窗自動消失
+  3. 點擊視窗外部 → 視窗自動隱藏
+  4. 再次按快捷鍵 → 視窗隱藏
+- **平臺支持**：目前僅支持 Windows 系統
+
+### ⚙️ 偏好設定分組優化
+
+- 新增「顯示設定」功能分組，合理歸類顯示相關配置項，包含：
+  - 文字顯示行數、圖片顯示高度、預設收起、操作按鈕、自動排序、顯示原內容
+- 「內容設定」保留：自動粘貼、複製為純文字、粘貼為純文字、自動收藏、刪除確認
+
+### 🔧 配置持久化
+
+- 所有新增配置項均自動保存到用戶數據目錄
+- 應用更新後配置不會丟失
+- 無需手動導出/導入配置
+
+### 🔄 自動同步上游
+
+- 本倉庫每天自動檢查上游 EcoPasteHub/EcoPaste 的更新
+- 有新版本時自動合併並觸發構建
+- 如遇合併衝突會創建 Issue 通知手動處理
+
+## 🐛 原版修復
+
+> 以下是對原版 EcoPaste 已知問題的修復：
+
+### 📋 剪貼板內容類型判斷邏輯
+
+- **問題描述**：
+  - 複製網絡圖片時，應用可能錯誤識別為「HTML」類型而非「圖片」類型
+  - 截圖後，應用將截圖圖片錯誤識別為「檔案」類型而非「圖片」類型
+- **修復方案**：修改判斷邏輯，當複製內容存在圖片數據時，優先識別為「圖片」類型；
+
+### 💾 數據備份入口
+
+- **問題描述**：數據備份功能入口缺失
+- **修復方案**：顯示數據備份功能入口，確保數據備份與恢復功能正常可用
+
+---
+
 ## 問題迴響
 
 1. 🔍 優先查閱[常見問題](https://ecopaste.cn/problem/macos/damage)或瀏覽已有 [issues](https://github.com/EcoPasteHub/EcoPaste/issues)。
 
 2. ❓ 如果問題仍未解决，請提交新的 [issue](https://github.com/EcoPasteHub/EcoPaste/issues/new/choose)，並附上詳細描述，方便我們快速定位和解决。
-
-## 歷史星標
-
-<a href="https://star-history.com/#EcoPasteHub/EcoPaste&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=EcoPasteHub/EcoPaste&type=Date" />
- </picture>
-</a>
-
-## 社區交流
-
-⚠️ 溫馨提示：群聊僅限日常討論和經驗分享，如需迴響問題或提交新需求，請查看[問題迴響](#問題迴響)。
-
-<table>
-  <thead>
-    <tr>
-      <th width="33.3%">微信群</th>
-      <th width="33.3%">QQ 群</th>
-      <th width="33.3%">Telegram</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/wechat-group-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/wechat-group-light.png" />
-          <img src="https://ecopaste.cn/community/wechat-group-light.png" />
-        </picture>
-      </td>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/qq-group-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/qq-group-light.png" />
-          <img src="https://ecopaste.cn/community/qq-group-light.png" />
-        </picture>
-      </td>
-      <td>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://ecopaste.cn/community/telegram-chat-dark.png" />
-          <source media="(prefers-color-scheme: light)" srcset="https://ecopaste.cn/community/telegram-chat-light.png" />
-          <img src="https://ecopaste.cn/community/telegram-chat-light.png" />
-        </picture>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-## 貢獻者
-
-感謝大家為 EcoPaste 做出的寶貴貢獻！如果你也希望為 EcoPaste 做出貢獻，請查閱[貢獻指南](./.github/CONTRIBUTING/zh-TW.md)。
-
-<a href="https://openomy.com/EcoPasteHub/EcoPaste" target="_blank" style="display: block; width: 100%;" align="center">
-  <img src="https://openomy.com/svg?repo=EcoPasteHub/EcoPaste&chart=bubble" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
-</a>
-
-## 贊助
-
-如果您覺得這個項目對您有幫助，可以考慮贊助支持我們！您的支持將幫助我們更好地維護和發展項目，讓 EcoPaste 持續為社區創造價值。
-
-贊助時請務必填寫留言，以便我們收錄到[贊助名單](https://ecopaste.cn/sponsor/index)中，感謝您的支持與鼓勵！
-
-|                           微信                            |                       支付寶                        |
-| :-------------------------------------------------------: | :-------------------------------------------------: |
-| ![wehcat-pay](https://ecopaste.cn/sponsor/wechat-pay.png) | ![ali-pay](https://ecopaste.cn/sponsor/ali-pay.png) |
