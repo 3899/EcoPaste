@@ -62,7 +62,7 @@
 ## 下载
 
 ### Windows
-最新版本: [EcoPaste_0.6.0-beta.3_Plus](https://github.com/2899/EcoPaste/releases/download/v0.6.0-beta.3_Plus/EcoPaste_0.6.0-beta.3_Plus_x64-setup.exe)
+最新版本: [EcoPaste_0.6.0-beta.3_Plus](https://github.com/3899/EcoPaste/releases/download/v0.6.0-beta.3_Plus/EcoPaste_0.6.0-beta.3_Plus_x64-setup.exe)
 
 安装指南: [点击查看](https://ecopaste.cn/guide/install#linux)
 
