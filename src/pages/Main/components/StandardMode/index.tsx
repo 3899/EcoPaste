@@ -9,6 +9,7 @@ import GroupList from "../GroupList";
 import HistoryList from "../HistoryList";
 import SearchInput from "../SearchInput";
 import WindowPin from "../WindowPin";
+import FavoriteToggle from "../FavoriteToggle";
 
 const StandardMode = () => {
   const { search } = useSnapshot(clipboardStore);
@@ -36,12 +37,13 @@ const StandardMode = () => {
           align="center"
           className="overflow-hidden px-3"
           data-tauri-drag-region
-          gap="small"
           justify="space-between"
         >
           <GroupList />
 
-          <Flex align="center" className="text-color-2 text-lg" gap={4}>
+          <Flex align="center" className="text-color-2 text-lg" gap={12}>
+            <FavoriteToggle />
+            
             <WindowPin />
 
             <UnoIcon

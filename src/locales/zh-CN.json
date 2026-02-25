@@ -5,15 +5,19 @@
         "copy": "复制",
         "delete": "删除",
         "download_image": "下载图片",
+        "edit": "编辑",
         "export_as_file": "导出为文件",
         "favorite": "收藏",
         "note": "备注",
         "open_in_browser": "在浏览器访问",
+        "paste_as_cmyk": "转为 CMYK 并粘贴",
+        "paste_as_hex": "转为 HEX 并粘贴",
         "paste_as_path": "粘贴为路径",
         "paste_as_plain_text": "粘贴为纯文本",
-        "preview_image": "预览图片",
+        "paste_as_rgb": "转为 RGB 并粘贴",
+        "preview_image": "打开图片",
         "send_email": "发送邮件",
-        "show_in_file_explorer": "在文件资源管理器中显示",
+        "show_in_file_explorer": "在资源管理器显示",
         "show_in_finder": "在 Finder 中显示",
         "unfavorite": "取消收藏"
       }
@@ -23,6 +27,7 @@
       "search_placeholder": "搜索"
     },
     "label": {
+      "code": "代码 ({{0}})",
       "color": "颜色",
       "email": "邮箱",
       "html": "HTML",
@@ -35,9 +40,13 @@
       "rtf": "富文本",
       "tab": {
         "all": "全部",
+        "code": "代码",
+        "colors": "颜色",
+        "email": "邮箱",
         "favorite": "收藏",
         "files": "文件",
         "image": "图片",
+        "links": "链接",
         "text": "文本"
       }
     }
@@ -125,11 +134,13 @@
           "auto_sort": "复制已存在的内容时排列到最前面",
           "copy_as_plain": "富文本和HTML格式在复制时仅保留纯文本内容",
           "delete_confirm": "删除剪贴板内容时弹出确认对话框",
+          "display_lines": "设置剪贴板列表中纯文本、富文本、HTML格式内容的最大显示行数",
+          "enable_code_highlighting": "自动识别代码内容并语法高亮显示",
+          "image_display_height": "设置剪贴板列表中图片的最大显示高度",
           "operation_button": "自定义操作剪贴板内容的图标按钮",
           "paste_as_plain": "富文本和HTML格式在粘贴时仅保留纯文本内容",
-          "show_original_content": "添加备注后，鼠标悬停时是否显示原内容",
-          "display_lines": "设置剪贴板列表中纯文本、富文本、HTML格式内容的默认显示行数",
-          "image_display_height": "设置剪贴板列表中图片的默认显示高度"
+          "record_source_app": "复制内容时，记录并显示其来源应用的图标和名称",
+          "show_original_content": "添加备注后，鼠标悬停时是否显示原内容"
         },
         "label": {
           "auto_favorite": "自动收藏",
@@ -137,33 +148,41 @@
           "auto_paste_double": "双击",
           "auto_paste_single": "单击",
           "auto_sort": "自动排序",
+          "collapse": "收起",
           "copy_as_plain": "复制为纯文本",
           "custom_operation_button_title": "自定义操作按钮",
           "delete_confirm": "删除确认",
+          "display_lines": "文本显示行数",
+          "enable_code_highlighting": "代码语法高亮",
+          "expand": "展开",
+          "image_display_height": "图片显示高度",
+          "image_display_height_unit": "像素",
           "operation_button": "操作按钮",
           "operation_button_option": {
             "copy": "复制",
             "delete": "删除",
             "favorite": "收藏",
             "notes": "备注",
-            "paste_plain": "粘贴为纯文本"
+            "open_browser": "在浏览器打开",
+            "paste_plain": "粘贴为纯文本",
+            "preview_image": "打开图片"
           },
           "paste_as_plain": "粘贴为纯文本",
-          "show_original_content": "显示原内容",
-          "display_lines": "文本显示行数",
-          "image_display_height": "图片显示高度",
-          "image_display_height_unit": "像素",
-          "expand": "展开",
-          "collapse": "收起"
+          "record_source_app": "记录应用来源",
+          "show_original_content": "显示原内容"
         },
         "title": "内容设置"
       },
       "display_settings": {
         "hints": {
-          "default_collapse": "激活窗口时，超出容器显示设置的内容默认收起"
+          "code_display_lines": "设置剪贴板列表中代码内容的最大显示行数",
+          "default_collapse": "激活窗口时，超出容器显示设置的内容默认收起",
+          "files_display_lines": "设置剪贴板列表中文件(夹)内容的最大显示行数"
         },
         "label": {
-          "default_collapse": "默认收起"
+          "code_display_lines": "代码显示行数",
+          "default_collapse": "默认收起",
+          "files_display_lines": "文件(夹)显示行数"
         },
         "title": "显示设置"
       },
@@ -189,9 +208,9 @@
           "back_top": "激活时回到顶部",
           "show_all": "激活时切换至全部分组",
           "window_position": "窗口位置",
+          "window_position_caret": "跟随光标",
           "window_position_center": "屏幕中心",
           "window_position_follow": "跟随鼠标",
-          "window_position_caret": "跟随光标",
           "window_position_remember": "记住位置"
         },
         "title": "窗口设置"
@@ -335,7 +354,7 @@
         "hide_window": "隐藏窗口",
         "open_preferences": "打开偏好设置",
         "paste": "粘贴",
-        "preview_image": "预览图片",
+        "preview_image": "打开图片",
         "search": "搜索",
         "select_group": "选择分组",
         "select_item": "选择条目"

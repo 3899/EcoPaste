@@ -6,6 +6,9 @@ version = 3
 name = "EcoPaste"
 version = "0.6.0-beta.3"
 dependencies = [
+ "base64 0.21.7",
+ "file_icon_provider 0.4.0",
+ "image",
  "serde",
  "serde_json",
  "tauri",
@@ -30,6 +33,7 @@ dependencies = [
  "tauri-plugin-single-instance",
  "tauri-plugin-sql",
  "tauri-plugin-updater",
+ "windows 0.58.0",
 ]
 
 [[package]]
@@ -1583,6 +1587,21 @@ name = "file_icon_provider"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "adef9ff8c03b1c04bc2c743e0395588001b1c8f5669cab0b300abe873b9c9227"
+dependencies = [
+ "gio 0.20.12",
+ "gtk",
+ "objc2 0.5.2",
+ "objc2-app-kit 0.2.2",
+ "objc2-foundation 0.2.2",
+ "scopeguard",
+ "windows 0.58.0",
+]
+
+[[package]]
+name = "file_icon_provider"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "773d22845dd97ca6712e0e5fce960cac790fc598a286184e744eb81847a6d009"
 dependencies = [
  "gio 0.20.12",
  "gtk",
@@ -6018,7 +6037,7 @@ version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4be88c01baab2a859bae736f55ecd3f6a5aa548c8a1f15758644e31cd6a5eaf9"
 dependencies = [
- "file_icon_provider",
+ "file_icon_provider 0.3.1",
  "flate2",
  "fs_extra",
  "image",

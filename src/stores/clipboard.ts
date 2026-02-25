@@ -7,6 +7,8 @@ export const clipboardStore = proxy<ClipboardStore>({
   },
 
   content: {
+    recordSourceApp: true,
+    enableCodeHighlighting: true,
     autoFavorite: false,
     autoPaste: "double",
     autoSort: false,
@@ -16,6 +18,8 @@ export const clipboardStore = proxy<ClipboardStore>({
     pastePlain: false,
     showOriginalContent: false,
     displayLines: 4,
+    codeDisplayLines: 6,
+    filesDisplayLines: 3,
     imageDisplayHeight: 100,
     defaultCollapse: false,
   },

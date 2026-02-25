@@ -12,10 +12,12 @@ import { useTauriListen } from "@/hooks/useTauriListen";
 import { MainContext } from "../..";
 import Item from "./components/Item";
 import NoteModal, { type NoteModalRef } from "./components/NoteModal";
+import EditModal, { type EditModalRef } from "./components/EditModal";
 
 const HistoryList = () => {
   const { rootState } = useContext(MainContext);
   const noteModelRef = useRef<NoteModalRef>(null);
+  const editModalRef = useRef<EditModalRef>(null);
   const [deleteModal, contextHolder] = Modal.useModal();
   const virtuosoRef = useRef<VirtuosoHandle>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -85,6 +87,7 @@ const HistoryList = () => {
                   data={data}
                   deleteModal={deleteModal}
                   handleNote={() => noteModelRef.current?.open(data.id)}
+                  handleEdit={() => editModalRef.current?.open(data.id)}
                   index={index}
                 />
               </div>
@@ -95,6 +98,7 @@ const HistoryList = () => {
       </Scrollbar>
 
       <NoteModal ref={noteModelRef} />
+      <EditModal ref={editModalRef} />
 
       <FloatButton.BackTop
         duration={0}

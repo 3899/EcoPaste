@@ -1,9 +1,9 @@
 import { useKeyPress } from "ahooks";
-import { Tag } from "antd";
 import clsx from "clsx";
 import { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Scrollbar from "@/components/Scrollbar";
+import UnoIcon from "@/components/UnoIcon";
 import type { DatabaseSchemaGroup } from "@/types/database";
 import { scrollElementToCenter } from "@/utils/dom";
 import { MainContext } from "../..";
@@ -16,26 +16,46 @@ const GroupList = () => {
     scrollElementToCenter(rootState.group);
   }, [rootState.group]);
 
-  const presetGroups: DatabaseSchemaGroup[] = [
+  const presetGroups: (DatabaseSchemaGroup & { icon: string })[] = [
     {
+      icon: "i-lucide:layout-grid",
       id: "all",
       name: t("clipboard.label.tab.all"),
     },
     {
+      icon: "i-lucide:type",
       id: "text",
       name: t("clipboard.label.tab.text"),
     },
     {
+      icon: "i-lucide:image",
       id: "image",
       name: t("clipboard.label.tab.image"),
     },
     {
-      id: "files",
-      name: t("clipboard.label.tab.files"),
+      icon: "i-lucide:link",
+      id: "links",
+      name: t("clipboard.label.tab.links", "链接"),
     },
     {
-      id: "favorite",
-      name: t("clipboard.label.tab.favorite"),
+      icon: "i-lucide:palette",
+      id: "colors",
+      name: t("clipboard.label.tab.colors", "颜色"),
+    },
+    {
+      icon: "i-lucide:mail",
+      id: "email",
+      name: t("clipboard.label.tab.email", "邮箱"),
+    },
+    {
+      icon: "i-lucide:code",
+      id: "code",
+      name: t("clipboard.label.tab.code", "代码"),
+    },
+    {
+      icon: "i-lucide:file-box",
+      id: "files",
+      name: t("clipboard.label.tab.files"),
     },
   ];
 
@@ -55,26 +75,30 @@ const GroupList = () => {
   });
 
   return (
-    <Scrollbar className="flex" data-tauri-drag-region>
-      {presetGroups.map((item) => {
-        const { id, name } = item;
+    <Scrollbar data-tauri-drag-region>
+      <div className="flex gap-[10px]">
+        {presetGroups.map((item) => {
+          const { id, name, icon } = item;
+          const isChecked = id === rootState.group;
 
-        const isChecked = id === rootState.group;
-
-        return (
-          <div id={id} key={id}>
-            <Tag.CheckableTag
-              checked={isChecked}
-              className={clsx({ "bg-primary!": isChecked })}
-              onChange={() => {
+          return (
+            <UnoIcon
+              className={clsx(
+                "flex-shrink-0 cursor-pointer text-lg! transition-colors",
+                isChecked ? "text-primary!" : "text-color-2",
+              )}
+              hoverable
+              id={id}
+              key={id}
+              name={icon}
+              onClick={() => {
                 rootState.group = id;
               }}
-            >
-              {name}
-            </Tag.CheckableTag>
-          </div>
-        );
-      })}
+              title={name}
+            />
+          );
+        })}
+      </div>
     </Scrollbar>
   );
 };

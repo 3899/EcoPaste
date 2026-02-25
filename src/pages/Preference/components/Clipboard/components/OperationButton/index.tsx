@@ -47,6 +47,30 @@ export const transferData: TransferData[] = [
     title:
       "preference.clipboard.content_settings.label.operation_button_option.delete",
   },
+  {
+    icon: "i-lucide:globe",
+    key: "openBrowser",
+    title:
+      "preference.clipboard.content_settings.label.operation_button_option.open_browser",
+  },
+  {
+    icon: "i-lucide:image",
+    key: "previewImage",
+    title:
+      "preference.clipboard.content_settings.label.operation_button_option.preview_image",
+  },
+  {
+    icon: "i-lucide:edit",
+    key: "edit",
+    title:
+      "clipboard.button.context_menu.edit",
+  },
+  {
+    icon: "i-lucide:folder-open",
+    key: "openFolder",
+    title:
+      "clipboard.button.context_menu.show_in_file_explorer",
+  },
 ];
 
 const OperationButton = () => {

@@ -82,6 +82,9 @@ pub fn run() {
             }
             _ => {}
         })
+        .invoke_handler(tauri::generate_handler![
+            crate::core::source_app::get_source_app_info
+        ])
         .build(generate_context!())
         .expect("error while running tauri application");
 

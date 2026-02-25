@@ -1,0 +1,17 @@
+/* 如果需要针对light主题自定义样式，可在此处添加 */
+.light-theme {
+  /* 例如：光秃秃的背景可能会比较丑，可以稍微加深一点 */
+  background-color: #f7f7f7;
+}
+
+/* 可以添加专门针对代码块内部元素的高亮覆盖 */
+.light-theme .hljs-keyword {
+  color: #0000ff;
+}
+.light-theme .hljs-string {
+  color: #a31515;
+}
+.light-theme .hljs-comment {
+  color: #008000;
+}
+/* 其他需要覆盖的类... */

@@ -5,12 +5,16 @@
         "copy": "Copy",
         "delete": "Delete",
         "download_image": "Download Image",
+        "edit": "Edit",
         "export_as_file": "Export as File",
         "favorite": "Favorite",
         "note": "Note",
         "open_in_browser": "Open in Browser",
-        "paste_as_path": "Paste as Path",
-        "paste_as_plain_text": "Paste as Plain Text",
+        "paste_as_cmyk": "Convert to CMYK and Paste",
+        "paste_as_hex": "Convert to HEX and Paste",
+        "paste_as_path": "Paste As Path",
+        "paste_as_plain_text": "Paste As Plain Text",
+        "paste_as_rgb": "Convert to RGB and Paste",
         "preview_image": "Preview Image",
         "send_email": "Send Email",
         "show_in_file_explorer": "Show in File Explorer",
@@ -23,6 +27,7 @@
       "search_placeholder": "Search..."
     },
     "label": {
+      "code": "Code ({{0}})",
       "color": "Color",
       "email": "Email",
       "html": "HTML",
@@ -35,9 +40,13 @@
       "rtf": "Rich Text",
       "tab": {
         "all": "All",
+        "code": "Code",
+        "colors": "Colors",
+        "email": "Email",
         "favorite": "Favorite",
         "files": "File",
         "image": "Image",
+        "links": "Links",
         "text": "Text"
       }
     }
@@ -125,11 +134,13 @@
           "auto_sort": "Alignment to the top when copying existing content",
           "copy_as_plain": "Rich text and HTML formats retain only plain text content when copied",
           "delete_confirm": "Pop-up confirmation dialog when deleting clipboard contents",
+          "display_lines": "Set the default number of lines displayed for text in the clipboard list",
+          "enable_code_highlighting": "Automatically detect and syntax highlight code content",
+          "image_display_height": "Set the default display height for images in the clipboard list",
           "operation_button": "Customize icon buttons to operate on clipboard content",
           "paste_as_plain": "Rich text and HTML formatting retains only plain text content when pasting",
-          "show_original_content": "Whether to display the original content on mouse hover after adding a note",
-          "display_lines": "Set the default number of lines displayed for text in the clipboard list",
-          "image_display_height": "Set the default display height for images in the clipboard list"
+          "record_source_app": "Record and display the icon and name of the source app when copying",
+          "show_original_content": "Whether to display the original content on mouse hover after adding a note"
         },
         "label": {
           "auto_favorite": "Auto Favorite",
@@ -137,26 +148,39 @@
           "auto_paste_double": "Double Click",
           "auto_paste_single": "Single Click",
           "auto_sort": "Auto Sort",
+          "collapse": "Collapse",
           "copy_as_plain": "Copy as Plain Text",
           "custom_operation_button_title": "Custom Action Button",
           "delete_confirm": "Delete Confirmation",
+          "display_lines": "Text Display Lines",
+          "enable_code_highlighting": "Code Syntax Highlighting",
+          "expand": "Expand",
+          "image_display_height": "Image Display Height",
+          "image_display_height_unit": "px",
           "operation_button": "Action Button",
           "operation_button_option": {
             "copy": "Copy",
             "delete": "Delete",
             "favorite": "Favorite",
-            "notes": "Notes",
-            "paste_plain": "Paste as Plain Text"
+            "notes": "Note",
+            "open_browser": "Open in Browser",
+            "paste_plain": "Paste as Plain Text",
+            "preview_image": "Preview Image"
           },
           "paste_as_plain": "Paste as Plain Text",
-          "show_original_content": "Show Original Content",
-          "display_lines": "Text Display Lines",
-          "image_display_height": "Image Display Height",
-          "image_display_height_unit": "px",
-          "expand": "Expand",
-          "collapse": "Collapse"
+          "record_source_app": "Record Source App",
+          "show_original_content": "Show Original Content"
         },
         "title": "Content Settings"
+      },
+      "display_settings": {
+        "hints": {
+          "files_display_lines": "Set the maximum number of displayed lines of file (folder) content in the clipboard list"
+        },
+        "label": {
+          "code_display_lines": "Code display line",
+          "files_display_lines": "File (folder) display line"
+        }
       },
       "search_box_settings": {
         "hints": {
@@ -180,9 +204,9 @@
           "back_top": "Back to top when activated",
           "show_all": "Switch to all group when activated",
           "window_position": "Window Position",
+          "window_position_caret": "Follow Input Caret",
           "window_position_center": "Center on Screen",
           "window_position_follow": "Follow Mouse Cursor",
-          "window_position_caret": "Follow Input Caret",
           "window_position_remember": "Remember Position"
         },
         "title": "Window Settings"

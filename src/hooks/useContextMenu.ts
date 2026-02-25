@@ -24,7 +24,7 @@ interface ContextMenuItem extends MenuItemOptions {
 }
 
 export const useContextMenu = (props: UseContextMenuProps) => {
-  const { data, deleteModal, handleNote, handleNext } = props;
+  const { data, deleteModal, handleNote, handleEdit, handleNext } = props;
   const { id, type, value, group, favorite, subtype } = data;
   const { t } = useTranslation();
   const { env } = useSnapshot(globalStore);
@@ -116,6 +116,55 @@ export const useContextMenu = (props: UseContextMenuProps) => {
     deleteHistory(data);
   };
 
+  const pasteColorAs = async (format: "hex" | "rgb" | "cmyk") => {
+    if (subtype !== "color" || !value) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return;
+    ctx.fillStyle = value as string;
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+
+    let result = value as string;
+    if (format === "hex") {
+      const hex = ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
+      result =
+        a < 255
+          ? `#${hex}${a.toString(16).padStart(2, "0")}`.toUpperCase()
+          : `#${hex}`.toUpperCase();
+    } else if (format === "rgb") {
+      result =
+        a < 255
+          ? `rgba(${r}, ${g}, ${b}, ${(a / 255).toFixed(2)})`
+          : `rgb(${r}, ${g}, ${b})`;
+    } else if (format === "cmyk") {
+      let c = 1 - r / 255;
+      let m = 1 - g / 255;
+      let y = 1 - b / 255;
+      const k = Math.min(c, m, y);
+      if (k === 1) {
+        result = "cmyk(0%, 0%, 0%, 100%)";
+      } else {
+        c = Math.round(((c - k) / (1 - k)) * 100);
+        m = Math.round(((m - k) / (1 - k)) * 100);
+        y = Math.round(((y - k) / (1 - k)) * 100);
+        const kPct = Math.round(k * 100);
+        result = `cmyk(${c}%, ${m}%, ${y}%, ${kPct}%)`;
+      }
+    }
+
+    const { writeText } = await import("tauri-plugin-clipboard-x-api");
+    const { paste } = await import("@/plugins/paste");
+    const { hideWindow } = await import("@/plugins/window");
+
+    await writeText(result);
+    hideWindow();
+    await paste();
+  };
+
   const handleContextMenu = async (event: MouseEvent) => {
     event.preventDefault();
 
@@ -131,6 +180,11 @@ export const useContextMenu = (props: UseContextMenuProps) => {
         text: t("clipboard.button.context_menu.note"),
       },
       {
+        action: handleEdit,
+        hide: type !== "text" && type !== "html" && type !== "rtf",
+        text: t("clipboard.button.context_menu.edit", "编辑"),
+      },
+      {
         action: pasteAsText,
         hide: type !== "html" && type !== "rtf",
         text: t("clipboard.button.context_menu.paste_as_plain_text"),
@@ -139,6 +193,21 @@ export const useContextMenu = (props: UseContextMenuProps) => {
         action: pasteAsText,
         hide: type !== "files",
         text: t("clipboard.button.context_menu.paste_as_path"),
+      },
+      {
+        action: () => pasteColorAs("hex"),
+        hide: subtype !== "color",
+        text: t("clipboard.button.context_menu.paste_as_hex", "转为 HEX 并粘贴"),
+      },
+      {
+        action: () => pasteColorAs("rgb"),
+        hide: subtype !== "color",
+        text: t("clipboard.button.context_menu.paste_as_rgb", "转为 RGB 并粘贴"),
+      },
+      {
+        action: () => pasteColorAs("cmyk"),
+        hide: subtype !== "color",
+        text: t("clipboard.button.context_menu.paste_as_cmyk", "转为 CMYK 并粘贴"),
       },
       {
         action: handleFavorite,

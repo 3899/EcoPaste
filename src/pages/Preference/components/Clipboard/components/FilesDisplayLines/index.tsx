@@ -8,7 +8,7 @@ interface Option {
   value: number;
 }
 
-const DisplayLines = () => {
+const FilesDisplayLines = () => {
   const { content } = useSnapshot(clipboardStore);
   const { t } = useTranslation();
 
@@ -22,17 +22,17 @@ const DisplayLines = () => {
   return (
     <ProSelect
       description={t(
-        "preference.clipboard.content_settings.hints.display_lines",
+        "preference.clipboard.display_settings.hints.files_display_lines",
       )}
       onChange={(value) => {
-        clipboardStore.content.displayLines = value;
+        clipboardStore.content.filesDisplayLines = value;
       }}
       options={options}
-      title={t("preference.clipboard.content_settings.label.display_lines")}
-      value={content.displayLines}
+      title={t("preference.clipboard.display_settings.label.files_display_lines")}
+      value={content.filesDisplayLines || 3}
       className="w-30"
     />
   );
 };
 
-export default DisplayLines;
+export default FilesDisplayLines;

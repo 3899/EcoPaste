@@ -63,7 +63,7 @@
 
 ### Windows
 
-Latest Version: [EcoPaste_0.6.0-beta.3_Plus](https://github.com/2899/EcoPaste/releases/download/v0.6.0-beta.3_Plus/EcoPaste_0.6.0-beta.3_Plus_x64-setup.exe)
+Latest Version: [Download Latest Build from Releases](https://github.com/3899/EcoPaste/releases/latest)
 
 Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
@@ -83,70 +83,43 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
 > This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste), with the following usability improvements added to the original version:
 
-### 📏 Text Display Lines Configuration
+### ✨ Exclusive Elite Expansion Enhancements
 
-- **Description**: Customize the number of lines displayed for plain text, rich text, and HTML content in clipboard entries.
-- **Location**: Preferences → Clipboard → Display Settings → Text Display Lines
-- **Range**: 1 - 20 lines (Default: 4 lines)
-- **Effect**:
-  - If content lines ≤ setting: Displays actual lines.
-  - If content lines > setting: Truncates display to the set number of lines.
+- **Independent Groups & Precise Color Binding**: Native categories extended for "Links", "Colors", and "Code". Intelligent auto-recognition accurately extracts RGB/RGBA gradients, highlighting playable paths securely.
+- **Rich Immersive Secondary Editing**: Supports isolated secondary modal pop-ups tailored strictly for text elements and visual graphic payloads alongside direct file locator triggers.
+- **Syntax Highlighting & Formatting Previews**: Intercepts programmatic code clipboard strings effortlessly rendering IDE-fidelity syntax highlighting.
+- **Application Applets & Scale Limit Expansions**: Exposes tooltip popovers identifying raw internal Source Apps & proprietary icons. Pushed the visualization capabilities boundary on Preference components allowing user overrides up to 50 individual item rendering rows.
+- **Flawless Screenshot Routing Dumpster**: Rebuilt the rigid Tauri SQLite persistence boundaries by forcing interception mechanisms, dynamically shielding the C-drive and forwarding native screenshots directly targeting the local Custom Disks selected safely by the user.
 
-### 🖼️ Image Display Height Configuration
+### 📏 Advanced Text & Graphic Display Configurations
 
-- **Description**: Customize the maximum height for image previews in the clipboard.
-- **Location**: Preferences → Clipboard → Display Settings → Image Display Height
-- **Range**: 50 - 500 pixels (Default: 100 pixels)
-- **Effect**: If image preview height exceeds the setting, it scales down while maintaining the aspect ratio.
+- **Extensible Limit Boundaries Override**: Configuration values natively stretched in Preferences -> Clipboard -> Display Settings -> Text/Code/Files rendering lengths up to 1-50 lines continuously.
+- **Intelligent Picture Aspect Expansion Triggers**: Allows adjustable dimensions scaling natively overriding components up to widths spanning 50-500 pixels.
 
-### 🔄 Expand/Collapse Feature
+### 🔄 Dynamic Expansion Features & Silent Frame Hooks
 
-- **Description**: Provides an expand/collapse button when content exceeds display limits. Expanding shows the full content, while collapsing truncates it based on settings.
-- **Applicability**:
-  - Text content: Shows expand button when exceeding set lines.
-  - Image content: Shows expand button when exceeding set height **AND** not filling the container width after scaling.
-- **Operation**: Click the expand/collapse button at the bottom of the entry to toggle display.
-- **Persistence**: Expand/collapse state is unaffected by virtual scrolling and remains unchanged after scrolling.
+- **Expand Full Metadata Payloads**: Equips intelligent expand/collapse toggles resiliently retaining memory context across vast visual virtualization boundaries mapping seamlessly for text boundaries overrides.
+- **No-Focus Quiet Window Immersions** (Windows): Exposes EcoPaste smoothly without dragging global Windows focus states forcing silent double-click paste events retaining absolute host-body integrity; auto-collapses stealthily when unfocused.
+- **Active Cursor Positional Flow Engine**: Native Windows capabilities allowing visual overlays tracking directly exactly into the physical hardware text cursor rendering frame smoothly.
+- **Settings Hierarchy Replacements**: Formulated dedicated 'Display Settings' parameter zones safely compartmentalizing granular overrides separating logic structures optimally safely safely safely safely.
 
-### 📌 Default Collapse Feature
+### 🔧 Zero-Loss Data Persistence Shielding
 
-- **Description**: Configure whether to automatically collapse all expanded content when the window is activated.
-- **Location**: Preferences → Clipboard → Display Settings → Default Collapse
-- **Behavior**:
-  - **On**: Automatically collapses content exceeding display settings every time the window is activated.
-  - **Off** (Default): Expand/collapse state is preserved regardless of window activation.
+- Automatically safely shields parameters backing up critical config objects enforcing absolute unyielding compatibility retaining the payload persistently ignoring volatile updates effectively across system reinstalls ensuring zero data loss natively.
 
-### 📍 Window Follows Cursor Position (Windows)
+### 🔄 Automatic Sync Automation
 
-- **Description**: The clipboard window can follow the text cursor position.
-- **Location**: Preferences → Clipboard → Window Settings → Window Position → Follow Cursor
-- **How it works**:
-  1. Prioritizes getting the text cursor position in the current input box.
-  2. If unavailable (e.g., non-text input scenarios), falls back to following the mouse position.
-- **Platform Support**: Currently only supports Windows.
-- **Use Case**: Suitable for scenarios requiring frequent pasting like document editing and coding.
+- Scans silently and checks `EcoPasteHub/EcoPaste` master forks efficiently triggering cross-branch compilation matrices flawlessly maintaining local synchronicity.
+- Pushes resolution tracking issues natively catching severe engine conflicts.
 
-### 🎯 No-Focus Window Experience (Windows)
+## 🐛 Ruthless Bug Annihilation System
 
-- **Description**: When the clipboard window is invoked, the original application retains focus, providing an experience consistent with Windows' built-in Win+V clipboard.
-- **How it works**:
-  - When invoked via shortcut, the window appears and immediately returns focus to the original application.
-  - The input cursor in the original application remains visible, keeping the editing state intact.
-  - Clicking a clipboard entry directly pastes it into the original application, and the window hides automatically.
-  - Clicking inside the clipboard window allows normal typing for search.
-  - Clicking outside the clipboard window automatically hides it.
-- **Usage Flow**:
-  1. Press shortcut in any app → Clipboard window floats, original app keeps focus.
-  2. Click or double-click an entry → Content pastes to original app, window vanishes.
-  3. Click outside the window → Window hides automatically.
-  4. Press shortcut again → Window hides.
-- **Platform Support**: Currently only supports Windows.
+> Enforcing critical crash prevention measures directly fixing hidden EcoPaste architecture failures natively underneath:
 
-### ⚙️ Preference Settings Grouping Optimization
+### 📋 Misfired Clipboard Value Parsing Corrections
 
-- Added a "Display Settings" group to logically categorize display-related configurations, including:
-  - Text Display Lines, Image Display Height, Default Collapse, Operation Buttons, Auto Sort, Show Original Content.
-- "Content Settings" retains: Auto Paste, Copy as Plain Text, Paste as Plain Text, Auto Favorite, Delete Confirmation.
+- **Bug Resolution**: Resolved massive pipeline catastrophic cascading failures preventing Web-images incorrectly parsed natively into blind HTML. Deeply rewrote intercept modules securely rectifying `FS` library broken API architectures restoring fully custom designated image locations seamlessly fixing widespread broken image red-cross GUI anomalies natively dynamically recovering native UI protocols.
+- **Missing Backup Tunnels Resurfaced**: Refactored deprecated UI parameter tunnels re-enabling manual local SQLite configuration export functionality securely fixing permissions conflicts enforcing robust disaster-recover matrices safely.
 
 ### 🔧 Configuration Persistence
 

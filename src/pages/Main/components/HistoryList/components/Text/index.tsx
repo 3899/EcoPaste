@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { type CSSProperties, forwardRef, useContext } from "react";
 import { Marker } from "react-mark.js";
 import { useSnapshot } from "valtio";
+import SyntaxHighlighter from "@/components/SyntaxHighlighter";
 import { MainContext } from "@/pages/Main";
 import { clipboardStore } from "@/stores/clipboard";
 import type { DatabaseSchemaHistory } from "@/types/database";
@@ -17,6 +18,7 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
   const { content } = useSnapshot(clipboardStore);
 
   const displayLines = content.displayLines || 4;
+  const codeDisplayLines = content.codeDisplayLines || 5;
 
   const renderMarker = () => {
     return <Marker mark={rootState.search}>{value}</Marker>;
@@ -49,11 +51,46 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
       return renderColor();
     }
 
+    if (subtype?.startsWith("code_") && content.enableCodeHighlighting) {
+      const language = subtype.replace("code_", "");
+      return <SyntaxHighlighter value={value} language={language} expanded={expanded} />;
+    }
+
     return renderMarker();
   };
 
   // 动态 line-clamp 样式
   const getLineClampStyle = (): CSSProperties => {
+    if (subtype?.startsWith("code_") && content.enableCodeHighlighting) {
+      if (expanded) return {};
+      
+      return {
+        display: "-webkit-box",
+        WebkitLineClamp: codeDisplayLines,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+      };
+    }
+
+    if (subtype === "url") {
+      if (expanded) {
+        return {
+          color: "#1677FE",
+          wordBreak: "break-all",
+          whiteSpace: "pre-wrap",
+        };
+      }
+      return {
+        color: "#1677FE",
+        display: "-webkit-box",
+        WebkitLineClamp: displayLines,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+        wordBreak: "break-all",
+        whiteSpace: "pre-wrap",
+      };
+    }
+
     if (expanded) {
       return {
         wordBreak: "break-all",
@@ -66,7 +103,7 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
       WebkitBoxOrient: "vertical",
       overflow: "hidden",
       wordBreak: "break-all",
-      whiteSpace: "pre-wrap", // 确保换行符被尊重
+      whiteSpace: "pre-wrap",
     };
   };
 

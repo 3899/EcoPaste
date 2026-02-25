@@ -25,10 +25,11 @@ export interface ItemProps {
   data: DatabaseSchemaHistory;
   deleteModal: HookAPI;
   handleNote: () => void;
+  handleEdit: () => void;
 }
 
 const Item: FC<ItemProps> = (props) => {
-  const { index, data, handleNote } = props;
+  const { index, data, handleNote, handleEdit } = props;
   const { id, type, note, value } = data;
   const { rootState } = useContext(MainContext);
   const { content } = useSnapshot(clipboardStore);
@@ -40,7 +41,7 @@ const Item: FC<ItemProps> = (props) => {
   // 检查内容是否溢出（依赖 expanded 以便收起时重新检测）
   useEffect(() => {
     checkOverflow();
-  }, [content.displayLines, content.imageDisplayHeight, value, type, rootState.search, expanded]);
+  }, [content.displayLines, content.imageDisplayHeight, content.codeDisplayLines, content.filesDisplayLines, value, type, rootState.search, expanded]);
 
   const checkOverflow = () => {
     // 展开状态：已展开说明之前检测过溢出，保持按钮显示
@@ -151,7 +152,7 @@ const Item: FC<ItemProps> = (props) => {
       case "image":
         return <Image ref={contentRef as any} {...data} expanded={expanded} onLoad={checkOverflow} />;
       case "files":
-        return <Files {...data} />;
+        return <Files ref={contentRef as any} {...data} expanded={expanded} />;
     }
   };
 
@@ -169,7 +170,7 @@ const Item: FC<ItemProps> = (props) => {
       onDoubleClick={() => handleClick("double")}
       vertical
     >
-      <Header {...rest} data={data} handleNote={handleNote} />
+      <Header {...rest} data={data} handleNote={handleNote} handleEdit={handleEdit} />
 
       <div className="relative flex-1 select-auto overflow-hidden break-words children:transition">
         <div

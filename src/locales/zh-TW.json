@@ -5,6 +5,7 @@
         "copy": "複製",
         "delete": "刪除",
         "download_image": "下載圖片",
+        "edit": "編輯",
         "export_as_file": "匯出為文件",
         "favorite": "收藏",
         "note": "備註",
@@ -23,21 +24,26 @@
       "search_placeholder": "搜尋"
     },
     "label": {
+      "code": "代碼 ({{0}})",
       "color": "顏色",
       "email": "信箱",
       "html": "HTML",
       "image": "圖片",
       "link": "連結",
       "n_chars": "{{0}}個字元",
-      "n_files": "{{0}}個檔案",
+      "n_files": "{{0}}個檔案（夾）",
       "path": "路徑",
       "plain_text": "純文字",
       "rtf": "富文字",
       "tab": {
         "all": "全部",
+        "code": "代碼",
+        "colors": "顏色",
+        "email": "信箱",
         "favorite": "收藏",
         "files": "文件",
         "image": "圖片",
+        "links": "連結",
         "text": "文字"
       }
     }
@@ -125,38 +131,53 @@
           "auto_sort": "複製已存在的內容時排列到最前面",
           "copy_as_plain": "富文字和HTML格式在複製時僅保留純文字內容",
           "delete_confirm": "删除剪貼板內容時彈出確認對話方塊",
+          "display_lines": "設置剪貼簿列表中文字內容的預設顯示行數",
+          "enable_code_highlighting": "自動識別代碼內容並語法高亮顯示",
+          "image_display_height": "設置剪貼簿列表中圖片的預設顯示高度",
           "operation_button": "自定義操作剪貼簿內容的圖示按鈕",
           "paste_as_plain": "富文字和HTML格式在粘貼時僅保留純文字內容",
-          "show_original_content": "添加備註後，滑鼠懸停時是否顯示原內容",
-          "display_lines": "設置剪貼簿列表中文字內容的預設顯示行數",
-          "image_display_height": "設置剪貼簿列表中圖片的預設顯示高度"
+          "record_source_app": "複製內容時，記錄並顯示其來源應用的圖示和名稱",
+          "show_original_content": "添加備註後，滑鼠懸停時是否顯示原內容"
         },
         "label": {
           "auto_favorite": "自動收藏",
           "auto_paste": "自動貼上",
           "auto_paste_double": "雙擊",
-          "auto_paste_single": "單擊",
+          "auto_paste_single": "按一下",
           "auto_sort": "自動排序",
+          "collapse": "收起",
           "copy_as_plain": "複製為純文字",
           "custom_operation_button_title": "自定義操作按鈕",
           "delete_confirm": "删除確認",
+          "display_lines": "文字顯示行數",
+          "enable_code_highlighting": "代碼語法高亮",
+          "expand": "展開",
+          "image_display_height": "圖片顯示高度",
+          "image_display_height_unit": "像素",
           "operation_button": "操作按鈕",
           "operation_button_option": {
             "copy": "複製",
             "delete": "刪除",
             "favorite": "收藏",
             "notes": "備註",
-            "paste_plain": "貼上為純文本"
+            "open_browser": "瀏覽器打開",
+            "paste_plain": "貼上為純文本",
+            "preview_image": "預覽圖片"
           },
           "paste_as_plain": "粘貼為純文字",
-          "show_original_content": "顯示原內容",
-          "display_lines": "文字顯示行數",
-          "image_display_height": "圖片顯示高度",
-          "image_display_height_unit": "像素",
-          "expand": "展開",
-          "collapse": "收起"
+          "record_source_app": "紀錄應用來源",
+          "show_original_content": "顯示原內容"
         },
         "title": "內容設定"
+      },
+      "display_settings": {
+        "hints": {
+          "files_display_lines": "設定剪貼簿清單中檔案(夾)內容的最大顯示行數"
+        },
+        "label": {
+          "code_display_lines": "程式碼顯示行數",
+          "files_display_lines": "文件(夾)顯示行數"
+        }
       },
       "search_box_settings": {
         "hints": {
@@ -180,9 +201,9 @@
           "back_top": "啟動時回到頂部",
           "show_all": "啟動時切換至全部分組",
           "window_position": "視窗位置",
+          "window_position_caret": "跟隨游標",
           "window_position_center": "螢幕中央",
           "window_position_follow": "跟隨滑鼠",
-          "window_position_caret": "跟隨游標",
           "window_position_remember": "記住位置"
         },
         "title": "視窗設定"

@@ -1,3 +1,4 @@
+import { openPath, openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
 import { useCreation } from "ahooks";
 import { Flex } from "antd";
 import clsx from "clsx";
@@ -20,6 +21,7 @@ interface HeaderProps {
   handleNote: () => void;
   handleFavorite: () => void;
   handleDelete: () => void;
+  handleEdit: () => void;
 }
 
 const Header: FC<HeaderProps> = (props) => {
@@ -45,6 +47,21 @@ const Header: FC<HeaderProps> = (props) => {
         return t("clipboard.label.color");
       case "path":
         return t("clipboard.label.path");
+    }
+
+    if (subtype?.startsWith("code_")) {
+      const lang = subtype.replace("code_", "");
+      let displayLang = lang.charAt(0).toUpperCase() + lang.slice(1);
+      if (lang === "cpp") displayLang = "C++";
+      else if (lang === "csharp") displayLang = "C#";
+      else if (lang === "javascript") displayLang = "JS";
+      else if (lang === "typescript") displayLang = "TS";
+      else if (lang === "html") displayLang = "HTML";
+      else if (lang === "css") displayLang = "CSS";
+      else if (lang === "json") displayLang = "JSON";
+      else if (lang === "sql") displayLang = "SQL";
+
+      return t("clipboard.label.code", { replace: [displayLang] });
     }
 
     switch (type) {
@@ -86,7 +103,7 @@ const Header: FC<HeaderProps> = (props) => {
   };
 
   const handleClick = (event: MouseEvent, key: OperationButton) => {
-    const { handleNote, handleFavorite, handleDelete } = props;
+    const { handleNote, handleFavorite, handleDelete, handleEdit } = props;
 
     event.stopPropagation();
 
@@ -101,13 +118,49 @@ const Header: FC<HeaderProps> = (props) => {
         return handleFavorite();
       case "delete":
         return handleDelete();
+      case "openBrowser": {
+        const urlStr = value as string;
+        return openUrl(urlStr.startsWith("http") ? urlStr : `http://${urlStr}`);
+      }
+      case "previewImage":
+        return openPath(value as string);
+      case "edit":
+        return handleEdit();
+      case "openFolder":
+        if (type === "text") {
+          return revealItemInDir(value);
+        } else if (type === "files") {
+          return revealItemInDir(value[0]);
+        }
     }
   };
 
   return (
-    <Flex className="text-color-2" gap="small" justify="space-between">
+    <Flex
+      align="center"
+      className="text-color-2"
+      gap="small"
+      justify="space-between"
+    >
       <Scrollbar thumbSize={0}>
-        <Flex className="flex-1 whitespace-nowrap text-xs" gap="small">
+        <Flex
+          align="center"
+          className="flex-1 whitespace-nowrap text-[11px]"
+          gap="small"
+        >
+          {data.sourceAppIcon && (
+            <img
+              alt={data.sourceAppName}
+              className="h-3.5 w-3.5 rounded-sm object-contain"
+              src={data.sourceAppIcon}
+              title={data.sourceAppName}
+            />
+          )}
+          {!data.sourceAppIcon && data.sourceAppName && (
+            <span className="text-12 opacity-70" title={data.sourceAppName}>
+              [{data.sourceAppName}]
+            </span>
+          )}
           <span>{renderType()}</span>
           <span>{renderCount()}</span>
           {renderPixel()}
@@ -125,6 +178,19 @@ const Header: FC<HeaderProps> = (props) => {
       >
         {operationButtons.map((item) => {
           const { key, icon, activeIcon, title } = item;
+
+          if (key === "openBrowser" && subtype !== "url") return null;
+          if (key === "previewImage" && type !== "image") return null;
+          if (key === "pastePlain" && type === "image") return null;
+          if (
+            key === "edit" &&
+            type !== "text" &&
+            type !== "html" &&
+            type !== "rtf"
+          )
+            return null;
+          if (key === "openFolder" && type !== "files" && subtype !== "path")
+            return null;
 
           const isFavorite = key === "star" && favorite;
 

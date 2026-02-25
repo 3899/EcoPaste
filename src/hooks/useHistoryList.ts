@@ -1,9 +1,8 @@
-import { copyFile, exists, remove } from "@tauri-apps/plugin-fs";
+import { exists } from "@tauri-apps/plugin-fs";
 import { useAsyncEffect, useReactive } from "ahooks";
 import { isString } from "es-toolkit";
 import { unionBy } from "es-toolkit/compat";
 import { useContext } from "react";
-import { getDefaultSaveImagePath } from "tauri-plugin-clipboard-x-api";
 import { LISTEN_KEY } from "@/constants";
 import { selectHistory } from "@/database/history";
 import { MainContext } from "@/pages/Main";
@@ -37,10 +36,23 @@ export const useHistoryList = (options: Options) => {
         const { size } = state;
         const { group, search } = rootState;
         const isFavoriteGroup = group === "favorite";
-        const isNormalGroup = group !== "all" && !isFavoriteGroup;
+        const isLinksGroup = group === "links";
+        const isColorsGroup = group === "colors";
+        const isEmailGroup = group === "email";
+        const isCodeGroup = group === "code";
+        const isNormalGroup = group !== "all"
+          && !isFavoriteGroup
+          && !isLinksGroup
+          && !isColorsGroup
+          && !isEmailGroup
+          && !isCodeGroup;
 
         return qb
           .$if(isFavoriteGroup, (eb) => eb.where("favorite", "=", true))
+          .$if(isLinksGroup, (eb) => eb.where("subtype", "in", ["url", "path"]))
+          .$if(isColorsGroup, (eb) => eb.where("subtype", "=", "color"))
+          .$if(isEmailGroup, (eb) => eb.where("subtype", "=", "email"))
+          .$if(isCodeGroup, (eb) => eb.where("subtype", "like", "code_%"))
           .$if(isNormalGroup, (eb) => eb.where("group", "=", group))
           .$if(!isBlank(search), (eb) => {
             return eb.where((eb) => {
@@ -61,16 +73,11 @@ export const useHistoryList = (options: Options) => {
         if (!isString(value)) continue;
 
         if (type === "image") {
-          const oldPath = join(getSaveImagePath(), value);
-          const newPath = join(await getDefaultSaveImagePath(), value);
+          const { getDefaultSaveImagePath } = await import("tauri-plugin-clipboard-x-api");
+          const defaultPath = join(await getDefaultSaveImagePath(), value);
+          const customPath = join(getSaveImagePath(), value);
 
-          if (await exists(oldPath)) {
-            await copyFile(oldPath, newPath);
-
-            remove(oldPath);
-          }
-
-          item.value = newPath;
+          item.value = (await exists(customPath)) ? customPath : defaultPath;
         }
 
         if (type === "files") {

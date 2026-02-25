@@ -57,7 +57,11 @@ export type OperationButton =
   | "pastePlain"
   | "note"
   | "star"
-  | "delete";
+  | "delete"
+  | "openBrowser"
+  | "previewImage"
+  | "edit"
+  | "openFolder";
 
 export interface ClipboardStore {
   // 窗口设置
@@ -82,6 +86,8 @@ export interface ClipboardStore {
 
   // 剪贴板内容设置
   content: {
+    recordSourceApp: boolean;
+    enableCodeHighlighting: boolean;
     autoPaste: "single" | "double";
     copyPlain: boolean;
     pastePlain: boolean;
@@ -91,6 +97,8 @@ export interface ClipboardStore {
     autoSort: boolean;
     showOriginalContent: boolean;
     displayLines: number;      // 显示行数，默认 4
+    codeDisplayLines: number;  // 代码显示行数，默认 6
+    filesDisplayLines: number; // 文件/文件夹显示行数，默认 3
     imageDisplayHeight: number; // 图片显示高度（像素），默认 100
     defaultCollapse: boolean;  // 默认收起，默认 false
   };

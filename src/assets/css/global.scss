@@ -27,3 +27,10 @@ html {
     }
   }
 }
+
+.safe-html pre,
+.safe-html code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}

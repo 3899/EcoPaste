@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core";
 import { useMount } from "ahooks";
 import { cloneDeep } from "es-toolkit";
 import { isEmpty, remove } from "es-toolkit/compat";
@@ -43,8 +44,10 @@ export const useClipboard = (
 
       if (files) {
         // 如果文件都是图片且有图片数据，优先识别为图片（如截图工具）
-        const imageExtensions = /\.(png|jpg|jpeg|gif|bmp|webp|svg|ico|tiff?|avif)$/i;
-        const allFilesAreImages = files.value.length > 0 &&
+        const imageExtensions =
+          /\.(png|jpg|jpeg|gif|bmp|webp|svg|ico|tiff?|avif)$/i;
+        const allFilesAreImages =
+          files.value.length > 0 &&
           files.value.every((f: string) => imageExtensions.test(f));
 
         if (allFilesAreImages && image) {
@@ -76,12 +79,54 @@ export const useClipboard = (
         });
       }
 
+      if (clipboardStore.content.recordSourceApp) {
+        try {
+          const appInfo: any = await invoke("get_source_app_info");
+          if (appInfo?.appName) {
+            data.sourceAppName = appInfo.appName;
+            if (appInfo.appIcon) {
+              data.sourceAppIcon = appInfo.appIcon;
+            }
+          }
+        } catch {
+        }
+      }
+
       const sqlData = cloneDeep(data);
 
       const { type, value, group, createTime } = data;
 
       if (type === "image") {
-        sqlData.value = await fullName(value);
+        const fileName = await fullName(value);
+
+        try {
+          const { getDefaultSaveImagePath } = await import(
+            "tauri-plugin-clipboard-x-api"
+          );
+          const { getSaveImagePath, join } = await import("@/utils/path");
+          const { copyFile, exists, remove, mkdir } = await import(
+            "@tauri-apps/plugin-fs"
+          );
+
+          const defaultSavePath = await getDefaultSaveImagePath();
+          const customSavePath = getSaveImagePath();
+
+          if (defaultSavePath !== customSavePath) {
+            const originalFilePath = join(defaultSavePath, fileName);
+            const customFilePath = join(customSavePath, fileName);
+
+            if (await exists(originalFilePath)) {
+              if (!(await exists(customSavePath))) {
+                await mkdir(customSavePath, { recursive: true });
+              }
+              await copyFile(originalFilePath, customFilePath);
+              await remove(originalFilePath);
+            }
+          }
+        } catch {
+        }
+
+        sqlData.value = fileName;
       }
 
       if (type === "files") {

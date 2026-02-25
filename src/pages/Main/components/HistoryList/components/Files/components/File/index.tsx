@@ -44,12 +44,9 @@ const File: FC<FileProps> = (props) => {
       return <LocalImage className="max-h-21.5" src={path} />;
     }
 
-    const height = 100 / Math.min(count, 3);
-
     return (
       <div
-        className={clsx({ "py-0.5": count > 1 })}
-        style={{ height: `${height}%` }}
+        className={clsx("h-7", { "py-0.5": count > 1 })}
       >
         <Flex align="center" className="h-full" gap={4}>
           {state.icon && <LocalImage className="h-full" src={state.icon} />}

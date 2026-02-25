@@ -9,6 +9,7 @@ import {
 import { clipboardStore } from "@/stores/clipboard";
 import type { DatabaseSchemaHistory } from "@/types/database";
 import { isColor, isEmail, isURL } from "@/utils/is";
+import { detectCode } from "@/utils/isCode";
 import { paste } from "./paste";
 import { hideWindow } from "./window";
 
@@ -28,6 +29,11 @@ export const getClipboardTextSubtype = async (value: string) => {
 
     if (await exists(value)) {
       return "path";
+    }
+
+    const codeDetect = detectCode(value);
+    if (codeDetect.isCode && codeDetect.language) {
+      return `code_${codeDetect.language}`;
     }
   } catch {
     return;

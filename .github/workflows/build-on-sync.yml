@@ -33,9 +33,9 @@ jobs:
         shell: bash
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          # 添加后缀
-          FULL_VERSION="${VERSION}_Plus"
-          GIT_DESC=$(git describe --long --tags --always --dirty | sed 's/-g/-/')
+          FULL_VERSION="${VERSION}.${{ github.run_number }}"
+          GIT_HASH=$(git rev-parse --short HEAD)
+          GIT_DESC="v${FULL_VERSION}-${GIT_HASH}"
           # GitHub Actions 运行在 UTC 环境，手动加 8 小时
           BUILD_TIME=$(date -u -d '+8 hours' +'%Y-%m-%d %H:%M:%S UTC+8')
           echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
@@ -82,41 +82,6 @@ jobs:
           retention-days: 7
           compression-level: 0
 
-      - name: Update README download link
-        shell: bash
-        env:
-          HUSKY: '0'
-          REPO: ${{ github.repository }}
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          
-          VERSION="${{ steps.version.outputs.version }}"
-          
-          # 使用 node 替换，并保持原始行尾格式
-          node -e "
-            const fs = require('fs');
-            const buf = fs.readFileSync('README.md');
-            let content = buf.toString('utf8');
-            const hasCRLF = content.includes('\r\n');
-            const v = '${VERSION}';
-            const repo = process.env.REPO;
-            const newLink = '最新版本: [EcoPaste_' + v + '](https://github.com/' + repo + '/releases/download/v' + v + '/EcoPaste_' + v + '_x64-setup.exe)';
-            content = content.replace(/^最新版本: .*/m, newLink);
-            if (hasCRLF) content = content.replace(/(?<!\r)\n/g, '\r\n');
-            fs.writeFileSync('README.md', content);
-          "
-          
-          # 使用 git diff --cached 检测真正的内容变更（排除 CRLF 假差异）
-          git add README.md
-          if ! git diff --cached --quiet README.md; then
-            git commit --no-verify -m "docs: auto update download link to v${VERSION} [skip ci]"
-            git push
-          else
-            echo "README.md already up to date, skipping commit"
-            git reset HEAD README.md 2>/dev/null || true
-          fi
-
       - name: Create Release
         if: github.event.inputs.create_release != 'false'
         uses: softprops/action-gh-release@v2
@@ -129,17 +94,17 @@ jobs:
             基于官方 EcoPaste 的增强 Fork 版本，包含以下改进：
             
             ### ✨ 增强功能
-            - **文本显示行数可配置**：可设置纯文本、富文本、HTML 内容的显示行数（1-20 行）
-            - **图片显示高度可配置**：可设置图片预览的最大高度（50-500px）
-            - **展开/收起功能**：内容超出显示范围时可展开查看完整内容，图片仅在超高且未布满容器宽度时显示展开按钮
-            - **默认收起**：可配置激活窗口时自动收起所有已展开的内容
-            - **窗口跟随光标位置**（Windows）：窗口可跟随输入光标位置显示
-            - **不夺焦窗口体验**（Windows）：呼出窗口时原应用保持焦点，体验与 Win+V 一致，双击条目直接粘贴；点击窗口外部自动隐藏
-            - **偏好设置分组优化**：新增「显示设置」分组，合理归类显示相关配置项
+            - **独立群组与颜色识别**：新增 "Links"、"Colors"、"Code" 群组分类。精准提取并高亮显示 RGB/RGBA 等颜色格式，路径链接高亮直达
+            - **丰富二次编辑能力**：支持图片等富内容的独立二级弹窗编辑与直接文件定位。
+            - **高亮代码语法预览**：自动侦测复制的代码片段并赋予原生语法高亮渲染。
+            - **数据开源与显示极限扩展**：提供来源 App 获取提示框，扩容各项数据偏好设置的显示能力上限（支持配置 1~50 行）
+            - **文本/图片显示限制**：支持灵活调整文本行数以及图片高度，超过后展开内容或统一收起
+            - **系统截屏完美转发**：拦截并重构 SQLite 日志行为，让图片可完美保存至您指定的自定义硬盘路径，杜绝 C 盘资源浪费
             
             ### 🐛 原版修复
-            - **剪贴板内容类型判断**：修复复制图片时可能被错误识别为文件或HTML类型的问题
-            - **数据备份入口**：显示数据备份功能入口，确保数据备份与恢复功能正常可用
+            - **剪贴板内容类型判断**：修复复制图片时可能由于 `html` 权重被错误拦截识别为文件或网页等一系列错误类型的问题
+            - **自定义图片夹保存失败**：修正内置库 `fullName` 接口短点导致自建目录崩溃且页面显示图片红叉的严重错误
+            - **数据备份入口缺失**：重现展示备份功能，确保数据留存恢复完整可用
             
             ### 📋 版本信息
             - **版本**: ${{ steps.version.outputs.version }}

@@ -46,7 +46,20 @@ export const getDatabase = async () => {
     .addColumn("createTime", "text")
     .addColumn("note", "text")
     .addColumn("subtype", "text")
+    .addColumn("sourceAppName", "text")
+    .addColumn("sourceAppIcon", "text")
     .execute();
+
+  // Try to add the columns if the table already existed and lacked them
+  // Catching errors in case they already exist (SQLite will throw if adding duplicate columns)
+  const columnsToAdd = ["subtype", "sourceAppName", "sourceAppIcon"];
+  for (const col of columnsToAdd) {
+    try {
+      await db.schema.alterTable("history").addColumn(col, "text").execute();
+    } catch (_error) {
+      // Column might already exist, ignore error
+    }
+  }
 
   return db;
 };

@@ -10,6 +10,8 @@ import ImageDisplayHeight from "./components/ImageDisplayHeight";
 import OperationButton from "./components/OperationButton";
 import SearchPosition from "./components/SearchPosition";
 import WindowPosition from "./components/WindowPosition";
+import CodeDisplayLines from "./components/CodeDisplayLines";
+import FilesDisplayLines from "./components/FilesDisplayLines";
 
 const ClipboardSettings = () => {
   const { window, search, content } = useSnapshot(clipboardStore);
@@ -123,7 +125,33 @@ const ClipboardSettings = () => {
       <ProList header={t("preference.clipboard.display_settings.title")}>
         <DisplayLines />
 
+        <CodeDisplayLines />
+
+        <FilesDisplayLines />
+
         <ImageDisplayHeight />
+
+        <ProSwitch
+          description={t(
+            "preference.clipboard.content_settings.hints.enable_code_highlighting",
+          )}
+          onChange={(value) => {
+            clipboardStore.content.enableCodeHighlighting = value;
+          }}
+          title={t("preference.clipboard.content_settings.label.enable_code_highlighting")}
+          value={content.enableCodeHighlighting}
+        />
+
+        <ProSwitch
+          description={t(
+            "preference.clipboard.content_settings.hints.record_source_app",
+          )}
+          onChange={(value) => {
+            clipboardStore.content.recordSourceApp = value;
+          }}
+          title={t("preference.clipboard.content_settings.label.record_source_app")}
+          value={content.recordSourceApp}
+        />
 
         <ProSwitch
           description={t(

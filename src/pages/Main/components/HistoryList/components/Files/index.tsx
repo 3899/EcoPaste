@@ -1,34 +1,43 @@
-import type { FC } from "react";
+import { forwardRef } from "react";
+import { useSnapshot } from "valtio";
 import type { DatabaseSchemaHistory } from "@/types/database";
+import { clipboardStore } from "@/stores/clipboard";
 import { isImage } from "@/utils/is";
 import File from "./components/File";
 
-const Files: FC<DatabaseSchemaHistory<"files">> = (props) => {
-  const { value } = props;
+interface FilesProps extends DatabaseSchemaHistory<"files"> {
+  expanded?: boolean;
+}
 
-  const getClassName = () => {
-    if (value.length === 1) {
-      if (isImage(value[0])) {
-        return "max-h-21.5";
-      }
+const Files = forwardRef<HTMLDivElement, FilesProps>((props, ref) => {
+  const { value, expanded } = props;
+  const { content } = useSnapshot(clipboardStore);
+  const filesDisplayLines = content.filesDisplayLines || 3;
 
-      return "h-7";
-    }
+  if (value.length === 1 && isImage(value[0])) {
+    return (
+      <div ref={ref}>
+        <File count={1} path={value[0]} />
+      </div>
+    );
+  }
 
-    if (value.length === 2) {
-      return "h-14";
-    }
-
-    return "h-21.5";
-  };
+  const maxHeight = expanded ? undefined : filesDisplayLines * 28;
 
   return (
-    <div className={getClassName()}>
+    <div
+      ref={ref}
+      className="overflow-hidden"
+      style={{ maxHeight }}
+    >
       {value.map((path) => {
         return <File count={value.length} key={path} path={path} />;
       })}
     </div>
   );
-};
+});
+
+Files.displayName = "Files";
 
 export default Files;
+
