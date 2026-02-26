@@ -109,4 +109,14 @@ export interface ClipboardStore {
     unit: number;
     maxCount: number;
   };
+
+  // WebDAV 备份
+  webdav: {
+    slim: boolean;
+    autoBackup: number;
+    maxBackups: number;
+    lastBackupAt?: string;
+    lastBackupStatus?: "none" | "success" | "error";
+    lastBackupError?: string;
+  };
 }

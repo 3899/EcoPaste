@@ -40,6 +40,7 @@ tauri-plugin-fs-pro.workspace = true
 tauri-plugin-eco-window.workspace = true
 tauri-plugin-eco-paste.workspace = true
 tauri-plugin-eco-autostart.workspace = true
+tauri-plugin-eco-webdav.workspace = true
 
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif"] }
 file_icon_provider = "0.4"

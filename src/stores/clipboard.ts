@@ -35,6 +35,14 @@ export const clipboardStore = proxy<ClipboardStore>({
     defaultFocus: false,
     position: "top",
   },
+  webdav: {
+    autoBackup: 0,
+    lastBackupAt: void 0,
+    lastBackupError: void 0,
+    lastBackupStatus: "none",
+    maxBackups: 0,
+    slim: false,
+  },
   window: {
     backTop: false,
     position: "remember",

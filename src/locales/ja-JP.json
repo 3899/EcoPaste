@@ -244,6 +244,71 @@
           "log_storage_path": "ログ保存パス"
         },
         "title": "ストレージ設定"
+      },
+      "webdav": {
+        "button": {
+          "backup": "WebDAV にバックアップ",
+          "cancel_restore": "キャンセル",
+          "close": "閉じる",
+          "confirm_backup": "バックアップ開始",
+          "confirm_restore": "復元を続行",
+          "delete": "削除",
+          "delete_selected": "選択項目を削除({{total}})",
+          "refresh": "更新",
+          "restore": "復元",
+          "restore_from": "WebDAV から復元",
+          "test": "テスト"
+        },
+        "hints": {
+          "auto_backup": "WebDAV 自動バックアップの間隔を設定",
+          "backup_success": "バックアップ成功",
+          "confirm_restore": "WebDAV から復元すると現在のデータが上書きされます。続行しますか？",
+          "delete_success": "削除成功",
+          "error": "バックアップエラー：{{error}}",
+          "manual": "WebDAV によるバックアップと復元",
+          "max_backups": "WebDAV に保持する最大バックアップ数を制限",
+          "restore_success": "復元成功",
+          "slim": "バックアップ時に画像とファイルをスキップし、テキストなどのコンテンツと設定のみを保持して速度を向上させます",
+          "test_failed": "接続失敗：{{error}}",
+          "test_success": "接続成功"
+        },
+        "label": {
+          "address": "WebDAV アドレス",
+          "auto_backup": "自動バックアップ",
+          "filename": "バックアップファイル名",
+          "manual": "データバックアップと復元",
+          "max_backups": "最大バックアップ数",
+          "password": "WebDAV パスワード",
+          "path": "WebDAV パス",
+          "slim": "スリムバックアップ",
+          "status": "バックアップ状態",
+          "total": "{{total}} 個のバックアップ",
+          "username": "WebDAV ユーザー名"
+        },
+        "placeholder": {
+          "address": "https://example.com/dav/",
+          "filename": "EcoPaste.20260212131015.PC001.windows",
+          "password": "パスワード",
+          "path": "例: /EcoPaste",
+          "username": "ユーザー名"
+        },
+        "section_title": "WebDAV",
+        "status": {
+          "failed": "バックアップ失敗",
+          "never": "未バックアップ",
+          "success": "バックアップ成功"
+        },
+        "table": {
+          "action": "操作",
+          "device": "デバイス",
+          "name": "ファイル名",
+          "size": "サイズ",
+          "time": "バックアップ時間"
+        },
+        "title": {
+          "backup": "WebDAV にバックアップ",
+          "restore": "WebDAV から復元"
+        }
       }
     },
     "history": {

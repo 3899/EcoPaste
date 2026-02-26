@@ -244,6 +244,71 @@
           "log_storage_path": "Log Storage Path"
         },
         "title": "Storage Settings"
+      },
+      "webdav": {
+        "button": {
+          "backup": "Backup to WebDAV",
+          "cancel_restore": "Cancel",
+          "close": "Close",
+          "confirm_backup": "Start Backup",
+          "confirm_restore": "Continue Restore",
+          "delete": "Delete",
+          "delete_selected": "Delete Selected ({{total}})",
+          "refresh": "Refresh",
+          "restore": "Restore",
+          "restore_from": "Restore from WebDAV",
+          "test": "Test"
+        },
+        "hints": {
+          "auto_backup": "Set the interval for automatic WebDAV backups",
+          "backup_success": "Backup Successful",
+          "confirm_restore": "Restoring from WebDAV will overwrite current data. Continue?",
+          "delete_success": "Deleted Successfully",
+          "error": "Backup Error: {{error}}",
+          "manual": "Backup and restore via WebDAV",
+          "max_backups": "Limit the maximum number of WebDAV backups",
+          "restore_success": "Restore Successful",
+          "slim": "Skip images and file(s) during backup, only keep text and other content with settings for faster speed",
+          "test_failed": "Connection Failed: {{error}}",
+          "test_success": "Connection Successful"
+        },
+        "label": {
+          "address": "WebDAV Address",
+          "auto_backup": "Auto Backup",
+          "filename": "Backup Filename",
+          "manual": "Backup & Restore",
+          "max_backups": "Max Backups",
+          "password": "WebDAV Password",
+          "path": "WebDAV Path",
+          "slim": "Slim Backup",
+          "status": "Backup Status",
+          "total": "{{total}} backup(s)",
+          "username": "WebDAV Username"
+        },
+        "placeholder": {
+          "address": "https://example.com/dav/",
+          "filename": "EcoPaste.20260212131015.PC001.windows",
+          "password": "Password",
+          "path": "e.g. /EcoPaste",
+          "username": "Username"
+        },
+        "section_title": "WebDAV",
+        "status": {
+          "failed": "Backup Failed",
+          "never": "Never Backed Up",
+          "success": "Backup Successful"
+        },
+        "table": {
+          "action": "Action",
+          "device": "Device",
+          "name": "Filename",
+          "size": "Size",
+          "time": "Backup Time"
+        },
+        "title": {
+          "backup": "Backup to WebDAV",
+          "restore": "Restore from WebDAV"
+        }
       }
     },
     "history": {
