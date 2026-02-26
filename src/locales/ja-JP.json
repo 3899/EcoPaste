@@ -24,6 +24,7 @@
     },
     "hints": {
       "delete_modal_content": "本当に削除しますか？",
+      "delete_local_file": "ローカルファイルも削除する",
       "search_placeholder": "検索"
     },
     "label": {
@@ -263,6 +264,8 @@
           "auto_backup": "WebDAV 自動バックアップの間隔を設定",
           "backup_success": "バックアップ成功",
           "confirm_restore": "WebDAV から復元すると現在のデータが上書きされます。続行しますか？",
+          "confirm_delete": "このバックアップを削除してもよろしいですか？",
+          "confirm_delete_selected": "選択した {{total}} 個のバックアップを削除してもよろしいですか？",
           "delete_success": "削除成功",
           "error": "バックアップエラー：{{error}}",
           "manual": "WebDAV によるバックアップと復元",

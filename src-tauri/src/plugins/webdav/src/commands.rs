@@ -297,7 +297,6 @@ pub async fn test_config(config: WebdavConfig) -> Result<(), String> {
 pub async fn list_backups() -> Result<Vec<WebdavBackupFile>, String> {
     let config = get_config().await?.ok_or("missing config")?;
     let client = build_client()?;
-    ensure_remote_dir(&client, &config).await?;
     let xml = request_propfind(&client, &config, "1").await?;
     let mut files = parse_propfind(&xml);
     let base_url = build_base_url(&config)?;
@@ -329,7 +328,6 @@ pub async fn upload_backup(file_path: String, file_name: String) -> Result<(), S
         .join(&file_name)
         .map_err(|e| e.to_string())?;
     let client = build_client()?;
-    ensure_remote_dir(&client, &config).await?;
     let file = File::open(file_path).await.map_err(|e| e.to_string())?;
     let stream = ReaderStream::new(file).take_while(|_| {
         let cancelled = UPLOAD_CANCELLED.load(Ordering::SeqCst);
@@ -370,7 +368,6 @@ pub async fn download_backup(file_name: String) -> Result<String, String> {
         .join(&file_name)
         .map_err(|e| e.to_string())?;
     let client = build_client()?;
-    ensure_remote_dir(&client, &config).await?;
     let response = client
         .get(url)
         .basic_auth(&config.username, Some(&config.password))
@@ -408,7 +405,6 @@ pub async fn delete_backup(file_name: String) -> Result<(), String> {
         .join(&file_name)
         .map_err(|e| e.to_string())?;
     let client = build_client()?;
-    ensure_remote_dir(&client, &config).await?;
     let response = client
         .delete(url)
         .basic_auth(&config.username, Some(&config.password))

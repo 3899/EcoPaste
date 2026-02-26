@@ -266,6 +266,18 @@ const Webdav = (props: { state: State }) => {
   };
 
   const handleDelete = async (fileName: string) => {
+    const confirmed = await new Promise<boolean>((resolve) => {
+      Modal.confirm({
+        cancelText: t("preference.data_backup.webdav.button.cancel_restore"),
+        centered: true,
+        content: t("preference.data_backup.webdav.hints.confirm_delete"),
+        okText: t("preference.data_backup.webdav.button.delete"),
+        okButtonProps: { danger: true },
+        onCancel: () => resolve(false),
+        onOk: () => resolve(true),
+      });
+    });
+    if (!confirmed) return;
     try {
       await deleteWebdavBackup(fileName);
       message.success(t("preference.data_backup.webdav.hints.delete_success"));
@@ -277,6 +289,20 @@ const Webdav = (props: { state: State }) => {
 
   const handleDeleteSelected = async () => {
     if (selectedKeys.length === 0) return;
+    const confirmed = await new Promise<boolean>((resolve) => {
+      Modal.confirm({
+        cancelText: t("preference.data_backup.webdav.button.cancel_restore"),
+        centered: true,
+        content: t("preference.data_backup.webdav.hints.confirm_delete_selected", {
+          total: selectedKeys.length,
+        }),
+        okText: t("preference.data_backup.webdav.button.delete"),
+        okButtonProps: { danger: true },
+        onCancel: () => resolve(false),
+        onOk: () => resolve(true),
+      });
+    });
+    if (!confirmed) return;
     try {
       setLoading(true);
       await Promise.all(

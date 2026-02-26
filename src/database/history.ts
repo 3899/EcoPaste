@@ -37,14 +37,17 @@ export const updateHistory = async (
   return db.updateTable("history").set(nextData).where("id", "=", id).execute();
 };
 
-export const deleteHistory = async (data: DatabaseSchemaHistory) => {
+export const deleteHistory = async (
+  data: DatabaseSchemaHistory,
+  deleteLocalFile = true,
+) => {
   const { id, type, value } = data;
 
   const db = await getDatabase();
 
   await db.deleteFrom("history").where("id", "=", id).execute();
 
-  if (type !== "image") return;
+  if (!deleteLocalFile || type !== "image") return;
 
   let path = value;
 

@@ -24,6 +24,7 @@
     },
     "hints": {
       "delete_modal_content": "Are you sure you want to delete this?",
+      "delete_local_file": "Also delete local file",
       "search_placeholder": "Search..."
     },
     "label": {
@@ -263,6 +264,8 @@
           "auto_backup": "Set the interval for automatic WebDAV backups",
           "backup_success": "Backup Successful",
           "confirm_restore": "Restoring from WebDAV will overwrite current data. Continue?",
+          "confirm_delete": "Are you sure you want to delete this backup?",
+          "confirm_delete_selected": "Are you sure you want to delete the selected {{total}} backup(s)?",
           "delete_success": "Deleted Successfully",
           "error": "Backup Error: {{error}}",
           "manual": "Backup and restore via WebDAV",

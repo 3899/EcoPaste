@@ -79,80 +79,50 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 - 🤝 Comprehensive documentation and community support to explore and grow with developers.
 - 🧩 Continuously optimized with more exciting features waiting to be discovered.
 
-## 🚀 Fork Version Enhancements
+## 🚀 Fork Enhancements
 
-> This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste), with the following usability improvements added to the original version:
+> This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) with the following usability improvements:
 
-### ✨ Exclusive Elite Expansion Enhancements
+### ✨ New Features
 
-- **Independent Groups & Precise Color Binding**: Native categories extended for "Links", "Colors", and "Code". Intelligent auto-recognition accurately extracts RGB/RGBA gradients, highlighting playable paths securely.
-- **Rich Immersive Secondary Editing**: Supports isolated secondary modal pop-ups tailored strictly for text elements and visual graphic payloads alongside direct file locator triggers.
-- **Syntax Highlighting & Formatting Previews**: Intercepts programmatic code clipboard strings effortlessly rendering IDE-fidelity syntax highlighting.
-- **Application Applets & Scale Limit Expansions**: Exposes tooltip popovers identifying raw internal Source Apps & proprietary icons. Pushed the visualization capabilities boundary on Preference components allowing user overrides up to 50 individual item rendering rows.
-- **Flawless Screenshot Routing Dumpster**: Rebuilt the rigid Tauri SQLite persistence boundaries by forcing interception mechanisms, dynamically shielding the C-drive and forwarding native screenshots directly targeting the local Custom Disks selected safely by the user.
+- **☁️ WebDAV Cloud Backup**: Back up clipboard data to cloud storage via WebDAV protocol (Nutstore, NextCloud, etc.). Supports slim backup mode (skips images and files, keeps text and other content), automatic scheduled backups, backup count limits, and one-click restore.
+- **🎨 Dedicated Groups & Color Preview**: Added native "Links"("链接"), "Colors"("颜色"), "Code"("代码"), and "Email"("邮箱") group categories. Accurately extracts and highlights RGB/RGBA color formats; path links are highlighted for quick access.
+- **📝 Rich Secondary Editing**: Supports independent pop-up editing for text and other rich content, with system-level quick file location.
+- **💻 Code Syntax Highlighting**: Automatically detects copied code snippets and renders IDE-quality syntax highlighting (Preferences → Clipboard → Display Settings → Code Syntax Highlight).
+- **📊 Source App Tracking**: Shows the source app's icon and name when copying (Preferences → Clipboard → Display Settings → Record App Source).
+- **⚡️ Native Quick Access**: Support opening file paths directly in the system file explorer, opening web links in the browser with one click, and viewing images using the system's default image viewer.
+- **🗑️ Smart Delete Confirmation**: When deleting images, a "Delete local file" checkbox (checked by default) is shown in the confirmation dialog, allowing you to keep the local file while removing only the clipboard record.
 
-### 📏 Advanced Text & Graphic Display Configurations
+### 📏 Advanced Text & Image Display
 
-- **Extensible Limit Boundaries Override**: Configuration values natively stretched in Preferences -> Clipboard -> Display Settings -> Text/Code/Files rendering lengths up to 1-50 lines continuously.
-- **Intelligent Picture Aspect Expansion Triggers**: Allows adjustable dimensions scaling natively overriding components up to widths spanning 50-500 pixels.
+- **Custom Text/Code/File Display Lines**: Preferences → Clipboard → Display Settings → Text/Code/Files display lines (1-50 lines)
+- **Image Height Scaling**: Flexibly adjust image display height with smart expand/collapse (50-500 pixels)
 
-### 🔄 Dynamic Expansion Features & Silent Frame Hooks
+### 🔄 Dynamic Expand/Collapse & Immersive Experience
 
-- **Expand Full Metadata Payloads**: Equips intelligent expand/collapse toggles resiliently retaining memory context across vast visual virtualization boundaries mapping seamlessly for text boundaries overrides.
-- **No-Focus Quiet Window Immersions** (Windows): Exposes EcoPaste smoothly without dragging global Windows focus states forcing silent double-click paste events retaining absolute host-body integrity; auto-collapses stealthily when unfocused.
-- **Active Cursor Positional Flow Engine**: Native Windows capabilities allowing visual overlays tracking directly exactly into the physical hardware text cursor rendering frame smoothly.
-- **Settings Hierarchy Replacements**: Formulated dedicated 'Display Settings' parameter zones safely compartmentalizing granular overrides separating logic structures optimally safely safely safely safely.
+- **Full Content Expansion**: Provides expand/collapse buttons when content exceeds display limits; states persist across virtual scrolling.
+- **No-Focus Silent Window** (Windows): The host app retains focus when the clipboard window appears; double-click to paste silently; auto-hides when clicking outside.
+- **Follow Input Cursor**: Window follows the editor's text cursor position for seamless workflow.
+- **Redesigned Preferences**: Added "Display Settings" section with granular control over advanced options.
 
-### 🔧 Zero-Loss Data Persistence Shielding
+### 🐛 Upstream Bug Fixes
 
-- Automatically safely shields parameters backing up critical config objects enforcing absolute unyielding compatibility retaining the payload persistently ignoring volatile updates effectively across system reinstalls ensuring zero data loss natively.
-
-### 🔄 Automatic Sync Automation
-
-- Scans silently and checks `EcoPasteHub/EcoPaste` master forks efficiently triggering cross-branch compilation matrices flawlessly maintaining local synchronicity.
-- Pushes resolution tracking issues natively catching severe engine conflicts.
-
-## 🐛 Ruthless Bug Annihilation System
-
-> Enforcing critical crash prevention measures directly fixing hidden EcoPaste architecture failures natively underneath:
-
-### 📋 Misfired Clipboard Value Parsing Corrections
-
-- **Bug Resolution**: Resolved massive pipeline catastrophic cascading failures preventing Web-images incorrectly parsed natively into blind HTML. Deeply rewrote intercept modules securely rectifying `FS` library broken API architectures restoring fully custom designated image locations seamlessly fixing widespread broken image red-cross GUI anomalies natively dynamically recovering native UI protocols.
-- **Missing Backup Tunnels Resurfaced**: Refactored deprecated UI parameter tunnels re-enabling manual local SQLite configuration export functionality securely fixing permissions conflicts enforcing robust disaster-recover matrices safely.
-
-### 🔧 Configuration Persistence
-
-- All new configuration items are automatically saved to the user data directory.
-- Settings are not lost after application updates.
-- No need to manually export/import settings.
+- **📸 Perfect Screenshot Dump**: Rebuilt SQLite persistence and the underlying FS mapping path to save screenshots perfectly to custom local directories, entirely fixing the issue where built-in library limits caused custom directory crashes and broken image displays, while avoiding C: drive bloat.
+- **📋 Clipboard Type Misidentification**: Completely fixed the issue where web images might be incorrectly identified as HTML due to `html` weight priority. Rewrote detection logic to give image types the highest priority.
+- **🔗 Duplicate Link Records**: Completely fixed the stubborn issue where copying a link produces two identical records in the clipboard.
+- **💾 Backup Tunnel Restored**: Re-enabled the data backup/restore entry that was hidden due to permission restrictions in the original version, ensuring stable imports and exports.
+- **⚙️ Config Persistence**: All new settings are automatically saved to the user data directory and persist across app updates.
 
 ### 🔄 Auto Sync with Upstream
 
-- This repository automatically checks for updates from upstream EcoPasteHub/EcoPaste daily.
-- Automatically merges and triggers builds when new versions are available.
-- Creates an issue for manual resolution if merge conflicts occur.
-
-## 🐛 Original Version Fixes
-
-> The following are fixes for known issues in the original EcoPaste:
-
-### 📋 Clipboard Content Type Logic
-
-- **Issue**:
-  - When copying web images, the app might incorrectly identify them as "HTML" instead of "Image".
-  - After taking a screenshot, the app might incorrectly identify the screenshot as "File" instead of "Image".
-- **Fix**: Modified logic to prioritize identifying as "Image" type when clipboard content contains image data.
-
-### 💾 Data Backup Entry
-
-- **Issue**: Missing entry for data backup function.
-- **Fix**: Displayed the data backup function entry to ensure data backup and restore features are accessible.
+- Automatically checks for updates from upstream EcoPasteHub/EcoPaste daily
+- Auto-merges and triggers builds when new versions are available
+- Creates an issue for manual resolution if merge conflicts occur
 
 ---
 
 ## Feedback
 
-1. 🔍 First, check out the [FAQ](https://ecopaste.cn/problem/macos/damage) or browse through the existing [issues](https://github.com/EcoPasteHub/EcoPaste/issues)。
+1. 🔍 First, check out the [FAQ](https://ecopaste.cn/problem/macos/damage) or browse through the existing [issues](https://github.com/EcoPasteHub/EcoPaste/issues).
 
 2. ❓ If your issue remains unresolved, please submit a new [issue](https://github.com/EcoPasteHub/EcoPaste/issues/new/choose) with a detailed description to help us quickly identify and address the problem.

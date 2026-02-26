@@ -21,6 +21,7 @@
     },
     "hints": {
       "delete_modal_content": "確定要删除此項嗎？",
+      "delete_local_file": "同時刪除本地文件",
       "search_placeholder": "搜尋"
     },
     "label": {
@@ -260,6 +261,8 @@
           "auto_backup": "設定 WebDAV 自動備份的間隔時間",
           "backup_success": "備份成功",
           "confirm_restore": "從 WebDAV 恢復將會覆蓋當前數據，是否繼續？",
+          "confirm_delete": "確定要刪除此備份文件嗎？",
+          "confirm_delete_selected": "確定要刪除選中的 {{total}} 個備份文件嗎？",
           "delete_success": "刪除成功",
           "error": "備份錯誤：{{error}}",
           "manual": "通過 WebDAV 進行備份與恢復",
