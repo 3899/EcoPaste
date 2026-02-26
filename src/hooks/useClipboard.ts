@@ -27,7 +27,13 @@ export const useClipboard = (
   useMount(async () => {
     await startListening();
 
+    let isProcessing = false;
+
     onClipboardChange(async (result) => {
+      if (isProcessing) return;
+      isProcessing = true;
+
+      try {
       const { files, image, html, rtf, text } = result;
 
       if (isEmpty(result) || Object.values(result).every(isEmpty)) return;
@@ -121,6 +127,7 @@ export const useClipboard = (
               }
               await copyFile(originalFilePath, customFilePath);
               await remove(originalFilePath);
+              data.value = customFilePath;
             }
           }
         } catch {
@@ -160,6 +167,9 @@ export const useClipboard = (
       }
 
       insertHistory(sqlData);
+      } finally {
+        isProcessing = false;
+      }
     }, options);
   });
 };
