@@ -1,5 +1,6 @@
 import { relaunch } from "@tauri-apps/plugin-process";
 import { useMount, useReactive } from "ahooks";
+import clsx from "clsx";
 import {
   Button,
   Flex,
@@ -86,6 +87,8 @@ const Webdav = (props: { state: State }) => {
   const [computerName, setComputerName] = useState<string>();
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [testSuccess, setTestSuccess] = useState<boolean>();
   const [backups, setBackups] = useState<BackupRow[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
   const form = useReactive<WebdavFormState>({
@@ -124,21 +127,32 @@ const Webdav = (props: { state: State }) => {
   };
 
   const handleTest = async () => {
+    if (testing) return;
     try {
+      setTesting(true);
+      setTestSuccess(undefined);
       await saveConfig();
+      const start = Date.now();
       await testWebdavConfig({
         address: form.address,
         password: form.password,
         path: form.path,
         username: form.username,
       });
-      message.success(t("preference.data_backup.webdav.hints.test_success"));
+      const duration = Date.now() - start;
+      setTestSuccess(true);
+      message.success(t("preference.data_backup.webdav.hints.test_success") + ` (延迟: ${duration}ms)`);
+      setTimeout(() => setTestSuccess(undefined), 3000);
     } catch (error: any) {
+      setTestSuccess(false);
       message.error(
         t("preference.data_backup.webdav.hints.test_failed", {
           error: String(error),
         }),
       );
+      setTimeout(() => setTestSuccess(undefined), 3000);
+    } finally {
+      setTesting(false);
     }
   };
 
@@ -454,10 +468,33 @@ const Webdav = (props: { state: State }) => {
             <Input.Password
               addonAfter={
                 <div
-                  className="webdav-test flex h-full cursor-pointer select-none items-center px-3"
+                  className={clsx(
+                    "webdav-test transition-colors flex h-[30px] cursor-pointer select-none items-center px-3 min-w-[72px] justify-center",
+                    {
+                      "text-green-6": testSuccess === true,
+                      "text-red-6": testSuccess === false,
+                    }
+                  )}
                   onClick={handleTest}
                 >
-                  {testLabel}
+                  {testing ? (
+                    <Flex align="center" gap={4}>
+                      <UnoIcon className="animate-spin" name="i-lucide:loader-2" />
+                      {t("preference.data_backup.webdav.button.testing", "正在测试...")}
+                    </Flex>
+                  ) : testSuccess === true ? (
+                    <Flex align="center" gap={4}>
+                      <UnoIcon name="i-lucide:check" />
+                      {t("preference.data_backup.webdav.button.test_success_short", "连接成功")}
+                    </Flex>
+                  ) : testSuccess === false ? (
+                    <Flex align="center" gap={4}>
+                      <UnoIcon name="i-lucide:x" />
+                      {t("preference.data_backup.webdav.button.test_failed_short", "连接失败")}
+                    </Flex>
+                  ) : (
+                    testLabel
+                  )}
                 </div>
               }
               onBlur={saveConfig}

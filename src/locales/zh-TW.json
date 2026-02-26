@@ -255,7 +255,10 @@
           "refresh": "重新整理",
           "restore": "恢復",
           "restore_from": "從 WebDAV 恢復",
-          "test": "檢測"
+          "test": "檢測",
+          "testing": "正在檢測...",
+          "test_success_short": "連接成功",
+          "test_failed_short": "連接失敗"
         },
         "hints": {
           "auto_backup": "設定 WebDAV 自動備份的間隔時間",

@@ -128,10 +128,14 @@ const Header: FC<HeaderProps> = (props) => {
         return handleEdit();
       case "openFolder":
         if (type === "text") {
-          return revealItemInDir(value);
+          return revealItemInDir(value as string);
+        } else if (type === "image") {
+          const path = Array.isArray(value) ? value[0] : (value as string);
+          return revealItemInDir(path);
         } else if (type === "files") {
-          return revealItemInDir(value[0]);
+          return revealItemInDir((value as string[])[0]);
         }
+        break;
     }
   };
 
@@ -189,7 +193,12 @@ const Header: FC<HeaderProps> = (props) => {
             type !== "rtf"
           )
             return null;
-          if (key === "openFolder" && type !== "files" && subtype !== "path")
+          if (
+            key === "openFolder" &&
+            type !== "files" &&
+            subtype !== "path" &&
+            type !== "image"
+          )
             return null;
 
           const isFavorite = key === "star" && favorite;

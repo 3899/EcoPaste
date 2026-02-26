@@ -51,13 +51,21 @@ export const deleteHistory = async (
 
   let path = value;
 
-  const saveImagePath = await getDefaultSaveImagePath();
-
-  if (!value.startsWith(saveImagePath)) {
-    path = join(saveImagePath, value);
+  // Handle case where image value is an array or string
+  if (Array.isArray(value)) {
+    path = value[0];
   }
 
-  const existed = await exists(path);
+  const saveImagePath = await getDefaultSaveImagePath();
+
+  if (typeof path === 'string' && !path.startsWith(saveImagePath)) {
+    const isAbs = /^[a-zA-Z]:[\\/]/.test(path) || path.startsWith('/');
+    if (!isAbs) {
+        path = join(saveImagePath, path);
+    }
+  }
+
+  const existed = await exists(path as string);
 
   if (!existed) return;
 

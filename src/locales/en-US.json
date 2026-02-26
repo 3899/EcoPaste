@@ -258,7 +258,10 @@
           "refresh": "Refresh",
           "restore": "Restore",
           "restore_from": "Restore from WebDAV",
-          "test": "Test"
+          "test": "Test",
+          "testing": "Testing...",
+          "test_success_short": "Success",
+          "test_failed_short": "Failed"
         },
         "hints": {
           "auto_backup": "Set the interval for automatic WebDAV backups",

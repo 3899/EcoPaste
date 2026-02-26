@@ -262,7 +262,10 @@
           "refresh": "刷新",
           "restore": "恢复",
           "restore_from": "从 WebDAV 恢复",
-          "test": "检测"
+          "test": "检测",
+          "testing": "正在检测...",
+          "test_success_short": "连接成功",
+          "test_failed_short": "连接失败"
         },
         "hints": {
           "auto_backup": "设置 WebDAV 自动备份的间隔时间",

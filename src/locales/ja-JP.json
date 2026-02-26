@@ -258,7 +258,10 @@
           "refresh": "更新",
           "restore": "復元",
           "restore_from": "WebDAV から復元",
-          "test": "テスト"
+          "test": "テスト",
+          "testing": "テスト中...",
+          "test_success_short": "成功",
+          "test_failed_short": "失敗"
         },
         "hints": {
           "auto_backup": "WebDAV 自動バックアップの間隔を設定",

@@ -83,6 +83,11 @@ export const useContextMenu = (props: UseContextMenuProps) => {
       return revealItemInDir(value);
     }
 
+    if (type === "image") {
+      const path = Array.isArray(value) ? value[0] : value;
+      return revealItemInDir(path);
+    }
+
     const [file] = value;
 
     revealItemInDir(file);
@@ -260,7 +265,7 @@ export const useContextMenu = (props: UseContextMenuProps) => {
       },
       {
         action: openToFinder,
-        hide: type !== "files" && subtype !== "path",
+        hide: type !== "files" && subtype !== "path" && type !== "image",
         text: isMac
           ? t("clipboard.button.context_menu.show_in_finder")
           : t("clipboard.button.context_menu.show_in_file_explorer"),
