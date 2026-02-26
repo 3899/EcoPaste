@@ -19,6 +19,7 @@ import { globalStore } from "./stores/global";
 import { generateColorVars } from "./utils/color";
 import { isURL } from "./utils/is";
 import { restoreStore } from "./utils/store";
+import { startAutoBackupScheduler } from "./utils/autoBackupScheduler";
 
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
@@ -33,6 +34,9 @@ const App = () => {
     await restoreStore();
 
     toggle();
+
+    // 启动自动备份调度器
+    startAutoBackupScheduler();
 
     // 生成 antd 的颜色变量
     generateColorVars();

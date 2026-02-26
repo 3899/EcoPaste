@@ -115,3 +115,41 @@ export const isBlank = (value: unknown) => {
 
   return true;
 };
+
+/**
+ * 是否为 Markdown 内容
+ * 通过使用分值权重系统来检测多种 Markdown 语法特征
+ */
+export const isMarkdown = (value: string, threshold = 30) => {
+  if (!value || typeof value !== "string" || value.length < 5) return false;
+
+  // 核心语法及其权重
+  const patterns = [
+    { name: "headers", pattern: /^#{1,6}\s+.+/gm, weight: 30 },
+    { name: "unordered_list", pattern: /^\s*[*+-]\s+.+/gm, weight: 20 },
+    { name: "ordered_list", pattern: /^\s*\d+\.\s+.+/gm, weight: 20 },
+    { name: "fenced_code", pattern: /```[\s\S]*?```/g, weight: 35 },
+    { name: "inline_code", pattern: /`[^`\n]+`/g, weight: 10 },
+    { name: "links", pattern: /\[.+?\]\(.+?\)/g, weight: 25 },
+    { name: "images", pattern: /!\[.+?\]\(.+?\)/g, weight: 25 },
+    { name: "emphasis", pattern: /(\*\*|__|\*|_).+?(\*\*|__|\*|_)/g, weight: 10 },
+    { name: "blockquote", pattern: /^>\s+.+/gm, weight: 15 },
+    { name: "hr", pattern: /^-{3,}\s*$/gm, weight: 10 },
+    { name: "tables", pattern: /\|.+\|.+\|/g, weight: 25 },
+  ];
+
+  let totalScore = 0;
+
+  // 执行检测
+  for (const { pattern, weight } of patterns) {
+    const matches = value.match(pattern);
+    if (matches) {
+      // 单项最高贡献 2 倍权重，防止单一符号刷分
+      const contribution = Math.min(matches.length * weight, weight * 2);
+      totalScore += contribution;
+    }
+  }
+
+  // 结果判定
+  return totalScore >= threshold;
+};

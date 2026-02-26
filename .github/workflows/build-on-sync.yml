@@ -33,7 +33,9 @@ jobs:
         shell: bash
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          FULL_VERSION="${VERSION}.${{ github.run_number }}"
+          TAG_COUNT=$(git tag -l "v${VERSION}.*" | wc -l)
+          NEXT_NUM=$((TAG_COUNT + 1))
+          FULL_VERSION="${VERSION}.${NEXT_NUM}"
           GIT_HASH=$(git rev-parse --short HEAD)
           GIT_DESC="v${FULL_VERSION}-${GIT_HASH}"
           # GitHub Actions 运行在 UTC 环境，手动加 8 小时

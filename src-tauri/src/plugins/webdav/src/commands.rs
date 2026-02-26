@@ -324,10 +324,11 @@ pub async fn list_backups() -> Result<Vec<WebdavBackupFile>, String> {
 pub async fn upload_backup(file_path: String, file_name: String) -> Result<(), String> {
     UPLOAD_CANCELLED.store(false, Ordering::SeqCst);
     let config = get_config().await?.ok_or("missing config")?;
+    let client = build_client()?;
+    ensure_remote_dir(&client, &config).await?;
     let url = build_base_url(&config)?
         .join(&file_name)
         .map_err(|e| e.to_string())?;
-    let client = build_client()?;
     let file = File::open(file_path).await.map_err(|e| e.to_string())?;
     let stream = ReaderStream::new(file).take_while(|_| {
         let cancelled = UPLOAD_CANCELLED.load(Ordering::SeqCst);
@@ -467,12 +468,12 @@ pub async fn create_slim_database(
                 row.get::<_, String>(1)?,
                 row.get::<_, String>(2)?,
                 row.get::<_, String>(3)?,
-                row.get::<_, String>(4)?,
+                row.get::<_, Option<String>>(4)?,
                 row.get::<_, Option<i64>>(5)?,
                 row.get::<_, Option<i64>>(6)?,
                 row.get::<_, Option<i64>>(7)?,
                 row.get::<_, Option<i64>>(8)?,
-                row.get::<_, String>(9)?,
+                row.get::<_, Option<String>>(9)?,
                 row.get::<_, Option<String>>(10)?,
                 row.get::<_, Option<String>>(11)?,
                 row.get::<_, Option<String>>(12)?,

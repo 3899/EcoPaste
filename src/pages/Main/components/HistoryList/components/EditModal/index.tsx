@@ -25,6 +25,7 @@ interface FormFields {
 const TEXT_TYPE_OPTIONS = [
   { label: "纯文本", value: "text|" },
   { label: "富文本", value: "rtf|" },
+  { label: "Markdown", value: "text|markdown" },
   { label: "HTML", value: "html|" },
   { label: "链接", value: "text|url" },
   { label: "邮箱", value: "text|email" },
@@ -57,6 +58,10 @@ const getSelectValue = (type: string, subtype?: string): string => {
 
   if (option) {
     return option.value;
+  }
+  // Handle markdown subtype specifically
+  if (type === "text" && subtype === "markdown") {
+    return "text|markdown";
   }
   return `${type}|`;
 };
@@ -122,8 +127,13 @@ const EditModal = forwardRef<EditModalRef>((_, ref) => {
   const initializeTypeSelection = (item: DatabaseSchemaHistory) => {
     if (!item) return;
 
-    // 如果是代码类型，设置对应的选项
-    if (item.subtype?.startsWith("code_")) {
+    // Markdown 特殊处理：虽然 subtype 是 markdown，但应该用 Markdown 编辑器
+    if (item.subtype === "markdown") {
+      setSelectedType("text|markdown");
+      setSelectedSubtype("markdown");
+      setSelectedCodeLanguage("");
+    } else if (item.subtype?.startsWith("code_")) {
+      // 如果是代码类型，设置对应的选项
       setSelectedType("code|");
       setSelectedCodeLanguage(item.subtype.replace("code_", ""));
       setSelectedSubtype(undefined);
@@ -162,7 +172,7 @@ const EditModal = forwardRef<EditModalRef>((_, ref) => {
 
   // 判断是否使用Markdown编辑器
   const shouldUseMarkdownEditor = () => {
-    return selectedType.startsWith("rtf|") || selectedType.startsWith("html|");
+    return selectedType.startsWith("rtf|") || selectedType.startsWith("html|") || selectedType === "text|markdown";
   };
 
   // 判断是否使用颜色选择器

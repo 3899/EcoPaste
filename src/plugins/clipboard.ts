@@ -8,7 +8,7 @@ import {
 } from "tauri-plugin-clipboard-x-api";
 import { clipboardStore } from "@/stores/clipboard";
 import type { DatabaseSchemaHistory } from "@/types/database";
-import { isColor, isEmail, isURL } from "@/utils/is";
+import { isColor, isEmail, isMarkdown, isURL } from "@/utils/is";
 import { detectCode } from "@/utils/isCode";
 import { paste } from "./paste";
 import { hideWindow } from "./window";
@@ -29,6 +29,11 @@ export const getClipboardTextSubtype = async (value: string) => {
 
     if (await exists(value)) {
       return "path";
+    }
+
+    // Markdown detection: check for common markdown patterns
+    if (isMarkdown(value)) {
+      return "markdown";
     }
 
     const codeDetect = detectCode(value);

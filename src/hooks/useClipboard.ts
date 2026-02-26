@@ -67,12 +67,18 @@ export const useClipboard = (
           });
         }
       } else if (image) {
-        // 还原 v0.5.0 逻辑：图片优先于 HTML/RTF
-        // 从网页复制图片时，浏览器会同时提供 HTML + Image 格式
-        // 优先识别为图片，避免被误判为 HTML
-        Object.assign(data, image, {
-          group: "image",
-        });
+        // Excel/Sheets 复制单元格时会同时提供 image + html + text
+        // 此时应优先使用 html 而非 image
+        if (html && text && !copyPlain) {
+          Object.assign(data, html);
+        } else {
+          // 还原 v0.5.0 逻辑：图片优先于 HTML/RTF
+          // 从网页复制图片时，浏览器会同时提供 HTML + Image 格式
+          // 优先识别为图片，避免被误判为 HTML
+          Object.assign(data, image, {
+            group: "image",
+          });
+        }
       } else if (html && !copyPlain) {
         Object.assign(data, html);
       } else if (rtf && !copyPlain) {

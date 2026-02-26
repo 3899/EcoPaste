@@ -49,6 +49,10 @@ const Header: FC<HeaderProps> = (props) => {
         return t("clipboard.label.path");
     }
 
+    if (subtype === "markdown") {
+      return "Markdown";
+    }
+
     if (subtype?.startsWith("code_")) {
       const lang = subtype.replace("code_", "");
       let displayLang = lang.charAt(0).toUpperCase() + lang.slice(1);

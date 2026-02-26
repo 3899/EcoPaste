@@ -3,6 +3,7 @@ import { useMount, useReactive } from "ahooks";
 import clsx from "clsx";
 import {
   Button,
+  Checkbox,
   Flex,
   Input,
   Modal,
@@ -19,8 +20,8 @@ import { useTranslation } from "react-i18next";
 import { useSnapshot } from "valtio";
 import ProList from "@/components/ProList";
 import ProListItem from "@/components/ProListItem";
-import ProSwitch from "@/components/ProSwitch";
 import UnoIcon from "@/components/UnoIcon";
+import ScheduleConfigComponent from "./ScheduleConfig";
 import {
   cancelWebdavUpload,
   deleteWebdavBackup,
@@ -30,6 +31,7 @@ import {
   testWebdavConfig,
 } from "@/plugins/webdav";
 import { clipboardStore } from "@/stores/clipboard";
+import type { AutoBackupStrategy } from "@/types/store";
 import { formatDate } from "@/utils/dayjs";
 import { wait } from "@/utils/shared";
 import {
@@ -54,19 +56,6 @@ interface BackupRow {
   modified?: string;
 }
 
-const AUTO_BACKUP_OPTIONS = [
-  { label: "关闭", value: 0 },
-  { label: "1分钟", value: 1 },
-  { label: "5分钟", value: 5 },
-  { label: "15分钟", value: 15 },
-  { label: "30分钟", value: 30 },
-  { label: "1小时", value: 60 },
-  { label: "2小时", value: 120 },
-  { label: "6小时", value: 360 },
-  { label: "12小时", value: 720 },
-  { label: "24小时", value: 1440 },
-];
-
 const MAX_BACKUPS_OPTIONS = [
   { label: "无限制", value: 0 },
   { label: "1", value: 1 },
@@ -89,6 +78,7 @@ const Webdav = (props: { state: State }) => {
   const [loading, setLoading] = useState(false);
   const [testing, setTesting] = useState(false);
   const [testSuccess, setTestSuccess] = useState<boolean>();
+
   const [backups, setBackups] = useState<BackupRow[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
   const form = useReactive<WebdavFormState>({
@@ -107,7 +97,7 @@ const Webdav = (props: { state: State }) => {
       form.path = config.path;
     }
     try {
-      setBackupName(await getDefaultWebdavFilename());
+      setBackupName(await getDefaultWebdavFilename(undefined, clipboardStore.webdav.manualSlim));
     } catch (error: any) {
       message.error(String(error));
     }
@@ -161,21 +151,22 @@ const Webdav = (props: { state: State }) => {
     try {
       const name = await getWebdavComputerName();
       setComputerName(name);
-      setBackupName(await getDefaultWebdavFilename(name));
+      setBackupName(await getDefaultWebdavFilename(name, clipboardStore.webdav.manualSlim));
     } catch (error: any) {
       message.error(String(error));
       try {
-        setBackupName(await getDefaultWebdavFilename(computerName));
+        setBackupName(await getDefaultWebdavFilename(computerName, clipboardStore.webdav.manualSlim));
       } catch (innerError: any) {
         message.error(String(innerError));
       }
     }
   };
 
-  const updateStatus = (status: "success" | "error", error?: string) => {
+  const updateStatus = (status: "success" | "error", error?: string, mode?: "full" | "slim") => {
     clipboardStore.webdav.lastBackupStatus = status;
     clipboardStore.webdav.lastBackupAt = formatDate();
     clipboardStore.webdav.lastBackupError = error;
+    if (mode) clipboardStore.webdav.lastBackupMode = mode;
   };
 
   const trimBackups = async () => {
@@ -194,16 +185,20 @@ const Webdav = (props: { state: State }) => {
   };
 
   const handleBackupConfirm = async () => {
-    const name = backupName.trim();
+    let name = backupName.trim();
     if (!name) return;
+    // Inject mode marker if not already present
+    if (!name.includes(".slim") && !name.includes(".full")) {
+      name = `${name}.${webdav.manualSlim ? "slim" : "full"}`;
+    }
     const fileName = normalizeWebdavBackupFileName(name);
 
     try {
       setUploading(true);
       await saveConfig();
-      await backupToWebdav(fileName, clipboardStore.webdav.slim);
+      await backupToWebdav(fileName, webdav.manualSlim);
       await trimBackups();
-      updateStatus("success");
+      updateStatus("success", undefined, webdav.manualSlim ? "slim" : "full");
       message.success(t("preference.data_backup.webdav.hints.backup_success"));
       setBackupOpen(false);
     } catch (error: any) {
@@ -245,8 +240,8 @@ const Webdav = (props: { state: State }) => {
   };
 
   const openRestoreModal = async () => {
-    await loadBackups();
     setRestoreOpen(true);
+    await loadBackups();
   };
 
   const confirmRestore = async () => {
@@ -391,6 +386,19 @@ const Webdav = (props: { state: State }) => {
       title: t("preference.data_backup.webdav.table.time"),
     },
     {
+      dataIndex: "fileName",
+      onHeaderCell: () => ({ className: "text-center" }),
+      render: (value: string) => {
+        const parts = value.split(".");
+        // Mode is at parts[4]: 'slim' or 'full' (format: AppName.TIMESTAMP.DEVICE.OS.MODE.ext)
+        const mode = parts[4];
+        if (mode === "slim") return t("preference.data_backup.webdav.table.mode_slim", "精简");
+        if (mode === "full") return t("preference.data_backup.webdav.table.mode_full", "完整");
+        return "-";
+      },
+      title: t("preference.data_backup.webdav.table.mode", "模式"),
+    },
+    {
       dataIndex: "size",
       onHeaderCell: () => ({ className: "text-center" }),
       render: (value?: number) => (value ? filesize(value) : "-"),
@@ -405,9 +413,12 @@ const Webdav = (props: { state: State }) => {
   ];
 
   const status = webdav.lastBackupStatus;
+  const backupMode = webdav.lastBackupMode;
   const statusText =
     status === "success"
-      ? t("preference.data_backup.webdav.status.success")
+      ? (backupMode === "slim"
+          ? t("preference.data_backup.webdav.status.slim_success", "精简备份成功")
+          : t("preference.data_backup.webdav.status.full_success", "完整备份成功"))
       : status === "error"
         ? t("preference.data_backup.webdav.status.failed")
         : t("preference.data_backup.webdav.status.never");
@@ -524,15 +535,6 @@ const Webdav = (props: { state: State }) => {
           />
         </ProListItem>
 
-        <ProSwitch
-          checked={webdav.slim}
-          description={t("preference.data_backup.webdav.hints.slim")}
-          onChange={(value) => {
-            clipboardStore.webdav.slim = value;
-          }}
-          title={t("preference.data_backup.webdav.label.slim")}
-        />
-
         <ProListItem
           description={t("preference.data_backup.webdav.hints.manual")}
           title={t("preference.data_backup.webdav.label.manual")}
@@ -548,18 +550,56 @@ const Webdav = (props: { state: State }) => {
         </ProListItem>
 
         <ProListItem
-          description={t("preference.data_backup.webdav.hints.auto_backup")}
-          title={t("preference.data_backup.webdav.label.auto_backup")}
+          description={t("preference.data_backup.webdav.hints.auto_strategy", "设置 WebDAV 自动备份启用状态和备份模式")}
+          title={t("preference.data_backup.webdav.label.auto_strategy", "自动备份策略")}
         >
           <Select
-            onChange={(value) => {
-              clipboardStore.webdav.autoBackup = value;
+            onChange={(value: AutoBackupStrategy) => {
+              clipboardStore.webdav.autoStrategy = value;
             }}
-            options={AUTO_BACKUP_OPTIONS}
-            style={{ width: 99 }}
-            value={webdav.autoBackup}
+            options={[
+              { label: t("preference.data_backup.webdav.strategy.off", "关闭"), value: "off" },
+              { label: t("preference.data_backup.webdav.strategy.full", "完整备份"), value: "full" },
+              { label: t("preference.data_backup.webdav.strategy.slim", "精简备份"), value: "slim" },
+              { label: t("preference.data_backup.webdav.strategy.combined", "组合备份"), value: "combined" },
+            ]}
+            style={{ width: 120 }}
+            value={webdav.autoStrategy}
           />
         </ProListItem>
+
+        {(webdav.autoStrategy === "full" || webdav.autoStrategy === "slim") && (
+          <ScheduleConfigComponent
+            description={t("preference.data_backup.webdav.hints.schedule", "设置 WebDAV 自动备份的时间")}
+            onChange={(patch) => {
+              const key = webdav.autoStrategy === "full" ? "fullSchedule" : "slimSchedule";
+              Object.assign(clipboardStore.webdav[key], patch);
+            }}
+            title={t("preference.data_backup.webdav.label.schedule", "备份周期")}
+            value={webdav.autoStrategy === "full" ? webdav.fullSchedule : webdav.slimSchedule}
+          />
+        )}
+
+        {webdav.autoStrategy === "combined" && (
+          <>
+            <ScheduleConfigComponent
+              description={t("preference.data_backup.webdav.hints.full_schedule", "设置 WebDAV 自动完整备份的时间")}
+              onChange={(patch) => {
+                Object.assign(clipboardStore.webdav.fullSchedule, patch);
+              }}
+              title={t("preference.data_backup.webdav.label.full_schedule", "完整备份周期")}
+              value={webdav.fullSchedule}
+            />
+            <ScheduleConfigComponent
+              description={t("preference.data_backup.webdav.hints.slim_schedule", "设置 WebDAV 自动精简备份的时间")}
+              onChange={(patch) => {
+                Object.assign(clipboardStore.webdav.slimSchedule, patch);
+              }}
+              title={t("preference.data_backup.webdav.label.slim_schedule", "精简备份周期")}
+              value={webdav.slimSchedule}
+            />
+          </>
+        )}
 
         <ProListItem
           description={t("preference.data_backup.webdav.hints.max_backups")}
@@ -570,7 +610,7 @@ const Webdav = (props: { state: State }) => {
               clipboardStore.webdav.maxBackups = value;
             }}
             options={MAX_BACKUPS_OPTIONS}
-            style={{ width: 99 }}
+            style={{ width: 120 }}
             value={webdav.maxBackups}
           />
         </ProListItem>
@@ -605,17 +645,33 @@ const Webdav = (props: { state: State }) => {
         open={backupOpen}
         title={t("preference.data_backup.webdav.title.backup")}
       >
-        <Space className="w-full" direction="vertical" size={8}>
-          <span className="text-color-2 text-xs">
-            {t("preference.data_backup.webdav.label.filename")}
-          </span>
-          <Input
-            onChange={(event) => setBackupName(event.target.value)}
-            placeholder={t(
-              "preference.data_backup.webdav.placeholder.filename",
-            )}
-            value={backupName}
-          />
+        <Space className="w-full" direction="vertical" size={12}>
+          <Space className="w-full" direction="vertical" size={8}>
+            <span className="text-color-2 text-xs">
+              {t("preference.data_backup.webdav.label.filename")}
+            </span>
+            <Input
+              onChange={(event) => setBackupName(event.target.value)}
+              placeholder={t(
+                "preference.data_backup.webdav.placeholder.filename",
+              )}
+              value={backupName}
+            />
+          </Space>
+          <Tooltip title={t("preference.data_backup.webdav.hints.slim", "备份时跳过图片和文件(夹)类型的内容，仅保留文本等其他内容与设置以提升速度")}>
+            <Checkbox
+              checked={webdav.manualSlim}
+              onChange={async (e) => {
+                clipboardStore.webdav.manualSlim = e.target.checked;
+                // Regenerate filename with updated mode marker
+                try {
+                  setBackupName(await getDefaultWebdavFilename(computerName, e.target.checked));
+                } catch {}
+              }}
+            >
+              {t("preference.data_backup.webdav.label.slim", "精简备份")}
+            </Checkbox>
+          </Tooltip>
         </Space>
       </Modal>
 
@@ -653,7 +709,7 @@ const Webdav = (props: { state: State }) => {
         onCancel={() => setRestoreOpen(false)}
         open={restoreOpen}
         title={t("preference.data_backup.webdav.title.restore")}
-        width={860}
+        width={960}
       >
         <Table
           columns={columns}

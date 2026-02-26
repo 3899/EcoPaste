@@ -52,13 +52,14 @@ const capitalizeFirst = (value: string) => {
   return value.slice(0, 1).toUpperCase() + value.slice(1);
 };
 
-export const getDefaultWebdavFilename = async (computerName?: string) => {
+export const getDefaultWebdavFilename = async (computerName?: string, slim = false) => {
   const appName = globalStore.env.appName || "EcoPaste";
   const device = await resolveComputerName(computerName);
   const deviceName = normalizeComputerName(device).replace(/\s+/g, "");
   const os = capitalizeFirst(await platform());
   const timestamp = buildBackupTime();
-  return `${appName}.${timestamp}.${deviceName}.${os}`;
+  const mode = slim ? "slim" : "full";
+  return `${appName}.${timestamp}.${deviceName}.${os}.${mode}`;
 };
 
 export const normalizeWebdavBackupFileName = (fileName: string) => {
@@ -70,9 +71,9 @@ export const normalizeWebdavBackupFileName = (fileName: string) => {
   return `${fileName}.${extname}`;
 };
 
-export const getDefaultWebdavBackupFileName = async (computerName?: string) => {
+export const getDefaultWebdavBackupFileName = async (computerName?: string, slim = false) => {
   return normalizeWebdavBackupFileName(
-    await getDefaultWebdavFilename(computerName),
+    await getDefaultWebdavFilename(computerName, slim),
   );
 };
 
@@ -91,23 +92,38 @@ export const createWebdavBackupArchive = async (
   const basePath = getSaveDataPath();
   const tempRoot = await tempDir();
   const archivePath = join(tempRoot, fileName);
-  const includes: string[] = [await fullName(await getSaveStorePath(true))];
   const cleanupPaths: string[] = [];
 
   if (slim) {
+    // Create a staging directory that mirrors basePath structure
+    // so the zip contains the same filenames as a normal export
+    const stagingDir = join(tempRoot, `slim-staging-${Date.now()}`);
+    await import("@tauri-apps/plugin-fs").then((fs) => fs.mkdir(stagingDir, { recursive: true }));
+    cleanupPaths.push(stagingDir);
+
+    // Copy store file to staging dir with original name
+    const storePath = await getSaveStorePath(true);
+    const storeBasename = await fullName(storePath);
+    const stagingStorePath = join(stagingDir, storeBasename);
+    await import("@tauri-apps/plugin-fs").then((fs) => fs.copyFile(storePath, stagingStorePath));
+
+    // Create slim DB in staging dir with original DB name
     const sourceDbPath = await getSaveDatabasePath();
-    const slimDbPath = join(basePath, ".slim-backup.db");
-    await createSlimDatabase(sourceDbPath, slimDbPath);
-    cleanupPaths.push(slimDbPath);
-    includes.push(await fullName(slimDbPath));
+    const dbBasename = await fullName(sourceDbPath);
+    const stagingDbPath = join(stagingDir, dbBasename);
+    await createSlimDatabase(sourceDbPath, stagingDbPath);
+
+    await compress(stagingDir, archivePath, {
+      includes: [storeBasename, dbBasename],
+    });
   } else {
+    const includes: string[] = [await fullName(await getSaveStorePath(true))];
     includes.push(
       await fullName(getSaveImagePath()),
       await fullName(await getSaveDatabasePath()),
     );
+    await compress(basePath, archivePath, { includes });
   }
-
-  await compress(basePath, archivePath, { includes });
 
   return {
     archivePath,

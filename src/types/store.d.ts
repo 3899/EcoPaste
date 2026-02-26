@@ -110,13 +110,35 @@ export interface ClipboardStore {
     maxCount: number;
   };
 
-  // WebDAV 备份
+  // WebDAV 备份调度配置
   webdav: {
-    slim: boolean;
-    autoBackup: number;
+    autoStrategy: AutoBackupStrategy;
+    fullSchedule: ScheduleConfig;
+    slimSchedule: ScheduleConfig;
+    manualSlim: boolean;
     maxBackups: number;
     lastBackupAt?: string;
+    lastBackupMode?: "full" | "slim";
     lastBackupStatus?: "none" | "success" | "error";
     lastBackupError?: string;
   };
 }
+
+// 备份周期调度模式
+export type ScheduleMode = "fixed" | "interval" | "cron";
+
+// 备份周期配置
+export interface ScheduleConfig {
+  mode: ScheduleMode;
+  // 定时模式
+  fixedHour: number;
+  fixedMinute: number;
+  fixedRepeat: "hourly" | "daily" | "weekly" | "biweekly" | "monthly" | "quarterly" | "semi_annual" | "yearly";
+  // 间隔模式 (分钟)
+  intervalMinutes: number;
+  // cron 模式
+  cronExpression: string;
+}
+
+// 自动备份策略
+export type AutoBackupStrategy = "off" | "full" | "slim" | "combined";

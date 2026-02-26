@@ -79,42 +79,70 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 - 🤝 Comprehensive documentation and community support to explore and grow with developers.
 - 🧩 Continuously optimized with more exciting features waiting to be discovered.
 
-## 🚀 Fork Enhancements
+## 🚀 Fork Update History
 
-> This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) with the following usability improvements:
+> This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) with the following usability improvements and update history:
 
-### ✨ New Features
+### M04.x
 
-- **☁️ WebDAV Cloud Backup**: Back up clipboard data to cloud storage via WebDAV protocol (Nutstore, NextCloud, etc.). Supports slim backup mode (skips images and files, keeps text and other content), automatic scheduled backups, backup count limits, and one-click restore.
-- **🎨 Dedicated Groups & Color Preview**: Added native "Links"("链接"), "Colors"("颜色"), "Code"("代码"), and "Email"("邮箱") group categories. Accurately extracts and highlights RGB/RGBA color formats; path links are highlighted for quick access.
+#### ✨ New Features
+- **☁️ WebDAV Cloud Backup Enhancement**:
+  - **Decoupled Slim/Full Backups**: Segmented backup policies into "Full" and "Slim" routines. Allows independent scheduling and management for manual or automatic backups.
+  - **Automated Scheduling Engine**: Built-in frontend task scheduler supporting flexible combinations of "Time", "Interval", and "Cron Expressions", enabling dual-pipeline scheduling for both full and slim backups.
+- **📝 Markdown Support**: Adopted a new score-weighted regex detection strategy to accurately identify Markdown structures, preventing misclassification of code or standard text, complete with independent rich Markdown editors.
+- **🖼️ Image Directory Locating**: Allows image types to open the system file explorer directly navigating precisely to the source file directory.
+
+#### 🔄 Immersive UX Optimization
+- **☁️ Seamless Restore Interaction**: Refactored WebDAV restore logic to eagerly render UI skeletons and loaders while asynchronously fetching backup arrays, eliminating UI freezing and lack of feedback.
+- **💾 Backup Archive Compatibility**: Implemented a Staging Directory mapping technique ensuring WebDAV `.zip` structure is identical to native Export Data structure, achieving two-way compatibility.
+
+#### 🔧 Internal Fixes
+- **🌐 WebDAV Cross-Platform Directories**: Ensured automated creation of remote WebDAV folder trees via Rust hooks (`ensure_remote_dir`) fixing `405 Method Not Allowed` exceptions.
+- **💾 Database Backup Abortion Fixes**: Defensively patched `Invalid column type Null` errors thrown by underlying Kysely when blank records exist in the Clipboard History table.
+
+#### 🐛 Upstream Bug Fixes
+- **📋 Clipboard Classification Weights**: Completely fixed an issue where copying cells in Excel resulted in forced downgrade of text content into images due to conflicting Image+HTML types holding the clipboard simultaneously.
+
+### M03.x
+
+#### ✨ New Features
+- **☁️ WebDAV Cloud Backup**: Back up clipboard data to cloud storage via WebDAV protocol (Nutstore, NextCloud, etc.). Supports manual backup, automatic scheduled backups, backup count limits, and one-click restore.
+- **Smart Delete Confirmation**: When deleting images, a "Delete local file" option (checked by default) is shown in the confirmation dialog, allowing you to keep the local file while removing only the clipboard record.
+
+### M02.x
+
+#### ✨ New Features
+- **🎨 Dedicated Groups & Color Preview**: Added native "Links", "Colors", "Code", and "Email" group categories. Accurately extracts and highlights RGB/RGBA color formats; path links are highlighted for quick access.
 - **📝 Rich Secondary Editing**: Supports independent pop-up editing for text and other rich content, with system-level quick file location.
 - **💻 Code Syntax Highlighting**: Automatically detects copied code snippets and renders IDE-quality syntax highlighting (Preferences → Clipboard → Display Settings → Code Syntax Highlight).
+- **🔢 Custom Code/File Display Lines**: Extended line number customizations to support Code and File datatypes. (Preferences → Clipboard → Display Settings → Code/File display lines).
 - **📊 Source App Tracking**: Shows the source app's icon and name when copying (Preferences → Clipboard → Display Settings → Record App Source).
 - **⚡️ Native Quick Access**: Support opening file paths directly in the system file explorer, opening web links in the browser with one click, and viewing images using the system's default image viewer.
-- **🗑️ Smart Delete Confirmation**: When deleting images, a "Delete local file" checkbox (checked by default) is shown in the confirmation dialog, allowing you to keep the local file while removing only the clipboard record.
 
-### 📏 Advanced Text & Image Display
+#### 🐛 Upstream Bug Fixes
+- **📸 Perfect Screenshot Dump**: Rebuilt SQLite persistence and the underlying FS mapping path to save screenshots perfectly to custom local directories, entirely fixing the issue where built-in library limits caused custom directory crashes and broken image displays, while avoiding C: drive bloat.
+- **🔗 Duplicate Link Records**: Completely fixed the stubborn issue where copying a link produces two identical records in the clipboard.
 
-- **Custom Text/Code/File Display Lines**: Preferences → Clipboard → Display Settings → Text/Code/Files display lines (1-50 lines)
-- **Image Height Scaling**: Flexibly adjust image display height with smart expand/collapse (50-500 pixels)
+### M01.x
 
-### 🔄 Dynamic Expand/Collapse & Immersive Experience
-
+#### 🔄 Dynamic Expand/Collapse & Immersive Experience
 - **Full Content Expansion**: Provides expand/collapse buttons when content exceeds display limits; states persist across virtual scrolling.
-- **No-Focus Silent Window** (Windows): The host app retains focus when the clipboard window appears; double-click to paste silently; auto-hides when clicking outside.
+- **No-Focus Silent Window (Windows)**: The host app retains focus when the clipboard window appears; double-click to paste silently; auto-hides when clicking outside.
 - **Follow Input Cursor**: Window follows the editor's text cursor position for seamless workflow.
 - **Redesigned Preferences**: Added "Display Settings" section with granular control over advanced options.
 
-### 🐛 Upstream Bug Fixes
+#### 📏 Advanced Text & Image Display
+- **Custom Text Display Lines**: Preferences → Clipboard → Display Settings → Text display lines (1-50 lines)
+- **Image Height Scaling**: Flexibly adjust image display height with smart expand/collapse (50-500 pixels)
 
-- **📸 Perfect Screenshot Dump**: Rebuilt SQLite persistence and the underlying FS mapping path to save screenshots perfectly to custom local directories, entirely fixing the issue where built-in library limits caused custom directory crashes and broken image displays, while avoiding C: drive bloat.
-- **📋 Clipboard Type Misidentification**: Completely fixed the issue where web images might be incorrectly identified as HTML due to `html` weight priority. Rewrote detection logic to give image types the highest priority.
-- **🔗 Duplicate Link Records**: Completely fixed the stubborn issue where copying a link produces two identical records in the clipboard.
+#### ⚙️ Config Persistence
+- All new settings are automatically saved to the user data directory and persist across app updates.
+
+#### 🐛 Upstream Bug Fixes
+- **📋 Clipboard Type Misidentification**: Completely fixed the issue where web images might be incorrectly identified as HTML due to html weight priority. Rewrote detection logic to give image types the highest priority.
 - **💾 Backup Tunnel Restored**: Re-enabled the data backup/restore entry that was hidden due to permission restrictions in the original version, ensuring stable imports and exports.
-- **⚙️ Config Persistence**: All new settings are automatically saved to the user data directory and persist across app updates.
 
-### 🔄 Auto Sync with Upstream
-
+#### 🔄 Auto Sync with Upstream
 - Automatically checks for updates from upstream EcoPasteHub/EcoPaste daily
 - Auto-merges and triggers builds when new versions are available
 - Creates an issue for manual resolution if merge conflicts occur
