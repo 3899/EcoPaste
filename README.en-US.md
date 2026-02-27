@@ -83,7 +83,7 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
 > This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) with the following usability improvements and update history:
 
-### M04.x
+### M04.x <font size="-2" color="gray">(Based on v0.6.0-beta.3 branch)</font>
 
 #### ✨ New Features
 - **☁️ WebDAV Cloud Backup Enhancement**:
@@ -91,39 +91,43 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
   - **Automated Scheduling Engine**: Built-in frontend task scheduler supporting flexible combinations of "Time", "Interval", and "Cron Expressions", enabling dual-pipeline scheduling for both full and slim backups.
 - **📝 Markdown Support**: Adopted a new score-weighted regex detection strategy to accurately identify Markdown structures, preventing misclassification of code or standard text, complete with independent rich Markdown editors.
 - **🖼️ Image Directory Locating**: Allows image types to open the system file explorer directly navigating precisely to the source file directory.
+- **🔍 Windows Path & Command Smart Recognition**: Automatically detects environment variable paths (`%APPDATA%`, etc.), Shell folders (`shell:startup`, etc.), filesystem paths (`C:\Windows`, etc.) and system management commands (`regedit`, etc.), with one-click open or run via context menu and action buttons.
+- **🔄 Config Auto-Sync**: Preference changes are automatically synced to the user's custom data directory, ensuring backup configuration is always up-to-date.
 
-#### 🔄 Immersive UX Optimization
+#### 💫 UX Optimization
 - **☁️ Seamless Restore Interaction**: Refactored WebDAV restore logic to eagerly render UI skeletons and loaders while asynchronously fetching backup arrays, eliminating UI freezing and lack of feedback.
 - **💾 Backup Archive Compatibility**: Implemented a Staging Directory mapping technique ensuring WebDAV `.zip` structure is identical to native Export Data structure, achieving two-way compatibility.
 
-#### 🔧 Internal Fixes
+#### 🐞 Bug Fixes
 - **🌐 WebDAV Cross-Platform Directories**: Ensured automated creation of remote WebDAV folder trees via Rust hooks (`ensure_remote_dir`) fixing `405 Method Not Allowed` exceptions.
 - **💾 Database Backup Abortion Fixes**: Defensively patched `Invalid column type Null` errors thrown by underlying Kysely when blank records exist in the Clipboard History table.
+- **📋 Classification Weight Optimization**: Completely fixed an issue where copying cells in Excel resulted in forced downgrade of text content into images due to conflicting Image+HTML types holding the clipboard simultaneously.
 
-#### 🐛 Upstream Bug Fixes
-- **📋 Clipboard Classification Weights**: Completely fixed an issue where copying cells in Excel resulted in forced downgrade of text content into images due to conflicting Image+HTML types holding the clipboard simultaneously.
-
-### M03.x
+### M03.x <font size="-2" color="gray">(Based on v0.6.0-beta.3 branch)</font>
 
 #### ✨ New Features
 - **☁️ WebDAV Cloud Backup**: Back up clipboard data to cloud storage via WebDAV protocol (Nutstore, NextCloud, etc.). Supports manual backup, automatic scheduled backups, backup count limits, and one-click restore.
-- **Smart Delete Confirmation**: When deleting images, a "Delete local file" option (checked by default) is shown in the confirmation dialog, allowing you to keep the local file while removing only the clipboard record.
+- **🔒 Native Credential Security**: Sensitive WebDAV configurations including server URLs, usernames, passwords, and paths are securely persisted via native Windows Credential Manager, fully encrypting data to prevent plaintext leakage and ensure privacy.
+- **🗑️ Optional Local Image Deletion**: When deleting images, a "Delete local file" option (checked by default) is shown in the confirmation dialog, allowing you to keep the local file while removing only the clipboard record.
 
-### M02.x
+### M02.x <font size="-2" color="gray">(Based on v0.6.0-beta.3 branch)</font>
 
 #### ✨ New Features
 - **🎨 Dedicated Groups & Color Preview**: Added native "Links", "Colors", "Code", and "Email" group categories. Accurately extracts and highlights RGB/RGBA color formats; path links are highlighted for quick access.
 - **📝 Rich Secondary Editing**: Supports independent pop-up editing for text and other rich content, with system-level quick file location.
 - **💻 Code Syntax Highlighting**: Automatically detects copied code snippets and renders IDE-quality syntax highlighting (Preferences → Clipboard → Display Settings → Code Syntax Highlight).
-- **🔢 Custom Code/File Display Lines**: Extended line number customizations to support Code and File datatypes. (Preferences → Clipboard → Display Settings → Code/File display lines).
-- **📊 Source App Tracking**: Shows the source app's icon and name when copying (Preferences → Clipboard → Display Settings → Record App Source).
+- **🎯 Source App Tracking**: Shows the source app's icon and name when copying (Preferences → Clipboard → Display Settings → Record App Source).
 - **⚡️ Native Quick Access**: Support opening file paths directly in the system file explorer, opening web links in the browser with one click, and viewing images using the system's default image viewer.
+- **🔢 Custom Code/File Display Lines**: Extended line number customizations to support Code and File datatypes. (Preferences → Clipboard → Display Settings → Code/File display lines).
+
+> **Acknowledgments**: The implementation ideas for "Dedicated Groups & Color Preview", "Rich Secondary Editing", "Code Syntax Highlighting", "🎯 Source App Tracking", and "Native Quick Access" in this project refer to [EcoPaste-Sync](https://github.com/Ruszero01/EcoPaste-Sync). We hereby express our gratitude.
 
 #### 🐛 Upstream Bug Fixes
 - **📸 Perfect Screenshot Dump**: Rebuilt SQLite persistence and the underlying FS mapping path to save screenshots perfectly to custom local directories, entirely fixing the issue where built-in library limits caused custom directory crashes and broken image displays, while avoiding C: drive bloat.
 - **🔗 Duplicate Link Records**: Completely fixed the stubborn issue where copying a link produces two identical records in the clipboard.
+- **📊 Double Record of Copied Document Table Content**: Completely fixed the issue where copying content from tables in documents like Word or Excel resulted in two completely identical records appearing simultaneously in the clipboard.
 
-### M01.x
+### M01.x <font size="-2" color="gray">(Based on v0.6.0-beta.3 branch)</font>
 
 #### 🔄 Dynamic Expand/Collapse & Immersive Experience
 - **Full Content Expansion**: Provides expand/collapse buttons when content exceeds display limits; states persist across virtual scrolling.

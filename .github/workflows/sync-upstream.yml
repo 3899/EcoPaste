@@ -29,6 +29,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # 需要在 GitHub 仓库 Settings → Secrets and variables → Actions 中配置名为 PAT_TOKEN 的 Personal Access Token
+          # Token 需要 repo 权限（Fine-grained 或 Classic 均可）
           token: ${{ secrets.PAT_TOKEN }}
 
       - name: Configure Git

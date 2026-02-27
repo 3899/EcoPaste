@@ -17,8 +17,9 @@
         "paste_as_rgb": "Convert to RGB and Paste",
         "preview_image": "Preview Image",
         "send_email": "Send Email",
-        "show_in_file_explorer": "Show in File Explorer",
+        "show_in_file_explorer": "Open in File Explorer",
         "show_in_finder": "Show in Finder",
+        "run_command": "Run",
         "unfavorite": "Unfavorite"
       }
     },
@@ -36,6 +37,7 @@
       "link": "Link",
       "n_chars": "{{0}} Character(s)",
       "n_files": "{{0}} File(s)",
+      "command": "Command",
       "path": "Path",
       "plain_text": "Plain Text",
       "rtf": "Rich Text",

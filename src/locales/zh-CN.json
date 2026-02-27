@@ -17,8 +17,9 @@
         "paste_as_rgb": "转为 RGB 并粘贴",
         "preview_image": "打开图片",
         "send_email": "发送邮件",
-        "show_in_file_explorer": "在资源管理器显示",
+        "show_in_file_explorer": "在资源管理器打开",
         "show_in_finder": "在 Finder 中显示",
+        "run_command": "运行",
         "unfavorite": "取消收藏"
       }
     },
@@ -36,6 +37,7 @@
       "link": "链接",
       "n_chars": "{{0}}个字符",
       "n_files": "{{0}}个文件（夹）",
+      "command": "指令",
       "path": "路径",
       "plain_text": "纯文本",
       "rtf": "富文本",

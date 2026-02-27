@@ -39,10 +39,16 @@ const initStore = async () => {
  */
 export const saveStore = async (backup = false) => {
   const store = { clipboardStore, globalStore };
+  const content = JSON.stringify(store, null, 2);
 
   const path = await getSaveStorePath(backup);
+  await writeTextFile(path, content);
 
-  return writeTextFile(path, JSON.stringify(store, null, 2));
+  // 非备份写入时，自动同步一份到用户目录的 .store-backup
+  if (!backup) {
+    const backupPath = await getSaveStorePath(true);
+    writeTextFile(backupPath, content).catch(() => {});
+  }
 };
 
 /**

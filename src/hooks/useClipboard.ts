@@ -91,6 +91,27 @@ export const useClipboard = (
         });
       }
 
+      // 后置检查：若被分类为 html 但纯文本匹配 Windows 路径/指令模式，则覆盖为 text
+      if (data.type === "html" && text) {
+        const trimmedText = text.value.replace(/[\u00A0\u200B\uFEFF]/g, ' ').trim();
+        if (!trimmedText.includes('\n')) {
+          const { isWin } = await import("@/utils/is");
+          if (isWin) {
+            const { isWinPathOrCommand } = await import("@/utils/winPaths");
+            if (isWinPathOrCommand(trimmedText)) {
+              const subtype = await getClipboardTextSubtype(trimmedText);
+              Object.assign(data, text, { 
+                type: "text", 
+                html: undefined, 
+                subtype, 
+                value: trimmedText, 
+                search: trimmedText 
+              });
+            }
+          }
+        }
+      }
+
       if (clipboardStore.content.recordSourceApp) {
         try {
           const appInfo: any = await invoke("get_source_app_info");

@@ -14,8 +14,9 @@
         "paste_as_plain_text": "貼上為純文字",
         "preview_image": "預覽圖片",
         "send_email": "發送郵件",
-        "show_in_file_explorer": "在檔案總管中顯示",
+        "show_in_file_explorer": "在檔案總管中開啟",
         "show_in_finder": "在 Finder 中顯示",
+        "run_command": "執行",
         "unfavorite": "取消收藏"
       }
     },
@@ -33,6 +34,7 @@
       "link": "連結",
       "n_chars": "{{0}}個字元",
       "n_files": "{{0}}個檔案（夾）",
+      "command": "指令",
       "path": "路徑",
       "plain_text": "純文字",
       "rtf": "富文字",

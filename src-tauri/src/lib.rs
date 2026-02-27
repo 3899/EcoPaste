@@ -6,6 +6,29 @@ use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_eco_window::{show_main_window, MAIN_WINDOW_LABEL, PREFERENCE_WINDOW_LABEL};
 use tauri_plugin_log::{Target, TargetKind};
 
+#[tauri::command]
+fn expand_env_vars(input: String) -> String {
+    let mut result = input.clone();
+    let bytes = input.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%' {
+            if let Some(end) = input[i + 1..].find('%') {
+                let var_name = &input[i + 1..i + 1 + end];
+                if !var_name.is_empty() {
+                    if let Ok(val) = std::env::var(var_name) {
+                        result = result.replacen(&format!("%{}%", var_name), &val, 1);
+                    }
+                }
+                i += end + 2;
+                continue;
+            }
+        }
+        i += 1;
+    }
+    result
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let app = Builder::default()
@@ -85,7 +108,8 @@ pub fn run() {
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![
-            crate::core::source_app::get_source_app_info
+            crate::core::source_app::get_source_app_info,
+            expand_env_vars
         ])
         .build(generate_context!())
         .expect("error while running tauri application");

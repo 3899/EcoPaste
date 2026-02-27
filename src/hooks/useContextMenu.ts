@@ -1,7 +1,7 @@
 import { Menu, MenuItem, type MenuItemOptions } from "@tauri-apps/api/menu";
 import { downloadDir } from "@tauri-apps/api/path";
 import { copyFile, writeTextFile } from "@tauri-apps/plugin-fs";
-import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
+import { openPath, openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
 import { find, isArray, remove } from "es-toolkit/compat";
 import { type MouseEvent, useContext, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -78,9 +78,23 @@ export const useContextMenu = (props: UseContextMenuProps) => {
     revealItemInDir(path);
   };
 
-  const openToFinder = () => {
+  const openToFinder = async () => {
     if (type === "text") {
-      return revealItemInDir(value);
+      // 对于 command 子类型，使用 openPath 运行指令
+      if (subtype === "command") {
+        return openPath(value as string);
+      }
+      // 对于 path 子类型，检查是否需要展开环境变量
+      const strValue = value as string;
+      if (strValue.includes("%")) {
+        const { expandEnvVars } = await import("@/utils/winPaths");
+        const expanded = await expandEnvVars(strValue);
+        return openPath(expanded);
+      }
+      if (strValue.toLowerCase().startsWith("shell:")) {
+        return openPath(strValue);
+      }
+      return revealItemInDir(strValue);
     }
 
     if (type === "image") {
@@ -265,10 +279,12 @@ export const useContextMenu = (props: UseContextMenuProps) => {
       },
       {
         action: openToFinder,
-        hide: type !== "files" && subtype !== "path" && type !== "image",
-        text: isMac
-          ? t("clipboard.button.context_menu.show_in_finder")
-          : t("clipboard.button.context_menu.show_in_file_explorer"),
+        hide: type !== "files" && subtype !== "path" && subtype !== "command" && type !== "image",
+        text: subtype === "command"
+          ? t("clipboard.button.context_menu.run_command")
+          : isMac
+            ? t("clipboard.button.context_menu.show_in_finder")
+            : t("clipboard.button.context_menu.show_in_file_explorer"),
       },
       {
         action: handleDelete,

@@ -47,6 +47,8 @@ const Header: FC<HeaderProps> = (props) => {
         return t("clipboard.label.color");
       case "path":
         return t("clipboard.label.path");
+      case "command":
+        return t("clipboard.label.command");
     }
 
     if (subtype === "markdown") {
@@ -132,7 +134,20 @@ const Header: FC<HeaderProps> = (props) => {
         return handleEdit();
       case "openFolder":
         if (type === "text") {
-          return revealItemInDir(value as string);
+          if (subtype === "command") {
+            return openPath(value as string);
+          }
+          const strValue = value as string;
+          if (strValue.includes("%")) {
+            import("@/utils/winPaths").then(({ expandEnvVars }) => {
+              expandEnvVars(strValue).then((expanded) => openPath(expanded));
+            });
+            return;
+          }
+          if (strValue.toLowerCase().startsWith("shell:")) {
+            return openPath(strValue);
+          }
+          return revealItemInDir(strValue);
         } else if (type === "image") {
           const path = Array.isArray(value) ? value[0] : (value as string);
           return revealItemInDir(path);
@@ -201,20 +216,33 @@ const Header: FC<HeaderProps> = (props) => {
             key === "openFolder" &&
             type !== "files" &&
             subtype !== "path" &&
+            subtype !== "command" &&
             type !== "image"
           )
             return null;
 
           const isFavorite = key === "star" && favorite;
+          const isCommandFolder =
+            key === "openFolder" && subtype === "command";
 
           return (
             <UnoIcon
               className={clsx({ "text-gold!": isFavorite })}
               hoverable
               key={key}
-              name={isFavorite ? activeIcon : icon}
+              name={
+                isCommandFolder
+                  ? "i-lucide:terminal"
+                  : isFavorite
+                    ? activeIcon
+                    : icon
+              }
               onClick={(event) => handleClick(event, key)}
-              title={t(title)}
+              title={t(
+                isCommandFolder
+                  ? "clipboard.button.context_menu.run_command"
+                  : title,
+              )}
             />
           );
         })}

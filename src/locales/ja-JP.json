@@ -17,8 +17,9 @@
         "paste_as_rgb": "RGB に変換して貼り付け",
         "preview_image": "画像プレビュー",
         "send_email": "メールを送信",
-        "show_in_file_explorer": "ファイルエクスプローラで表示",
+        "show_in_file_explorer": "ファイルエクスプローラで開く",
         "show_in_finder": "Finder で表示",
+        "run_command": "実行",
         "unfavorite": "コレクションのキャンセル"
       }
     },
@@ -36,6 +37,7 @@
       "link": "ウェブリンク",
       "n_chars": "{{0}} 文字",
       "n_files": "{{0}} ファイル",
+      "command": "コマンド",
       "path": "パス",
       "plain_text": "プレーンテキスト",
       "rtf": "リッチテキスト",

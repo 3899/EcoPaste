@@ -10,6 +10,7 @@ import { clipboardStore } from "@/stores/clipboard";
 import type { DatabaseSchemaHistory } from "@/types/database";
 import { isColor, isEmail, isMarkdown, isURL } from "@/utils/is";
 import { detectCode } from "@/utils/isCode";
+import { isEnvPath, isShellPath, isSysCommand } from "@/utils/winPaths";
 import { paste } from "./paste";
 import { hideWindow } from "./window";
 
@@ -25,6 +26,15 @@ export const getClipboardTextSubtype = async (value: string) => {
 
     if (isColor(value)) {
       return "color";
+    }
+
+    // Windows 特殊路径与指令检测
+    if (isEnvPath(value) || isShellPath(value)) {
+      return "path";
+    }
+
+    if (isSysCommand(value)) {
+      return "command";
     }
 
     if (await exists(value)) {
