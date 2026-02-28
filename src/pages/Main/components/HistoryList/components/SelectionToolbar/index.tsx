@@ -13,7 +13,7 @@ interface SelectionToolbarProps {
 	containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
-const TOOLBAR_OFFSET = 4;
+const TOOLBAR_OFFSET = 9;
 
 const SelectionToolbar = ({ containerRef }: SelectionToolbarProps) => {
 	const { t } = useTranslation();

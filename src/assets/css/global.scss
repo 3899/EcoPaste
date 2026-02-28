@@ -22,6 +22,11 @@ html {
       --uno: "hover:color-primary";
     }
 
+    ::selection {
+      background-color: #4096ff;
+      color: #fff;
+    }
+
     mark {
       background-color: #ffe58f;
     }

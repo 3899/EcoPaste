@@ -85,6 +85,21 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
 ### M04.x <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
 
+#### M04.5
+
+##### 🏗️ Architecture Optimization
+- **🛡️ Downward Compatibility Hardening**: Implemented the robustness principle of "conservative in what you send, liberal in what you accept", resolving crash issues during version downgrades caused by data structure incompatibilities.
+- **🗄️ Database Query Safeguard**: Refactored the database query layer utilizing a "Unified Column Definition → On-Demand Query" architecture, driven solely by the `historyColumnDefs` data source for both table creation and querying. Lower versions will automatically ignore unknown columns added by higher versions, completely eliminating downgrade crashes caused by structural differences.
+- **⚙️ Config Processing Safeguard**: Added the `strictDeepAssign` strict deep-merge mechanism. Config sync now only accepts options defined in the current version. Unknown config fields written by higher versions will be silently discarded, preventing rendering anomalies caused by state pollution.
+
+##### 💫 UX Optimization
+- **🎨 Text Selection Highlight Tuning**: Changed the selected text highlight background color in the clipboard to a softer blue `#4096FF`, and set the text color to white `#FFFFFF`.
+- **📍 "Back to Top" Button Position Tuning**: Standardized the position of the "Back to Top" button in the bottom right corner of the clipboard window, keeping its bottom and right margins equal.
+
+##### 🐞 Bug Fixes
+- **📋 Source App Tracking Fix**: Fixed an issue where, with `autoSort` enabled, the source icon/name of the latest clipboard item incorrectly reflected the currently active window rather than the original copying app. The app info from the original copy event is now preserved.
+- **💥 Downgrade Crash Fix**: Fixed a rendering crash (`Cannot destructure property 'key'`) that occurred when downgrading from a higher version to a lower version due to extra database fields in the clipboard window (effective for current and future versions).
+
 #### M04.4
 
 ##### ✨ New Features

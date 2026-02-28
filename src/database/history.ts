@@ -4,7 +4,7 @@ import type { SelectQueryBuilder } from "kysely";
 import { getDefaultSaveImagePath } from "tauri-plugin-clipboard-x-api";
 import type { DatabaseSchema, DatabaseSchemaHistory } from "@/types/database";
 import { join } from "@/utils/path";
-import { getDatabase } from ".";
+import { getDatabase, historyColumns } from ".";
 
 type QueryBuilder = SelectQueryBuilder<DatabaseSchema, "history", AnyObject>;
 
@@ -13,7 +13,7 @@ export const selectHistory = async (
 ) => {
   const db = await getDatabase();
 
-  let qb = db.selectFrom("history").selectAll() as QueryBuilder;
+  let qb = db.selectFrom("history").select(historyColumns as (keyof DatabaseSchemaHistory)[]) as QueryBuilder;
 
   if (fn) {
     qb = fn(qb);

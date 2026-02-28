@@ -25,7 +25,7 @@ import type {
   DatabaseSchemaHistory,
 } from "@/types/database";
 import type { Store } from "@/types/store";
-import { deepAssign } from "@/utils/object";
+import { strictDeepAssign } from "@/utils/object";
 import DockMode from "./components/DockMode";
 import StandardMode from "./components/StandardMode";
 
@@ -84,8 +84,8 @@ const Main = () => {
 
   // 同步配置项
   useTauriListen<Store>(LISTEN_KEY.STORE_CHANGED, ({ payload }) => {
-    deepAssign(globalStore, payload.globalStore);
-    deepAssign(clipboardStore, payload.clipboardStore);
+    strictDeepAssign(globalStore, payload.globalStore);
+    strictDeepAssign(clipboardStore, payload.clipboardStore);
   });
 
   // 窗口显示与隐藏

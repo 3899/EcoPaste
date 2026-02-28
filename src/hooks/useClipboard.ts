@@ -191,7 +191,13 @@ export const useClipboard = (
         if (visible) {
           remove(state.list, { id });
 
-          state.list.unshift({ ...data, id });
+          // 保留原始来源应用信息，避免被当前焦点窗口覆盖
+          state.list.unshift({
+            ...data,
+            id,
+            sourceAppName: matched.sourceAppName ?? data.sourceAppName,
+            sourceAppIcon: matched.sourceAppIcon ?? data.sourceAppIcon,
+          });
         }
 
         return updateHistory(id, { createTime, subtype: sqlData.subtype });

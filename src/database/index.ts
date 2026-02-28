@@ -7,6 +7,9 @@ import type { DatabaseSchema } from "@/types/database";
 import { getSaveDatabasePath } from "@/utils/path";
 
 let db: Kysely<DatabaseSchema> | null = null;
+let historyColumns: string[] = [];
+
+export { historyColumns };
 
 export const getDatabase = async () => {
   if (db) return db;
@@ -31,24 +34,33 @@ export const getDatabase = async () => {
     ],
   });
 
-  await db.schema
-    .createTable("history")
-    .ifNotExists()
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("type", "text")
-    .addColumn("group", "text")
-    .addColumn("value", "text")
-    .addColumn("search", "text")
-    .addColumn("count", "integer")
-    .addColumn("width", "integer")
-    .addColumn("height", "integer")
-    .addColumn("favorite", "integer", (col) => col.defaultTo(0))
-    .addColumn("createTime", "text")
-    .addColumn("note", "text")
-    .addColumn("subtype", "text")
-    .addColumn("sourceAppName", "text")
-    .addColumn("sourceAppIcon", "text")
-    .execute();
+  // 数据库表列定义（唯一的字段定义来源，供 createTable 和 selectHistory 共用）
+  // 未来增加新列时，只需在这里添加一行即可，查询也会自动包含新列
+  const historyColumnDefs: { name: string; type: string; modifier?: (col: any) => any }[] = [
+    { name: "id", type: "text", modifier: (col) => col.primaryKey() },
+    { name: "type", type: "text" },
+    { name: "group", type: "text" },
+    { name: "value", type: "text" },
+    { name: "search", type: "text" },
+    { name: "count", type: "integer" },
+    { name: "width", type: "integer" },
+    { name: "height", type: "integer" },
+    { name: "favorite", type: "integer", modifier: (col) => col.defaultTo(0) },
+    { name: "createTime", type: "text" },
+    { name: "note", type: "text" },
+    { name: "subtype", type: "text" },
+    { name: "sourceAppName", type: "text" },
+    { name: "sourceAppIcon", type: "text" },
+  ];
+
+  // 导出列名数组，供 selectHistory 的 .select() 使用
+  historyColumns = historyColumnDefs.map((c) => c.name);
+
+  let builder = db.schema.createTable("history").ifNotExists();
+  for (const col of historyColumnDefs) {
+    builder = builder.addColumn(col.name, col.type as any, col.modifier);
+  }
+  await builder.execute();
 
   // Try to add the columns if the table already existed and lacked them
   // Catching errors in case they already exist (SQLite will throw if adding duplicate columns)

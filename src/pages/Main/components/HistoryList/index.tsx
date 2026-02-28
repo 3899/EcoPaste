@@ -104,6 +104,7 @@ const HistoryList = () => {
         duration={0}
         onClick={scrollToTop}
         target={() => scrollerRef.current!}
+        style={{ bottom: 24 }}
       />
 
       {contextHolder}
