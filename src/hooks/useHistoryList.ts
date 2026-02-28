@@ -2,7 +2,7 @@ import { exists } from "@tauri-apps/plugin-fs";
 import { useAsyncEffect, useReactive } from "ahooks";
 import { isString } from "es-toolkit";
 import { unionBy } from "es-toolkit/compat";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { LISTEN_KEY } from "@/constants";
 import { selectHistory } from "@/database/history";
 import { MainContext } from "@/pages/Main";
@@ -23,11 +23,14 @@ export const useHistoryList = (options: Options) => {
     page: 1,
     size: 20,
   });
+  const fetchIdRef = useRef(0);
 
-  const fetchData = async () => {
+  const fetchData = async (isReload = false) => {
+    if (!isReload && state.loading) return;
+
+    const currentFetchId = ++fetchIdRef.current;
+
     try {
-      if (state.loading) return;
-
       state.loading = true;
 
       const { page } = state;
@@ -67,6 +70,8 @@ export const useHistoryList = (options: Options) => {
           .orderBy("createTime", "desc");
       });
 
+      if (currentFetchId !== fetchIdRef.current) return;
+
       for (const item of list) {
         const { type, value } = item;
 
@@ -97,7 +102,9 @@ export const useHistoryList = (options: Options) => {
 
       rootState.list = unionBy(rootState.list, list, "id");
     } finally {
-      state.loading = false;
+      if (currentFetchId === fetchIdRef.current) {
+        state.loading = false;
+      }
     }
   };
 
@@ -105,15 +112,15 @@ export const useHistoryList = (options: Options) => {
     state.page = 1;
     state.noMore = false;
 
-    return fetchData();
+    return fetchData(true);
   };
 
   const loadMore = () => {
-    if (state.noMore) return;
+    if (state.noMore || state.loading) return;
 
     state.page += 1;
 
-    fetchData();
+    fetchData(false);
   };
 
   useTauriListen(LISTEN_KEY.REFRESH_CLIPBOARD_LIST, reload);

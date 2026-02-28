@@ -85,6 +85,11 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
 ### M04.x <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
 
+#### M04.6
+
+##### 🐞 Bug Fixes
+- **🔀 Group Switching Content Display Anomaly**: Fixed a race condition where rapidly switching groups in the clipboard window displayed incorrect content, caused by subsequent group click requests being discarded while the component was in a loading state.
+
 #### M04.5
 
 ##### 🏗️ Architecture Optimization

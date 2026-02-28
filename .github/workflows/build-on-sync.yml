@@ -91,11 +91,14 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           name: "EcoPaste_v${{ steps.version.outputs.version }}"
           body: |
-            ## EcoPaste Plus 增强版
+            ## EcoPaste-Pro 增强版
             
             基于官方 EcoPaste 的增强 Fork 版本，包含以下改进：
             
-            ### ✨ M04.5
+            ### ✨ M04.6
+            - **🐞 bug修复**：修复了剪贴板窗口快速连续切换分组时内容显示不正确的竞态条件问题。
+
+            ### 📜 M04.5
             - **🏗️ 架构优化**：结合单例查询驱动与严格深拷贝赋值，解决版本降级时因 DB/Config 结构不兼容产生的渲染崩溃。
             - **💫 体验优化**：统一返回顶部按钮右下边距，调优拖拽选取文本蓝白高亮色调。
             - **🐞 bug修复**：修复当 `autoSort` 开启时来源应用信息被当前焦点应用错误覆盖的问题。
