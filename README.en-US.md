@@ -83,34 +83,55 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
 > This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) with the following usability improvements and update history:
 
-### M04.x <font size="-2" color="gray">(Based on v0.6.0-beta.3 branch)</font>
+### M04.x <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
 
-#### ✨ New Features
+#### M04.3
+
+##### ✨ New Features
+- **🎨 CMYK Color Detection**: Added smart extraction and preview support for CMYK color formats.
+
+##### 💫 UX Optimization
+- **🖱️ Context Menu Refactoring**:
+  - **Feature Grouping**: Categorized actions into "Copy/Paste", "Operations", and "Editing". Related functions are grouped together and operation paths shortened to improve selection efficiency.
+  - **Logical Ordering**: Arranged menu items based on operational flow and usage frequency.
+  - **Type-Specific Menus**: Tailor-made exclusive menu items for 12 content types (`Plain Text`, `Rich Text`, `HTML`, `Image`, `File`, `Markdown`, `Link`, `Path`, `Code`, `Email`, `Color`, `Command`).
+
+##### 🐞 Bug Fixes
+- **⚙️ Action Button Configuration**: Added the missing "Run" command in Preferences, allowing users to configure its visibility and order properly.
+- **🎨 Color Group Sync Fix**: Fixed the dynamic sync issue where new colors failed to auto-update at the top when viewing the "Color" group.
+
+#### M04.2
+
+##### ✨ New Features
+- **🔍 Windows Path & Command Smart Recognition**: Automatically detects environment variable paths (`%APPDATA%`, etc.), Shell folders (`shell:startup`, etc.), filesystem paths (`C:\Windows`, etc.) and system management commands (`regedit`, etc.), with one-click open or run via context menu and action buttons.
+- **🔄 Config Auto-Sync**: Preference changes are automatically synced to the user's custom data directory, ensuring backup configuration is always up-to-date.
+
+#### M04.1
+
+##### ✨ New Features
 - **☁️ WebDAV Cloud Backup Enhancement**:
   - **Decoupled Slim/Full Backups**: Segmented backup policies into "Full" and "Slim" routines. Allows independent scheduling and management for manual or automatic backups.
   - **Automated Scheduling Engine**: Built-in frontend task scheduler supporting flexible combinations of "Time", "Interval", and "Cron Expressions", enabling dual-pipeline scheduling for both full and slim backups.
 - **📝 Markdown Support**: Adopted a new score-weighted regex detection strategy to accurately identify Markdown structures, preventing misclassification of code or standard text, complete with independent rich Markdown editors.
 - **🖼️ Image Directory Locating**: Allows image types to open the system file explorer directly navigating precisely to the source file directory.
-- **🔍 Windows Path & Command Smart Recognition**: Automatically detects environment variable paths (`%APPDATA%`, etc.), Shell folders (`shell:startup`, etc.), filesystem paths (`C:\Windows`, etc.) and system management commands (`regedit`, etc.), with one-click open or run via context menu and action buttons.
-- **🔄 Config Auto-Sync**: Preference changes are automatically synced to the user's custom data directory, ensuring backup configuration is always up-to-date.
 
-#### 💫 UX Optimization
+##### 💫 UX Optimization
 - **☁️ Seamless Restore Interaction**: Refactored WebDAV restore logic to eagerly render UI skeletons and loaders while asynchronously fetching backup arrays, eliminating UI freezing and lack of feedback.
 - **💾 Backup Archive Compatibility**: Implemented a Staging Directory mapping technique ensuring WebDAV `.zip` structure is identical to native Export Data structure, achieving two-way compatibility.
 
-#### 🐞 Bug Fixes
+##### 🐞 Bug Fixes
 - **🌐 WebDAV Cross-Platform Directories**: Ensured automated creation of remote WebDAV folder trees via Rust hooks (`ensure_remote_dir`) fixing `405 Method Not Allowed` exceptions.
 - **💾 Database Backup Abortion Fixes**: Defensively patched `Invalid column type Null` errors thrown by underlying Kysely when blank records exist in the Clipboard History table.
 - **📋 Classification Weight Optimization**: Completely fixed an issue where copying cells in Excel resulted in forced downgrade of text content into images due to conflicting Image+HTML types holding the clipboard simultaneously.
 
-### M03.x <font size="-2" color="gray">(Based on v0.6.0-beta.3 branch)</font>
+### M03.x <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
 
 #### ✨ New Features
 - **☁️ WebDAV Cloud Backup**: Back up clipboard data to cloud storage via WebDAV protocol (Nutstore, NextCloud, etc.). Supports manual backup, automatic scheduled backups, backup count limits, and one-click restore.
 - **🔒 Native Credential Security**: Sensitive WebDAV configurations including server URLs, usernames, passwords, and paths are securely persisted via native Windows Credential Manager, fully encrypting data to prevent plaintext leakage and ensure privacy.
 - **🗑️ Optional Local Image Deletion**: When deleting images, a "Delete local file" option (checked by default) is shown in the confirmation dialog, allowing you to keep the local file while removing only the clipboard record.
 
-### M02.x <font size="-2" color="gray">(Based on v0.6.0-beta.3 branch)</font>
+### M02.x <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
 
 #### ✨ New Features
 - **🎨 Dedicated Groups & Color Preview**: Added native "Links", "Colors", "Code", and "Email" group categories. Accurately extracts and highlights RGB/RGBA color formats; path links are highlighted for quick access.
@@ -127,7 +148,7 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 - **🔗 Duplicate Link Records**: Completely fixed the stubborn issue where copying a link produces two identical records in the clipboard.
 - **📊 Double Record of Copied Document Table Content**: Completely fixed the issue where copying content from tables in documents like Word or Excel resulted in two completely identical records appearing simultaneously in the clipboard.
 
-### M01.x <font size="-2" color="gray">(Based on v0.6.0-beta.3 branch)</font>
+### M01.x <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
 
 #### 🔄 Dynamic Expand/Collapse & Immersive Experience
 - **Full Content Expansion**: Provides expand/collapse buttons when content exceeds display limits; states persist across virtual scrolling.

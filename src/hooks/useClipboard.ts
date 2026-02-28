@@ -173,7 +173,15 @@ export const useClipboard = (
         return qb.where("type", "=", type).where("value", "=", value);
       });
 
-      const visible = state.group === "all" || state.group === group;
+      let visible = state.group === "all" || state.group === group;
+
+      if (!visible) {
+        if (state.group === "favorite" && data.favorite) visible = true;
+        if (state.group === "links" && (sqlData.subtype === "url" || sqlData.subtype === "path")) visible = true;
+        if (state.group === "colors" && sqlData.subtype === "color") visible = true;
+        if (state.group === "email" && sqlData.subtype === "email") visible = true;
+        if (state.group === "code" && sqlData.subtype?.startsWith("code_")) visible = true;
+      }
 
       if (matched) {
         if (!clipboardStore.content.autoSort) return;
@@ -186,7 +194,7 @@ export const useClipboard = (
           state.list.unshift({ ...data, id });
         }
 
-        return updateHistory(id, { createTime });
+        return updateHistory(id, { createTime, subtype: sqlData.subtype });
       }
 
       if (visible) {

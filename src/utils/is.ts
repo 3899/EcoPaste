@@ -86,6 +86,11 @@ export const isColor = (value: string) => {
 
   if (excludes.includes(value) || value.includes("url")) return false;
 
+  // CMYK 格式无法被浏览器 CSS 引擎识别，需要通过正则前置判断
+  if (/^cmyk\(\s*\d+%?\s*,\s*\d+%?\s*,\s*\d+%?\s*,\s*\d+%?\s*\)$/i.test(value)) {
+    return true;
+  }
+
   const style = new Option().style;
 
   style.backgroundColor = value;

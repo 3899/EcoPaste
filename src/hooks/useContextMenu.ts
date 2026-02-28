@@ -1,4 +1,4 @@
-import { Menu, MenuItem, type MenuItemOptions } from "@tauri-apps/api/menu";
+import { Menu, MenuItem, type MenuItemOptions, PredefinedMenuItem } from "@tauri-apps/api/menu";
 import { downloadDir } from "@tauri-apps/api/path";
 import { copyFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import { openPath, openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
@@ -25,7 +25,7 @@ interface ContextMenuItem extends MenuItemOptions {
 
 export const useContextMenu = (props: UseContextMenuProps) => {
   const { data, deleteModal, handleNote, handleEdit, handleNext } = props;
-  const { id, type, value, group, favorite, subtype } = data;
+  const { id, type, value, favorite, subtype } = data;
   const { t } = useTranslation();
   const { env } = useSnapshot(globalStore);
   const { rootState } = useContext(MainContext);
@@ -33,6 +33,10 @@ export const useContextMenu = (props: UseContextMenuProps) => {
 
   const pasteAsText = () => {
     return pasteToClipboard(data, true);
+  };
+
+  const pasteAction = () => {
+    return pasteToClipboard(data);
   };
 
   const handleFavorite = async () => {
@@ -207,97 +211,222 @@ export const useContextMenu = (props: UseContextMenuProps) => {
     await paste();
   };
 
+  /**
+   * 根据内容类型构建分组右键菜单
+   * 分组 1：复制粘贴类
+   * 分组 2：操作类
+   * 分组 3：编辑类
+   */
+  const buildMenuGroups = (): ContextMenuItem[][] => {
+    // 判断具体的内容子类型
+    const isUrl = subtype === "url";
+    const isEmail = subtype === "email";
+    const isColor = subtype === "color";
+    const isPath = subtype === "path";
+    const isCommand = subtype === "command";
+    const isMarkdown = subtype === "markdown";
+    const isCode = subtype?.startsWith("code_");
+
+    // 通用菜单项定义
+    const copy: ContextMenuItem = {
+      action: () => writeToClipboard(data),
+      text: t("clipboard.button.context_menu.copy"),
+    };
+    const paste: ContextMenuItem = {
+      action: pasteAction,
+      text: t("clipboard.button.context_menu.paste"),
+    };
+    const pastePlainText: ContextMenuItem = {
+      action: pasteAsText,
+      text: t("clipboard.button.context_menu.paste_as_plain_text"),
+    };
+    const pastePath: ContextMenuItem = {
+      action: pasteAsText,
+      text: t("clipboard.button.context_menu.paste_as_path"),
+    };
+    const edit: ContextMenuItem = {
+      action: handleEdit,
+      text: t("clipboard.button.context_menu.edit", "编辑"),
+    };
+    const fav: ContextMenuItem = {
+      action: handleFavorite,
+      text: favorite
+        ? t("clipboard.button.context_menu.unfavorite")
+        : t("clipboard.button.context_menu.favorite"),
+    };
+    const note: ContextMenuItem = {
+      action: handleNote,
+      text: t("clipboard.button.context_menu.note"),
+    };
+    const del: ContextMenuItem = {
+      action: handleDelete,
+      text: t("clipboard.button.context_menu.delete"),
+    };
+    const exportFile: ContextMenuItem = {
+      action: exportToFile,
+      text: t("clipboard.button.context_menu.export_as_file"),
+    };
+    const openBrowser: ContextMenuItem = {
+      action: openToBrowser,
+      text: t("clipboard.button.context_menu.open_in_browser"),
+    };
+    const sendEmail: ContextMenuItem = {
+      action: () => openUrl(`mailto:${value}`),
+      text: t("clipboard.button.context_menu.send_email"),
+    };
+    const previewImage: ContextMenuItem = {
+      action: () => openPath(value as string),
+      text: t("clipboard.button.context_menu.preview_image"),
+    };
+    const downloadImg: ContextMenuItem = {
+      action: downloadImage,
+      text: t("clipboard.button.context_menu.download_image"),
+    };
+    const showInExplorer: ContextMenuItem = {
+      action: openToFinder,
+      text: isMac
+        ? t("clipboard.button.context_menu.show_in_finder")
+        : t("clipboard.button.context_menu.show_in_file_explorer"),
+    };
+    const runCommand: ContextMenuItem = {
+      action: () => openPath(value as string),
+      text: t("clipboard.button.context_menu.run_command"),
+    };
+    const pasteHex: ContextMenuItem = {
+      action: () => pasteColorAs("hex"),
+      text: t("clipboard.button.context_menu.paste_as_hex"),
+    };
+    const pasteRgb: ContextMenuItem = {
+      action: () => pasteColorAs("rgb"),
+      text: t("clipboard.button.context_menu.paste_as_rgb"),
+    };
+    const pasteCmyk: ContextMenuItem = {
+      action: () => pasteColorAs("cmyk"),
+      text: t("clipboard.button.context_menu.paste_as_cmyk"),
+    };
+
+    // 根据类型分配菜单组
+    // 图片类型
+    if (type === "image") {
+      return [
+        [copy, paste],
+        [previewImage, downloadImg, showInExplorer],
+        [fav, note, del],
+      ];
+    }
+
+    // 文件类型
+    if (type === "files") {
+      return [
+        [copy, pastePath],
+        [showInExplorer],
+        [fav, note, del],
+      ];
+    }
+
+    // 富文本类型
+    if (type === "rtf") {
+      return [
+        [copy, paste, pastePlainText],
+        [exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    // HTML 类型
+    if (type === "html") {
+      return [
+        [copy, paste, pastePlainText],
+        [exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    // 以下为 text 类型的各种子类型
+    if (isUrl) {
+      return [
+        [copy, paste],
+        [openBrowser, exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    if (isEmail) {
+      return [
+        [copy, paste],
+        [sendEmail, exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    if (isColor) {
+      return [
+        [copy, paste],
+        [pasteHex, pasteRgb, pasteCmyk, exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    if (isPath) {
+      return [
+        [copy, paste],
+        [showInExplorer, exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    if (isCommand) {
+      return [
+        [copy, paste],
+        [runCommand, exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    if (isMarkdown) {
+      return [
+        [copy, paste],
+        [exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    if (isCode) {
+      return [
+        [copy, paste],
+        [exportFile],
+        [edit, fav, note, del],
+      ];
+    }
+
+    // 默认：纯文本
+    return [
+      [copy, paste],
+      [exportFile],
+      [edit, fav, note, del],
+    ];
+  };
+
   const handleContextMenu = async (event: MouseEvent) => {
     event.preventDefault();
 
     rootState.activeId = id;
 
-    const items: ContextMenuItem[] = [
-      {
-        action: () => writeToClipboard(data),
-        text: t("clipboard.button.context_menu.copy"),
-      },
-      {
-        action: handleNote,
-        text: t("clipboard.button.context_menu.note"),
-      },
-      {
-        action: handleEdit,
-        hide: type !== "text" && type !== "html" && type !== "rtf",
-        text: t("clipboard.button.context_menu.edit", "编辑"),
-      },
-      {
-        action: pasteAsText,
-        hide: type !== "html" && type !== "rtf",
-        text: t("clipboard.button.context_menu.paste_as_plain_text"),
-      },
-      {
-        action: pasteAsText,
-        hide: type !== "files",
-        text: t("clipboard.button.context_menu.paste_as_path"),
-      },
-      {
-        action: () => pasteColorAs("hex"),
-        hide: subtype !== "color",
-        text: t("clipboard.button.context_menu.paste_as_hex", "转为 HEX 并粘贴"),
-      },
-      {
-        action: () => pasteColorAs("rgb"),
-        hide: subtype !== "color",
-        text: t("clipboard.button.context_menu.paste_as_rgb", "转为 RGB 并粘贴"),
-      },
-      {
-        action: () => pasteColorAs("cmyk"),
-        hide: subtype !== "color",
-        text: t("clipboard.button.context_menu.paste_as_cmyk", "转为 CMYK 并粘贴"),
-      },
-      {
-        action: handleFavorite,
-        text: favorite
-          ? t("clipboard.button.context_menu.unfavorite")
-          : t("clipboard.button.context_menu.favorite"),
-      },
-      {
-        action: openToBrowser,
-        hide: subtype !== "url",
-        text: t("clipboard.button.context_menu.open_in_browser"),
-      },
-      {
-        action: () => openUrl(`mailto:${value}`),
-        hide: subtype !== "email",
-        text: t("clipboard.button.context_menu.send_email"),
-      },
-      {
-        action: exportToFile,
-        hide: group !== "text",
-        text: t("clipboard.button.context_menu.export_as_file"),
-      },
-      {
-        action: downloadImage,
-        hide: type !== "image",
-        text: t("clipboard.button.context_menu.download_image"),
-      },
-      {
-        action: openToFinder,
-        hide: type !== "files" && subtype !== "path" && subtype !== "command" && type !== "image",
-        text: subtype === "command"
-          ? t("clipboard.button.context_menu.run_command")
-          : isMac
-            ? t("clipboard.button.context_menu.show_in_finder")
-            : t("clipboard.button.context_menu.show_in_file_explorer"),
-      },
-      {
-        action: handleDelete,
-        text: t("clipboard.button.context_menu.delete"),
-      },
-    ];
+    const groups = buildMenuGroups();
 
     const menu = await Menu.new();
 
-    for await (const item of items.filter(({ hide }) => !hide)) {
-      const menuItem = await MenuItem.new(item);
+    for (let gi = 0; gi < groups.length; gi++) {
+      if (gi > 0) {
+        const separator = await PredefinedMenuItem.new({ item: "Separator" });
+        await menu.append(separator);
+      }
 
-      await menu.append(menuItem);
+      for (const item of groups[gi]) {
+        if (item.hide) continue;
+        const menuItem = await MenuItem.new(item);
+        await menu.append(menuItem);
+      }
     }
 
     menu.popup();

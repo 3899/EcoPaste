@@ -155,6 +155,8 @@ const Header: FC<HeaderProps> = (props) => {
           return revealItemInDir((value as string[])[0]);
         }
         break;
+      case "runCommand":
+        return openPath(value as string);
     }
   };
 
@@ -216,14 +218,13 @@ const Header: FC<HeaderProps> = (props) => {
             key === "openFolder" &&
             type !== "files" &&
             subtype !== "path" &&
-            subtype !== "command" &&
             type !== "image"
           )
             return null;
+          if (key === "runCommand" && subtype !== "command")
+            return null;
 
           const isFavorite = key === "star" && favorite;
-          const isCommandFolder =
-            key === "openFolder" && subtype === "command";
 
           return (
             <UnoIcon
@@ -231,18 +232,12 @@ const Header: FC<HeaderProps> = (props) => {
               hoverable
               key={key}
               name={
-                isCommandFolder
-                  ? "i-lucide:terminal"
-                  : isFavorite
-                    ? activeIcon
-                    : icon
+                isFavorite
+                  ? activeIcon
+                  : icon
               }
               onClick={(event) => handleClick(event, key)}
-              title={t(
-                isCommandFolder
-                  ? "clipboard.button.context_menu.run_command"
-                  : title,
-              )}
+              title={t(title)}
             />
           );
         })}

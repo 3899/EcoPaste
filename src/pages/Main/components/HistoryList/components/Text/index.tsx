@@ -24,10 +24,27 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
     return <Marker mark={rootState.search}>{value}</Marker>;
   };
 
+  const toCssColor = (val: string): string => {
+    const cmykMatch = val.match(
+      /^cmyk\(\s*(\d+)%?\s*,\s*(\d+)%?\s*,\s*(\d+)%?\s*,\s*(\d+)%?\s*\)$/i,
+    );
+    if (cmykMatch) {
+      const c = Number(cmykMatch[1]) / 100;
+      const m = Number(cmykMatch[2]) / 100;
+      const y = Number(cmykMatch[3]) / 100;
+      const k = Number(cmykMatch[4]) / 100;
+      const r = Math.round(255 * (1 - c) * (1 - k));
+      const g = Math.round(255 * (1 - m) * (1 - k));
+      const b = Math.round(255 * (1 - y) * (1 - k));
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+    return val;
+  };
+
   const renderColor = () => {
     const className = "absolute rounded-full";
     const style: CSSProperties = {
-      background: value,
+      background: toCssColor(value),
     };
 
     return (

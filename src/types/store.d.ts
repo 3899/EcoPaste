@@ -61,7 +61,8 @@ export type OperationButton =
   | "openBrowser"
   | "previewImage"
   | "edit"
-  | "openFolder";
+  | "openFolder"
+  | "runCommand";
 
 export interface ClipboardStore {
   // 窗口设置

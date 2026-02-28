@@ -71,6 +71,12 @@ export const transferData: TransferData[] = [
     title:
       "clipboard.button.context_menu.show_in_file_explorer",
   },
+  {
+    icon: "i-lucide:terminal",
+    key: "runCommand",
+    title:
+      "clipboard.button.context_menu.run_command",
+  },
 ];
 
 const OperationButton = () => {

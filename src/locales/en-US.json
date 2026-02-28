@@ -10,6 +10,7 @@
         "favorite": "Favorite",
         "note": "Note",
         "open_in_browser": "Open in Browser",
+        "paste": "Paste",
         "paste_as_cmyk": "Convert to CMYK and Paste",
         "paste_as_hex": "Convert to HEX and Paste",
         "paste_as_path": "Paste As Path",
