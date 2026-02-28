@@ -99,6 +99,17 @@ const ClipboardSettings = () => {
 
         <ProSwitch
           description={t(
+            "preference.clipboard.content_settings.hints.enable_text_selection",
+          )}
+          onChange={(value) => {
+            clipboardStore.content.enableTextSelection = value;
+          }}
+          title={t("preference.clipboard.content_settings.label.enable_text_selection")}
+          value={content.enableTextSelection}
+        />
+
+        <ProSwitch
+          description={t(
             "preference.clipboard.content_settings.hints.auto_favorite",
           )}
           onChange={(value) => {

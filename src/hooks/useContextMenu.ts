@@ -5,11 +5,14 @@ import { openPath, openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
 import { find, isArray, remove } from "es-toolkit/compat";
 import { type MouseEvent, useContext, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { writeText } from "tauri-plugin-clipboard-x-api";
 import { useSnapshot } from "valtio";
 import { deleteHistory, updateHistory } from "@/database/history";
 import { MainContext } from "@/pages/Main";
 import type { ItemProps } from "@/pages/Main/components/HistoryList/components/Item";
 import { pasteToClipboard, writeToClipboard } from "@/plugins/clipboard";
+import { paste } from "@/plugins/paste";
+import { hideWindow } from "@/plugins/window";
 import { clipboardStore } from "@/stores/clipboard";
 import { globalStore } from "@/stores/global";
 import { isMac } from "@/utils/is";
@@ -412,7 +415,31 @@ export const useContextMenu = (props: UseContextMenuProps) => {
 
     rootState.activeId = id;
 
+    // 检测是否有选中文本
+    const selection = window.getSelection();
+    const selectedText = selection?.toString().trim() || "";
+
     const groups = buildMenuGroups();
+
+    // 如果有选中文本，在最前面插入选中操作组
+    if (selectedText) {
+      groups.unshift([
+        {
+          action: async () => {
+            await writeText(selectedText);
+          },
+          text: t("clipboard.button.context_menu.copy_selection"),
+        },
+        {
+          action: async () => {
+            await writeText(selectedText);
+            hideWindow();
+            await paste();
+          },
+          text: t("clipboard.button.context_menu.paste_selection"),
+        },
+      ]);
+    }
 
     const menu = await Menu.new();
 

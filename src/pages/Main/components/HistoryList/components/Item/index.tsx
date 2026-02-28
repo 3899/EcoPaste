@@ -18,6 +18,7 @@ import Files from "../Files";
 import Header from "../Header";
 import Image from "../Image";
 import Rtf from "../Rtf";
+import SelectionToolbar from "../SelectionToolbar";
 import Text from "../Text";
 
 export interface ItemProps {
@@ -37,6 +38,8 @@ const Item: FC<ItemProps> = (props) => {
   const expanded = rootState.expandedIds.includes(id);
   const [isOverflow, setIsOverflow] = useState(expanded);
   const contentRef = useRef<HTMLDivElement | HTMLImageElement>(null);
+  const contentContainerRef = useRef<HTMLDivElement>(null);
+  const isTextType = type === "text" || type === "rtf" || type === "html";
 
   // 检查内容是否溢出（依赖 expanded 以便收起时重新检测）
   useEffect(() => {
@@ -118,16 +121,26 @@ const Item: FC<ItemProps> = (props) => {
     handleNext,
   });
 
-  const handleClick = (type: typeof content.autoPaste) => {
-    // 检查是否有选中文本，如果有则不触发粘贴
+  const handleClick = (clickType: typeof content.autoPaste) => {
     const selection = window.getSelection();
+
+    // 双击时浏览器会自动选中一个词，需要清除选区并恢复原有的粘贴功能
+    if (clickType === "double") {
+      selection?.removeAllRanges();
+      rootState.activeId = id;
+      if (content.autoPaste !== clickType) return;
+      pasteToClipboard(data);
+      return;
+    }
+
+    // 单击时如果有拖选的文本，则不触发粘贴
     if (selection && selection.toString().length > 0) {
       return;
     }
 
     rootState.activeId = id;
 
-    if (content.autoPaste !== type) return;
+    if (content.autoPaste !== clickType) return;
 
     pasteToClipboard(data);
   };
@@ -172,7 +185,13 @@ const Item: FC<ItemProps> = (props) => {
     >
       <Header {...rest} data={data} handleNote={handleNote} handleEdit={handleEdit} />
 
-      <div className="relative flex-1 select-auto overflow-hidden break-words children:transition">
+      <div
+        ref={contentContainerRef}
+        className={clsx(
+          "relative flex-1 overflow-hidden break-words children:transition",
+          { "select-text": isTextType && content.enableTextSelection },
+        )}
+      >
         <div
           className={clsx(
             "pointer-events-none absolute inset-0 children:inline opacity-0",
@@ -204,6 +223,10 @@ const Item: FC<ItemProps> = (props) => {
         >
           {renderContent()}
         </div>
+
+        {isTextType && content.enableTextSelection && (
+          <SelectionToolbar containerRef={contentContainerRef} />
+        )}
       </div>
 
       {/* 展开/收起按钮 */}

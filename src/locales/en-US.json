@@ -3,6 +3,7 @@
     "button": {
       "context_menu": {
         "copy": "Copy",
+        "copy_selection": "Copy Selection",
         "delete": "Delete",
         "download_image": "Download Image",
         "edit": "Edit",
@@ -11,6 +12,7 @@
         "note": "Note",
         "open_in_browser": "Open in Browser",
         "paste": "Paste",
+        "paste_selection": "Paste Selection",
         "paste_as_cmyk": "Convert to CMYK and Paste",
         "paste_as_hex": "Convert to HEX and Paste",
         "paste_as_path": "Paste As Path",
@@ -134,6 +136,7 @@
         },
         "hints": {
           "auto_favorite": "Auto-favorite after adding or editing a note",
+          "enable_text_selection": "Allow selecting partial text in the clipboard window for copy / paste. Only applies to plain text, rich text, and HTML",
           "auto_paste": "Quickly paste content to the input field when using the left mouse button",
           "auto_sort": "Alignment to the top when copying existing content",
           "copy_as_plain": "Rich text and HTML formats retain only plain text content when copied",
@@ -148,6 +151,7 @@
         },
         "label": {
           "auto_favorite": "Auto Favorite",
+          "enable_text_selection": "Select Partial Text",
           "auto_paste": "Auto Paste",
           "auto_paste_double": "Double Click",
           "auto_paste_single": "Single Click",

@@ -3,6 +3,7 @@
     "button": {
       "context_menu": {
         "copy": "複製",
+        "copy_selection": "複製選取內容",
         "delete": "刪除",
         "download_image": "下載圖片",
         "edit": "編輯",
@@ -11,6 +12,7 @@
         "note": "備註",
         "open_in_browser": "在瀏覽器開啟",
         "paste": "貼上",
+        "paste_selection": "貼上選取內容",
         "paste_as_cmyk": "轉為 CMYK 並貼上",
         "paste_as_hex": "轉為 HEX 並貼上",
         "paste_as_path": "粘貼為路徑",
@@ -134,6 +136,7 @@
         },
         "hints": {
           "auto_favorite": "新增或編輯備註後自動收藏",
+          "enable_text_selection": "控制剪貼簿視窗是否支援選取部分文字，執行複製 / 貼上操作，僅對純文字、富文字、HTML 生效",
           "auto_paste": "當使用滑鼠左鍵時，快速將內容貼上到輸入位置",
           "auto_sort": "複製已存在的內容時排列到最前面",
           "copy_as_plain": "富文字和HTML格式在複製時僅保留純文字內容",
@@ -148,6 +151,7 @@
         },
         "label": {
           "auto_favorite": "自動收藏",
+          "enable_text_selection": "文字片段選取",
           "auto_paste": "自動貼上",
           "auto_paste_double": "雙擊",
           "auto_paste_single": "按一下",

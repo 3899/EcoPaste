@@ -10,6 +10,7 @@ export const clipboardStore = proxy<ClipboardStore>({
     recordSourceApp: true,
     enableCodeHighlighting: true,
     autoFavorite: false,
+    enableTextSelection: true,
     autoPaste: "double",
     autoSort: false,
     copyPlain: false,

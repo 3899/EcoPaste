@@ -85,6 +85,12 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
 ### M04.x <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
 
+#### M04.4
+
+##### ✨ New Features
+- **✂️ Support for Text Snippet Selection**: You can select specific text snippets within the clipboard window and quickly perform "Copy / Paste" operations using the auto-popping floating toolbar or enhanced context menu. Supports `Plain Text`, `Rich Text`, and `HTML` types.
+- **🔛 Text Snippet Selection Toggle**: You can independently enable or disable partial text selection as needed (Preferences → Content Settings → Text Snippet Selection).
+
 #### M04.3
 
 ##### ✨ New Features

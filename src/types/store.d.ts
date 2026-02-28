@@ -94,6 +94,7 @@ export interface ClipboardStore {
     pastePlain: boolean;
     operationButtons: OperationButton[];
     autoFavorite: boolean;
+    enableTextSelection: boolean;
     deleteConfirm: boolean;
     autoSort: boolean;
     showOriginalContent: boolean;
