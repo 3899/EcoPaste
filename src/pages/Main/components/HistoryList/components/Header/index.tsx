@@ -6,7 +6,6 @@ import { filesize } from "filesize";
 import { type FC, type MouseEvent, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useSnapshot } from "valtio";
-import Scrollbar from "@/components/Scrollbar";
 import UnoIcon from "@/components/UnoIcon";
 import { MainContext } from "@/pages/Main";
 import { transferData } from "@/pages/Preference/components/Clipboard/components/OperationButton";
@@ -66,6 +65,7 @@ const Header: FC<HeaderProps> = (props) => {
       else if (lang === "css") displayLang = "CSS";
       else if (lang === "json") displayLang = "JSON";
       else if (lang === "sql") displayLang = "SQL";
+      else if (lang === "svg") displayLang = "SVG";
 
       return t("clipboard.label.code", { replace: [displayLang] });
     }
@@ -101,11 +101,7 @@ const Header: FC<HeaderProps> = (props) => {
 
     const { width, height } = data;
 
-    return (
-      <span>
-        {width}×{height}
-      </span>
-    );
+    return `${width}×${height}`;
   };
 
   const handleClick = (event: MouseEvent, key: OperationButton) => {
@@ -160,42 +156,48 @@ const Header: FC<HeaderProps> = (props) => {
     }
   };
 
+  const fullTextInfo = [
+    data.sourceAppName,
+    renderType(),
+    renderCount(),
+    renderPixel(),
+    dayjs(createTime).format("YY/M/D H:mm")
+  ].filter(Boolean).join(" · ");
+
+  const timeDisplay = dayjs().diff(dayjs(createTime), "days") > 3
+    ? dayjs(createTime).format("YY/M/D H:mm")
+    : dayjs(createTime).locale(i18n.language).fromNow();
+
   return (
-    <Flex
-      align="center"
-      className="text-color-2"
-      gap="small"
-      justify="space-between"
-    >
-      <Scrollbar thumbSize={0}>
-        <Flex
-          align="center"
-          className="flex-1 whitespace-nowrap text-[11px]"
-          gap="small"
-        >
-          {data.sourceAppIcon && (
-            <img
-              alt={data.sourceAppName}
-              className="h-3.5 w-3.5 rounded-sm object-contain"
-              src={data.sourceAppIcon}
-              title={data.sourceAppName}
-            />
-          )}
-          {!data.sourceAppIcon && data.sourceAppName && (
-            <span className="text-12 opacity-70" title={data.sourceAppName}>
-              [{data.sourceAppName}]
-            </span>
-          )}
-          <span>{renderType()}</span>
-          <span>{renderCount()}</span>
-          {renderPixel()}
-          <span>{dayjs(createTime).locale(i18n.language).fromNow()}</span>
-        </Flex>
-      </Scrollbar>
+    <div className="relative text-color-2 h-[22px] flex items-center">
+      <div 
+        className="flex-1 overflow-hidden whitespace-nowrap text-[11px] flex items-center gap-2"
+        title={fullTextInfo}
+      >
+        {data.sourceAppIcon && (
+          <img
+            alt={data.sourceAppName}
+            className="h-3.5 w-3.5 rounded-sm object-contain flex-shrink-0"
+            src={data.sourceAppIcon}
+            title={data.sourceAppName}
+          />
+        )}
+        {!data.sourceAppIcon && data.sourceAppName && (
+          <span className="text-12 opacity-70 flex-shrink-0" title={data.sourceAppName}>
+            [{data.sourceAppName}]
+          </span>
+        )}
+        <span className="flex-shrink-0">{renderType()}</span>
+        <span className="flex-shrink-0">{renderCount()}</span>
+        {renderPixel() && <span className="flex-shrink-0">{renderPixel()}</span>}
+        <span className="truncate">{timeDisplay}</span>
+      </div>
 
       <Flex
         align="center"
-        className={clsx("opacity-0 transition group-hover:opacity-100", {
+        className={clsx("absolute right-0 pl-2 opacity-0 transition group-hover:opacity-100", {
+          "bg-primary-1": rootState.activeId === id,
+          "bg-color-1": rootState.activeId !== id,
           "opacity-100": rootState.activeId === id,
         })}
         gap={6}
@@ -242,7 +244,7 @@ const Header: FC<HeaderProps> = (props) => {
           );
         })}
       </Flex>
-    </Flex>
+    </div>
   );
 };
 

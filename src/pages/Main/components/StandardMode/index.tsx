@@ -4,15 +4,18 @@ import { useSnapshot } from "valtio";
 import UnoIcon from "@/components/UnoIcon";
 import { showWindow } from "@/plugins/window";
 import { clipboardStore } from "@/stores/clipboard";
+import { useTranslation } from "react-i18next";
 import { isLinux, isWin } from "@/utils/is";
 import GroupList from "../GroupList";
 import HistoryList from "../HistoryList";
 import SearchInput from "../SearchInput";
 import WindowPin from "../WindowPin";
 import FavoriteToggle from "../FavoriteToggle";
+import DateFilter from "../DateFilter";
 
 const StandardMode = () => {
   const { search } = useSnapshot(clipboardStore);
+  const { t } = useTranslation();
 
   return (
     <Flex
@@ -25,7 +28,20 @@ const StandardMode = () => {
       gap={12}
       vertical
     >
-      <SearchInput className="mx-3" />
+      <Flex align="center" gap={12} className="px-3">
+        <SearchInput className="flex-1" />
+        <Flex align="center" className="text-color-2 text-lg" gap={12}>
+          <WindowPin />
+          <UnoIcon
+            hoverable
+            name="i-lets-icons:setting-alt-line"
+            onClick={() => {
+              showWindow("preference");
+            }}
+            title={t("clipboard.button.setting")}
+          />
+        </Flex>
+      </Flex>
 
       <Flex
         className="flex-1 overflow-hidden"
@@ -41,18 +57,9 @@ const StandardMode = () => {
         >
           <GroupList />
 
-          <Flex align="center" className="text-color-2 text-lg" gap={12}>
+          <Flex align="center" className="text-color-2 text-lg" gap={10}>
             <FavoriteToggle />
-            
-            <WindowPin />
-
-            <UnoIcon
-              hoverable
-              name="i-lets-icons:setting-alt-line"
-              onClick={() => {
-                showWindow("preference");
-              }}
-            />
+            <DateFilter />
           </Flex>
         </Flex>
 

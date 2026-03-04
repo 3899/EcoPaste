@@ -68,7 +68,7 @@ export interface ClipboardStore {
   // 窗口设置
   window: {
     style: "standard" | "dock";
-    position: "remember" | "follow" | "center" | "caret";
+    position: "remember" | "follow" | "center";
     backTop: boolean;
     showAll: boolean;
   };

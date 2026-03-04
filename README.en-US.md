@@ -83,6 +83,29 @@ Installation Guide: [Click here](https://ecopaste.cn/guide/install#linux)
 
 > This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) with the following usability improvements and update history:
 
+### M05.0 <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
+
+#### ✨ New Features
+- **📅 Multi-Dimensional Filtering**: Added combined "Date + Content Type" multi-dimensional filtering. Click the funnel icon at the top to open the filter panel. Supports three independent date filter modes — by day, by month, and custom date range — along with multi-select for 12 content type tags, enabling efficient and precise content inspection.
+- **🧩 Code (SVG) Smart Detection**: Added intelligent SVG formatted content recognition at the code level, leveraging "regex pre-screening of component skeleton + DOMParser XML structure parsing" dual validation for security, with SVG results categorized under the explicit `Code (SVG)` label.
+- **📌 Detail-Level Global Tooltip**: Hovering over any text area in a content item's header reveals comprehensive core attributes including source app, content type, character count (file size / resolution), creation time, and more for convenient detail inspection.
+
+#### 💫 UX Optimization
+- **📝 Adaptive Precise Time Display**: Refactored clipboard history time display logic. When relative time (e.g., "3 days ago") exceeds 3 days, it automatically switches to the `YY/M/D H:mm` absolute time format for clearer and more informative time tracing.
+- **🧹 Top Controls Layout Reorganization**: Optimized the top layout of the search floating window by narrowing the search input width and front-loading the "Pin/Unpin" and "Preferences" action button groups for significantly improved access to high-frequency operations.
+- **🏗️ Focus Management Full Rollback**: The "No-Focus Silent Window" and "Window Follows Caret Position" features have been fully reverted to the original v0.6.0-beta.3 implementation, removing the background polling threads and additional mount interfaces that relied heavily on the Win32 API, and restoring the main window's native focus capture mechanism.
+
+#### 🐞 Bug Fixes
+- **🚀 Group Switch on Activation Failure**: Completely resolved the issue where the "Preferences → Clipboard → Switch to All Groups on Window Activation" setting failed to take effect, ensuring the app strictly follows user-defined group rules upon activation.
+- **📰 Composite Code Misclassification**: Completely fixed a priority override vulnerability where copying mixed "plain text code + HTML rich text semantics" fragments from IDEs or web pages caused content to be forcibly classified as `HTML` hypertext type, ensuring accurate recognition and classification of copied code.
+- **🌐 HTML Code Misclassification**: Refactored the underlying HTML detection logic with regex compatibility for declaration headers and case-insensitive scenarios, completely resolving misclassification caused by skeleton validation failures and significantly improving detection accuracy.
+- **📝 Markdown Misclassification**: Completely refactored the Markdown detection logic, upgrading to a composite intelligent engine with "core syntax positive weighting + illegal feature negative penalty + strict prefix boundary validation", effectively resolving issues where JS and other code snippets were misidentified as Markdown.
+- **📋 JavaScript Code Misclassification**: Refactored the underlying code language detection engine, elevating JavaScript detection to the highest priority with targeted strong feature keywords for frontend build artifacts. Removed generic operators (`<<`, `>>`) from C++ detection rules that conflicted with JS shift operations, and added a JS feature "reverse kill" validation mechanism, completely resolving the persistent issue of obfuscated/minified frontend JS production code being misidentified as "Code (C++)".
+- **🗑️ Legacy Garbage Cleanup**: Performed deep comparison and thorough cleanup of residual temporary files from deprecated mounts, eliminating redundant data interference with future feature refactoring from the root.
+
+#### 🐞 Upstream Bug Fixes
+- **👁️ Full-Width Item Header Release**: Removed the original UI behavior of forcibly reserving fixed width for invisible action buttons on the right side. In unselected state, the record header attribute bar now achieves 100% full-width display, providing more content space and more complete information presentation.
+
 ### M04.x <font size="-2" color="gray">(Based on original v0.6.0-beta.3 branch)</font>
 
 #### M04.6

@@ -5,21 +5,14 @@ import { PhysicalPosition, PhysicalSize } from "@tauri-apps/api/window";
 import { LISTEN_KEY, WINDOW_LABEL } from "@/constants";
 import { clipboardStore } from "@/stores/clipboard";
 import type { WindowLabel } from "@/types/plugin";
-
+import { isLinux } from "@/utils/is";
 import { getCursorMonitor } from "@/utils/monitor";
 
 const COMMAND = {
   HIDE_WINDOW: "plugin:eco-window|hide_window",
   SHOW_TASKBAR_ICON: "plugin:eco-window|show_taskbar_icon",
   SHOW_WINDOW: "plugin:eco-window|show_window",
-  GET_CARET_POSITION: "plugin:eco-window|get_caret_position",
 };
-
-interface CaretPosition {
-  x: number;
-  y: number;
-  success: boolean;
-}
 
 /**
  * 显示窗口
@@ -45,10 +38,13 @@ export const hideWindow = () => {
 export const toggleWindowVisible = async () => {
   const appWindow = getCurrentWebviewWindow();
 
-  // 使用 isVisible() 判断窗口状态，因为不夺焦模式下 isFocused() 始终为 false
-  const visible = await appWindow.isVisible();
+  let focused = await appWindow.isFocused();
 
-  if (visible) {
+  if (isLinux) {
+    focused = await appWindow.isVisible();
+  }
+
+  if (focused) {
     return hideWindow();
   }
 
@@ -76,23 +72,6 @@ export const toggleWindowVisible = async () => {
         if (window.position === "follow") {
           x = Math.min(x, position.x + size.width - width);
           y = Math.min(y, position.y + size.height - height);
-        } else if (window.position === "caret") {
-          // 跟随输入光标位置
-          try {
-            const caretPos = await invoke<CaretPosition>(COMMAND.GET_CARET_POSITION);
-            if (caretPos.success && caretPos.x > 0 && caretPos.y > 0) {
-              x = Math.min(caretPos.x, position.x + size.width - width);
-              y = Math.min(caretPos.y + 20, position.y + size.height - height); // +20 偏移避免遮挡光标
-            } else {
-              // 获取失败时回退到跟随鼠标
-              x = Math.min(x, position.x + size.width - width);
-              y = Math.min(y, position.y + size.height - height);
-            }
-          } catch {
-            // 获取失败时回退到跟随鼠标
-            x = Math.min(x, position.x + size.width - width);
-            y = Math.min(y, position.y + size.height - height);
-          }
         } else {
           x = position.x + (size.width - width) / 2;
           y = position.y + (size.height - height) / 2;

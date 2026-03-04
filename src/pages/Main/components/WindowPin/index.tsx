@@ -1,7 +1,6 @@
 import { useKeyPress } from "ahooks";
 import clsx from "clsx";
-import { useContext, useEffect } from "react";
-import { listen } from "@tauri-apps/api/event";
+import { useContext } from "react";
 import UnoIcon from "@/components/UnoIcon";
 import { PRESET_SHORTCUT } from "@/constants";
 import { useTauriFocus } from "@/hooks/useTauriFocus";
@@ -22,22 +21,6 @@ const WindowPin = () => {
       hideWindow();
     },
   });
-
-  // 监听窗口外点击事件（不夺焦模式下的自动隐藏）
-  useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    listen("clipboard-outside-click", () => {
-      if (rootState.pinned) return;
-      hideWindow();
-    }).then((unlisten) => {
-      cleanup = unlisten;
-    });
-
-    return () => {
-      cleanup?.();
-    };
-  }, []);
 
   const togglePin = () => {
     rootState.pinned = !rootState.pinned;

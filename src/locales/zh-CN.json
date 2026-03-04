@@ -24,7 +24,10 @@
         "show_in_finder": "在 Finder 中显示",
         "run_command": "运行",
         "unfavorite": "取消收藏"
-      }
+      },
+      "pin": "置顶",
+      "unpin": "取消置顶",
+      "setting": "设置"
     },
     "hints": {
       "delete_modal_content": "确定要删除此项吗？",
@@ -216,7 +219,6 @@
           "back_top": "激活时回到顶部",
           "show_all": "激活时切换至全部分组",
           "window_position": "窗口位置",
-          "window_position_caret": "跟随光标",
           "window_position_center": "屏幕中心",
           "window_position_follow": "跟随鼠标",
           "window_position_remember": "记住位置"

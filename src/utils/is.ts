@@ -123,24 +123,34 @@ export const isBlank = (value: unknown) => {
 
 /**
  * 是否为 Markdown 内容
- * 通过使用分值权重系统来检测多种 Markdown 语法特征
+ * 通过使用分值权重系统和负向惩罚机制来检测多种 Markdown 语法特征
  */
-export const isMarkdown = (value: string, threshold = 30) => {
+export const isMarkdown = (value: string, threshold = 35) => {
   if (!value || typeof value !== "string" || value.length < 5) return false;
 
-  // 核心语法及其权重
+  // 1. 负面特征检测 (Negative Constraints)
+  let codePenalty = 0;
+  
+  const braceBlocks = (value.match(/\{[\s\S]{1,50}?\}/g) || []).length;
+  const semicolons = (value.match(/;\s*$/gm) || []).length;
+  const jsKeywords = (value.match(/\b(function|var|const|let|return|define|exports)\b/g) || []).length;
+  
+  const totalCodeHits = braceBlocks + semicolons + jsKeywords;
+  if (totalCodeHits > 10) {
+    codePenalty = totalCodeHits * 5;
+  }
+
+  // 2. 核心语法及其权重
   const patterns = [
-    { name: "headers", pattern: /^#{1,6}\s+.+/gm, weight: 30 },
-    { name: "unordered_list", pattern: /^\s*[*+-]\s+.+/gm, weight: 20 },
-    { name: "ordered_list", pattern: /^\s*\d+\.\s+.+/gm, weight: 20 },
-    { name: "fenced_code", pattern: /```[\s\S]*?```/g, weight: 35 },
-    { name: "inline_code", pattern: /`[^`\n]+`/g, weight: 10 },
-    { name: "links", pattern: /\[.+?\]\(.+?\)/g, weight: 25 },
-    { name: "images", pattern: /!\[.+?\]\(.+?\)/g, weight: 25 },
-    { name: "emphasis", pattern: /(\*\*|__|\*|_).+?(\*\*|__|\*|_)/g, weight: 10 },
+    { name: "headers", pattern: /^#{1,6}\s+[^\n]+/gm, weight: 30 },
+    { name: "unordered_list", pattern: /^\s*[*+-]\s+[^\n]{1,200}$/gm, weight: 20 },
+    { name: "ordered_list", pattern: /^\s*\d+\.\s+[^\n]{1,200}$/gm, weight: 20 },
+    { name: "fenced_code", pattern: /^```[a-zA-Z0-9]*\s*[\s\S]+?^```/gm, weight: 40 },
+    { name: "links", pattern: /(?:^|[^a-zA-Z0-9_$])\[[^\]\n]+\]\([^\s)(]+\)/g, weight: 25 },
+    { name: "images", pattern: /!\[[^\]\n]*\]\([^\s)(]+\)/g, weight: 25 },
+    { name: "emphasis", pattern: /(?<![a-zA-Z0-9_])(\*\*|__)[^\s].+?[^\s]\1(?![a-zA-Z0-9_])/g, weight: 10 },
     { name: "blockquote", pattern: /^>\s+.+/gm, weight: 15 },
-    { name: "hr", pattern: /^-{3,}\s*$/gm, weight: 10 },
-    { name: "tables", pattern: /\|.+\|.+\|/g, weight: 25 },
+    { name: "table_separator", pattern: /^\|?(?:\s*:?-{3,}:?\s*\|)+\s*:?-{3,}:?\s*\|?$/gm, weight: 40 },
   ];
 
   let totalScore = 0;
@@ -155,6 +165,10 @@ export const isMarkdown = (value: string, threshold = 30) => {
     }
   }
 
+  // 计算最终得分
+  const finalScore = totalScore - codePenalty;
+
   // 结果判定
-  return totalScore >= threshold;
+  return finalScore >= threshold;
 };
+

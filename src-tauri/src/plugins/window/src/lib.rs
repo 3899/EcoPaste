@@ -13,9 +13,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .invoke_handler(generate_handler![
             commands::show_window,
             commands::hide_window,
-            commands::show_taskbar_icon,
-            commands::get_caret_position
+            commands::show_taskbar_icon
         ])
         .build()
 }
-

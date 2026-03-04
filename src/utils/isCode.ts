@@ -91,8 +91,59 @@ const isNaturalLanguage = (text: string): boolean => {
 	return ratio > 0.3;
 };
 
+const isSVG = (value: string) => {
+	const cleanStr = value.trim();
+	if (cleanStr.length < 6) return false;
+
+	const svgRegex = /^(?:<\?xml[^>]*\?>\s*)?(?:<!doctype svg[^>]*>\s*)?(?:\s*)*<svg[^>]*>(?:[\s\S]*<\/svg>)?\s*$/i;
+	const isBasicSkeleton = svgRegex.test(cleanStr) && (cleanStr.endsWith("</svg>") || cleanStr.endsWith("/>"));
+
+	if (!isBasicSkeleton) return false;
+
+	if (typeof DOMParser !== "undefined") {
+		try {
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(cleanStr, "image/svg+xml");
+			const parserError = doc.getElementsByTagName("parsererror");
+			if (parserError.length > 0) return false;
+			return doc.documentElement.nodeName.toLowerCase() === "svg";
+		} catch {
+			return false;
+		}
+	}
+
+	return true;
+};
+
 const quickLanguageDetection = (text: string): string | undefined => {
 	const lower = text.toLowerCase();
+
+	// JavaScript (Moved to the top because it's the most common and to prevent minified JS bitwise operators from triggering C++ first)
+	if (
+		containsMultiple(
+			text,
+			[
+				"function ",
+				"const ",
+				"let ",
+				"var ",
+				"console.log",
+				"=>",
+				"import ",
+				"export ",
+				"webpackJsonp",
+				"__webpack_require__",
+				"prototype.",
+				"Object.assign",
+				"Object.create",
+				"Object.keys",
+			],
+			2,
+		) &&
+		!lower.includes("class main")
+	) {
+		return "javascript";
+	}
 
 	// C++
 	if (
@@ -102,10 +153,11 @@ const quickLanguageDetection = (text: string): string | undefined => {
 				"int main",
 				"cout",
 				"cin",
-				"<<",
-				">>",
+				"std::",
 				"using namespace std",
 				"#include",
+				"nullptr",
+				"template<",
 			],
 			2,
 		) ||
@@ -117,6 +169,10 @@ const quickLanguageDetection = (text: string): string | undefined => {
 		(containsMultiple(text, ["#include", "using namespace", "std::"], 2) &&
 			containsMultiple(text, ["int", "main"], 2))
 	) {
+		// Prevent minified JS from being detected as C++ if it has var/function
+		if (containsMultiple(text, ["function", "var", "const", "let"], 2)) {
+			return "javascript";
+		}
 		return "cpp";
 	}
 
@@ -150,27 +206,6 @@ const quickLanguageDetection = (text: string): string | undefined => {
 		!lower.includes("function")
 	) {
 		return "python";
-	}
-
-	// JavaScript
-	if (
-		containsMultiple(
-			text,
-			[
-				"function ",
-				"const ",
-				"let ",
-				"var ",
-				"console.log",
-				"=>",
-				"import ",
-				"export ",
-			],
-			2,
-		) &&
-		!lower.includes("class main")
-	) {
-		return "javascript";
 	}
 
 	// TypeScript
@@ -298,10 +333,15 @@ export const detectCode = (
 		}
 	}
 
+	// SVG
+	if (isSVG(trimmed)) {
+		return { isCode: true, language: "svg" };
+	}
+
 	// HTML
 	if (trimmed.startsWith("<")) {
 		if (
-			/^<\s*(html|head|body|div|script|style|link|meta|span|p|h[1-6])[\s>]/.test(
+			/^<\s*(!doctype|html|head|body|div|script|style|link|meta|span|p|h[1-6])[\s>]/i.test(
 				trimmed,
 			)
 		) {

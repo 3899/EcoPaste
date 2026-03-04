@@ -4,6 +4,8 @@ import { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Scrollbar from "@/components/Scrollbar";
 import UnoIcon from "@/components/UnoIcon";
+import { useTauriFocus } from "@/hooks/useTauriFocus";
+import { clipboardStore } from "@/stores/clipboard";
 import type { DatabaseSchemaGroup } from "@/types/database";
 import { scrollElementToCenter } from "@/utils/dom";
 import { MainContext } from "../..";
@@ -15,6 +17,14 @@ const GroupList = () => {
   useEffect(() => {
     scrollElementToCenter(rootState.group);
   }, [rootState.group]);
+
+  useTauriFocus({
+    onBlur() {
+      if (clipboardStore.window.showAll) {
+        rootState.group = "all";
+      }
+    },
+  });
 
   const presetGroups: (DatabaseSchemaGroup & { icon: string })[] = [
     {

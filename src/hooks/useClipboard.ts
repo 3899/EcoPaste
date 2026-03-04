@@ -91,24 +91,40 @@ export const useClipboard = (
         });
       }
 
-      // 后置检查：若被分类为 html 但纯文本匹配 Windows 路径/指令模式，则覆盖为 text
+      // 后置检查：若被分类为 html 但纯文本匹配 Windows 路径/指令/代码模式，则覆盖为 text
       if (data.type === "html" && text) {
         const trimmedText = text.value.replace(/[\u00A0\u200B\uFEFF]/g, ' ').trim();
+        let rescuedAsText = false;
+        
         if (!trimmedText.includes('\n')) {
           const { isWin } = await import("@/utils/is");
           if (isWin) {
             const { isWinPathOrCommand } = await import("@/utils/winPaths");
             if (isWinPathOrCommand(trimmedText)) {
-              const subtype = await getClipboardTextSubtype(trimmedText);
-              Object.assign(data, text, { 
-                type: "text", 
-                html: undefined, 
-                subtype, 
-                value: trimmedText, 
-                search: trimmedText 
-              });
+              rescuedAsText = true;
             }
           }
+        }
+
+        // 尝试代码检测 (救回从IDE复制的带高亮的HTML代码块)
+        if (!rescuedAsText) {
+          const { detectCode } = await import("@/utils/isCode");
+          const codeDetect = detectCode(trimmedText);
+          if (codeDetect.isCode && codeDetect.language) {
+            rescuedAsText = true;
+            // 稍后统一赋值，这里只需要知道可以被拯救
+          }
+        }
+
+        if (rescuedAsText) {
+          const subtype = await getClipboardTextSubtype(trimmedText);
+          Object.assign(data, text, { 
+            type: "text", 
+            html: undefined, 
+            subtype, 
+            value: trimmedText, 
+            search: trimmedText 
+          });
         }
       }
 

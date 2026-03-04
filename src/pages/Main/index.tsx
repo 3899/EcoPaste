@@ -43,6 +43,8 @@ export interface State {
   eventBus?: EventEmitter<EventBusPayload>;
   quickPasteKeys: string[];
   expandedIds: string[];
+  dateRange?: [number, number];
+  filterTags?: string[];
 }
 
 const INITIAL_STATE: State = {

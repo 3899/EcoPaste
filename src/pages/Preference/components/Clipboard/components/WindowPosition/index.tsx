@@ -28,12 +28,6 @@ const WindowPosition = () => {
     },
     {
       label: t(
-        "preference.clipboard.window_settings.label.window_position_caret",
-      ),
-      value: "caret",
-    },
-    {
-      label: t(
         "preference.clipboard.window_settings.label.window_position_center",
       ),
       value: "center",

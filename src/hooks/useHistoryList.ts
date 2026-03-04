@@ -8,6 +8,7 @@ import { selectHistory } from "@/database/history";
 import { MainContext } from "@/pages/Main";
 import { isBlank } from "@/utils/is";
 import { getSaveImagePath, join } from "@/utils/path";
+import { dayjs } from "@/utils/dayjs";
 import { useTauriListen } from "./useTauriListen";
 
 interface Options {
@@ -37,7 +38,7 @@ export const useHistoryList = (options: Options) => {
 
       const list = await selectHistory((qb) => {
         const { size } = state;
-        const { group, search } = rootState;
+        const { group, search, dateRange, filterTags } = rootState;
         const isFavoriteGroup = group === "favorite";
         const isLinksGroup = group === "links";
         const isColorsGroup = group === "colors";
@@ -47,10 +48,40 @@ export const useHistoryList = (options: Options) => {
           && !isFavoriteGroup
           && !isLinksGroup
           && !isColorsGroup
-          && !isEmailGroup
           && !isCodeGroup;
 
         return qb
+          .$if(!!dateRange, (eb) => {
+            return eb.where((eb) => eb.or([
+              eb.and([
+                eb("createTime", ">=", dayjs(dateRange![0]).format("YYYY-MM-DD HH:mm:ss")),
+                eb("createTime", "<=", dayjs(dateRange![1]).format("YYYY-MM-DD HH:mm:ss"))
+              ]),
+              eb.and([
+                eb("createTime", ">=", String(dateRange![0])),
+                eb("createTime", "<=", String(dateRange![1]))
+              ])
+            ]));
+          })
+          .$if(!!filterTags && filterTags.length < 12, (eb) => {
+            return eb.where((eb) => {
+              const conditions: any[] = [];
+              if (filterTags!.includes("text")) conditions.push(eb.and([eb("type", "=", "text"), eb("subtype", "is", null)]));
+              if (filterTags!.includes("rtf")) conditions.push(eb("type", "=", "rtf"));
+              if (filterTags!.includes("html")) conditions.push(eb("type", "=", "html"));
+              if (filterTags!.includes("image")) conditions.push(eb("type", "=", "image"));
+              if (filterTags!.includes("url")) conditions.push(eb("subtype", "=", "url"));
+              if (filterTags!.includes("code")) conditions.push(eb("subtype", "like", "code_%"));
+              if (filterTags!.includes("markdown")) conditions.push(eb("subtype", "=", "markdown"));
+              if (filterTags!.includes("path")) conditions.push(eb("subtype", "=", "path"));
+              if (filterTags!.includes("email")) conditions.push(eb("subtype", "=", "email"));
+              if (filterTags!.includes("color")) conditions.push(eb("subtype", "=", "color"));
+              if (filterTags!.includes("command")) conditions.push(eb("subtype", "=", "command"));
+              if (filterTags!.includes("files")) conditions.push(eb("type", "=", "files"));
+
+              return eb.or(conditions);
+            });
+          })
           .$if(isFavoriteGroup, (eb) => eb.where("favorite", "=", true))
           .$if(isLinksGroup, (eb) => eb.where("subtype", "in", ["url", "path"]))
           .$if(isColorsGroup, (eb) => eb.where("subtype", "=", "color"))
@@ -129,7 +160,7 @@ export const useHistoryList = (options: Options) => {
     await reload();
 
     rootState.activeId = rootState.list[0]?.id;
-  }, [rootState.group, rootState.search]);
+  }, [rootState.group, rootState.search, rootState.dateRange, rootState.filterTags]);
 
   return {
     loadMore,

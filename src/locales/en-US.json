@@ -24,7 +24,10 @@
         "show_in_finder": "Show in Finder",
         "run_command": "Run",
         "unfavorite": "Unfavorite"
-      }
+      },
+      "pin": "Pin",
+      "unpin": "Unpin",
+      "setting": "Settings"
     },
     "hints": {
       "delete_modal_content": "Are you sure you want to delete this?",
@@ -212,7 +215,6 @@
           "back_top": "Back to top when activated",
           "show_all": "Switch to all group when activated",
           "window_position": "Window Position",
-          "window_position_caret": "Follow Input Caret",
           "window_position_center": "Center on Screen",
           "window_position_follow": "Follow Mouse Cursor",
           "window_position_remember": "Remember Position"
