@@ -67,11 +67,11 @@
   </picture>
 </div>
 
-## ℹ️ Branch Information
+## 🌟 Branch Information
 
 > This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste). Building upon the official release, it restructures and introduces advanced features such as cross-device data synchronization, secure WebDAV cloud backup for data assets, and panoramic storage statistics. Additionally, it comprehensively enhances the intelligent content classification engine and the immersive experience of daily interactions.
 
-## Download
+## 📥 Download Links
 
 ### 🔗 Official Version
 - 🌐 GitHub Repository: [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste)
@@ -80,8 +80,11 @@
 
 ### 🔗 This Fork
 - 📥 Latest Version: [Download Latest Build from Releases](https://github.com/3899/EcoPaste/releases/latest)
+- 📚 Mobile Data Sync Guide
+  - [Android Sync Configuration Guide](docs/Android/README.md) (Providing complete setup files using Tasker as an example. Users of MacroDroid and other automation software can seamlessly adapt this logic to write their own configurations)
+  - iPhone Sync Configuration Guide (WIP, to be supplemented...)
 
-## Features
+## 📖 Features
 
 - 🎉 Built with Tauri v2, lightweight and efficient, taking cross-platform experience to the next level.
 - 💻 Compatible with Windows, macOS, and Linux (X11), enabling seamless switching between devices.

@@ -67,11 +67,11 @@
   </picture>
 </div>
 
-## ℹ️ 分支说明
+## 🌟 分支说明
 
 > 本仓库是 [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) 的 Fork 版本，在官方原版基础上，重构并新增了跨设备数据同步、WebDAV 云端数据资产安全备份、全景存储统计等多项高级功能，同时全面增强了剪贴板内容的智能分类识别引擎与日常交互的沉浸式体验。
 
-## 下载
+## 📥 下载链接
 
 ### 🔗 官方原版
 - 🌐 GitHub 主页：[EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste)
@@ -80,9 +80,11 @@
 
 ### 🔗 本 Fork 分支
 - 📥 最新版本: [前往 Releases 下载最新构建程序包](https://github.com/3899/EcoPaste/releases/latest)
+- 📚 移动端数据同步指南
+  - [Android 同步配置指南](docs/Android/README.md)（以 Tasker 为例提供完整配套文件，使用 MacroDroid 等自动化软件的用户完全可参考其逻辑举一反三自行编写）
+  - iPhone 同步配置指南（整理中，待补充...）
 
-
-## 功能介绍
+## 📖 功能介绍
 
 - 🎉 基于 Tauri v2 开发，轻量高效，跨平台体验更进一步。
 - 💻 支持 Windows、macOS 和 Linux（x11），在多设备间无缝切换。

@@ -67,11 +67,11 @@
   </picture>
 </div>
 
-## ℹ️ ブランチの説明
+## 🌟 ブランチの説明
 
 > 本リポジトリは [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) の Fork 版です。公式のオリジナル版を基に、クロスデバイスのデータ同期、WebDAV クラウドデータ資産の安全なバックアップ、パノラマストレージ統計などの多数の高度な機能を再構築および追加しました。同時に、クリップボードコンテンツのインテリジェントな分類・認識エンジンと日常のインタラクションの没入型体験を全面的に強化しています。
 
-## ダウンロード
+## 📥 ダウンロードリンク
 
 ### 🔗 公式オリジナル版
 - 🌐 GitHub トップページ：[EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste)
@@ -80,8 +80,11 @@
 
 ### 🔗 当 Fork ブランチ
 - 📥 最新バージョン: [Releases から最新ビルドをダウンロード](https://github.com/3899/EcoPaste/releases/latest)
+- 📚 モバイル端データ同期ガイド
+  - [Android 同期設定ガイド](docs/Android/README.md)（Tasker を例として完全な設定ファイルを提供しています。MacroDroid などの自動化ソフトウェアを利用しているユーザーも、このロジックを参考に独自の構成を簡単に作成できます）
+  - iPhone 同期設定ガイド（作成中、後日追加予定...）
 
-## 機能紹介
+## 📖 機能紹介
 
 - 🎉 Tauri v2 をもとに開発、軽量で効率的、クロスプラットフォームの体験をさらに向上させる。
 - 💻 Windows、macOS、Linux（x11）とも対応でき、複数デバイス間でシームレスに切り替え可能である。
