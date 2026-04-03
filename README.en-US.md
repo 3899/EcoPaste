@@ -67,11 +67,11 @@
   </picture>
 </div>
 
-## ℹ️ Branch Information
+## 🌟 Branch Information
 
 > This repository is a fork of [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste). Building upon the official release, it restructures and introduces advanced features such as cross-device data synchronization, secure WebDAV cloud backup for data assets, and panoramic storage statistics. Additionally, it comprehensively enhances the intelligent content classification engine and the immersive experience of daily interactions.
 
-## Download
+## 📥 Download Links
 
 ### 🔗 Official Version
 - 🌐 GitHub Repository: [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste)
@@ -79,9 +79,12 @@
 - 📚 Documentation: [EcoPaste Website](https://ecopaste.cn/)
 
 ### 🔗 This Fork
-- 📥 Latest Version: [Download Latest Build from Releases](https://github.com/3899/EcoPaste/releases/latest)
+- 📥 Latest Version: [Download Latest Build from Releases](https://github.com/3899/EcoPaste-Pro/releases/latest)
+- 📚 Mobile Data Sync Guide
+  - [Android Sync Configuration Guide](docs/Android/README.md) (Providing complete setup files using Tasker as an example. Users of MacroDroid and other automation software can seamlessly adapt this logic to write their own configurations)
+  - iPhone Sync Configuration Guide (WIP, to be supplemented...)
 
-## Features
+## 📖 Features
 
 - 🎉 Built with Tauri v2, lightweight and efficient, taking cross-platform experience to the next level.
 - 💻 Compatible with Windows, macOS, and Linux (X11), enabling seamless switching between devices.
@@ -100,7 +103,7 @@
 #### Pro.5.4
 
 ##### ✨ New Features
-- **🔄 Lightweight Data Sync Module**: Added a "Data Sync" entry in preferences, divided into "Push Data" and "Receive Data" modules.
+- **🔄 Lightweight Data Sync Module**: Added a "Data Sync" entry in preferences, divided into three modules: "Base Configuration / Push Data / Receive Data".
 - **📤 Active Push from Main UI**: Added a "Push" option to the item header actions, right-click context menu, and preference action buttons. Supports explicitly pushing a single clipboard item to external devices.
 - **⚙️ Auto-Push Strategies**: Supports three modes: "Off / Favorites Only / Custom Tags". The "Favorites Only" mode auto-pushes when an item is starred, while the custom mode filters based on specific content type tags.
 - **📡 Auto-Receive Service**: Added a local HTTP local receiving interface. Supports injecting text / html / rtf / files / image into the local history, with an option to write back to the system clipboard automatically.
@@ -129,8 +132,8 @@
 - **📊 Refactored Clipboard Type Recognition Engine**: Fixed the issue where copying data from office software (Excel/WPS) was mistakenly saved as an image when the "Copy as Plain Text" mode was enabled.
 - **🎯 Smart Detection for Composite Table Data**: Addressing the extremely similar content characteristics when copying data from office software (Excel/WPS) vs. copying images from browsers, introduced a four-dimensional detection system to achieve absolutely precise targeting and clean extraction of office table data.
 - **🧹 Auto-Cleanup of Temporary Table Files**: Automatically deletes useless temporary images after recognizing tables, preventing residual files on the disk.
-- **🔘 Optimized Default Action Buttons**: Enabled 9 common quick actions by default and adjusted their order (Preferences → Clipboard → Action Buttons), comprehensively enhancing the out-of-the-box experience for new users.
-- **🖱️ Optimized Word Selection Paste**: Renamed "Text Snippet Selection" to "Word Selection Paste" (Preferences → Clipboard → Action Buttons) for a more intuitive expression of the feature; moved its position below "Auto Paste" in the preferences for clearer configuration.
+- **🔘 Optimized Default Action Buttons**: Enabled 9 common quick actions by default and adjusted their order (Preferences → Clipboard → Display Settings → Action Buttons), comprehensively enhancing the out-of-the-box experience for new users.
+- **🖱️ Optimized Word Selection Paste**: Renamed "Text Snippet Selection" to "Word Selection Paste" (Preferences → Clipboard → Content Settings → Word Selection Paste) for a more intuitive expression of the feature; moved its position below "Auto Paste" in the preferences for clearer configuration.
 - **📊 Storage Stats View Space Optimization**: Deeply streamlined the redundant padding whitespace in the storage stats page, dynamically narrowing the font size and width of the left stats summary area to provide maximum visualization space for the horizontal charts.
 
 ##### 🐞 Bug Fixes
