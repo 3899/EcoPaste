@@ -1,10 +1,10 @@
 mod core;
 
-use core::{prevent_default, setup, shortcut_hook};
+use core::{crash_log, prevent_default, setup, shortcut_hook};
 use tauri::{generate_context, Builder, Manager, WindowEvent};
 use tauri_plugin_autostart::MacosLauncher;
 use tauri_plugin_eco_window::{show_main_window, MAIN_WINDOW_LABEL, PREFERENCE_WINDOW_LABEL};
-use tauri_plugin_log::{Target, TargetKind};
+use tauri_plugin_log::{log::LevelFilter, Target, TargetKind};
 
 #[tauri::command]
 fn expand_env_vars(input: String) -> String {
@@ -33,6 +33,9 @@ fn expand_env_vars(input: String) -> String {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    crash_log::install_panic_hook();
+    crash_log::append_event("EcoPaste process started");
+
     let app = Builder::default()
         .setup(|app| {
             let app_handle = app.handle();
@@ -63,6 +66,7 @@ pub fn run() {
         // 日志插件：https://github.com/tauri-apps/tauri-plugin-log/tree/v2
         .plugin(
             tauri_plugin_log::Builder::new()
+                .level(LevelFilter::Info)
                 .targets([
                     Target::new(TargetKind::Stdout),
                     Target::new(TargetKind::LogDir { file_name: None }),
@@ -121,20 +125,34 @@ pub fn run() {
         .build(generate_context!())
         .expect("error while running tauri application");
 
-    app.run(|app_handle, event| match event {
-        #[cfg(target_os = "macos")]
-        tauri::RunEvent::Reopen {
-            has_visible_windows,
-            ..
-        } => {
-            if has_visible_windows {
-                return;
+    app.run(|app_handle, event| {
+        match event {
+            tauri::RunEvent::Ready => {
+                log::info!("EcoPaste ready");
+                crash_log::append_event("EcoPaste ready");
             }
+            tauri::RunEvent::ExitRequested { code, .. } => {
+                log::warn!("EcoPaste exit requested: {:?}", code);
+                crash_log::append_event(format!("EcoPaste exit requested: {:?}", code));
+            }
+            tauri::RunEvent::Exit => {
+                log::warn!("EcoPaste event loop exiting");
+                crash_log::append_event("EcoPaste event loop exiting");
+            }
+            #[cfg(target_os = "macos")]
+            tauri::RunEvent::Reopen {
+                has_visible_windows,
+                ..
+            } => {
+                if has_visible_windows {
+                    return;
+                }
 
-            tauri_plugin_eco_window::show_preference_window(app_handle);
-        }
-        _ => {
-            let _ = app_handle;
+                tauri_plugin_eco_window::show_preference_window(app_handle);
+            }
+            _ => {
+                let _ = app_handle;
+            }
         }
     });
 }
