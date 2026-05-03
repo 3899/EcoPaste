@@ -7,7 +7,6 @@ import { filesize } from "filesize";
 import { type FC, type MouseEvent, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useSnapshot } from "valtio";
-import UnoIcon from "@/components/UnoIcon";
 import { MainContext } from "@/pages/Main";
 import { transferData } from "@/pages/Preference/components/Clipboard/components/OperationButton";
 import { pasteToClipboard, writeToClipboard } from "@/plugins/clipboard";
@@ -176,19 +175,19 @@ const Header: FC<HeaderProps> = (props) => {
             }
 
             await invoke("plugin:transfer|push_clipboard_item", {
-              item: buildTransferPushItem(data),
               config,
+              item: buildTransferPushItem(data),
               nonSensitive: {
-                providers,
-                service_port: ts.receive.port,
-                bark_level: ts.push.barkLevel,
-                bark_auto_copy: ts.push.barkAutoCopy,
                 bark_archive: ts.push.barkArchive,
-                bark_group_mode: ts.push.barkGroupMode,
+                bark_auto_copy: ts.push.barkAutoCopy,
                 bark_group_mapping: ts.push.barkGroupMapping,
+                bark_group_mode: ts.push.barkGroupMode,
+                bark_level: ts.push.barkLevel,
+                image_local_directory: ts.push.imageLocalDirectory,
                 image_strategy: ts.push.imageStrategy,
                 image_ttl_seconds: ts.push.imageTtlSeconds,
-                image_local_directory: ts.push.imageLocalDirectory,
+                providers,
+                service_port: ts.receive.port,
                 webhook_payload_template: ts.push.webhookPayloadTemplate,
               },
             });
@@ -243,8 +242,9 @@ const Header: FC<HeaderProps> = (props) => {
             title={data.sourceAppName}
           />
         )}
-        {!hasRenderableSourceIcon && data.sourceAppName && (
-          shouldUseRemoteDeviceIcon ? (
+        {!hasRenderableSourceIcon &&
+          data.sourceAppName &&
+          (shouldUseRemoteDeviceIcon ? (
             <img
               alt={data.sourceAppName}
               className="h-3.5 w-3.5 flex-shrink-0 rounded-sm object-contain opacity-85"
@@ -258,8 +258,7 @@ const Header: FC<HeaderProps> = (props) => {
             >
               [{data.sourceAppName}]
             </span>
-          )
-        )}
+          ))}
         <span className="flex-shrink-0">{renderType()}</span>
         <span className="flex-shrink-0">{renderCount()}</span>
         {renderPixel() && (
@@ -282,7 +281,7 @@ const Header: FC<HeaderProps> = (props) => {
         onDoubleClick={(event) => event.stopPropagation()}
       >
         {operationButtons.map((item) => {
-          const { key, icon, activeIcon, title } = item;
+          const { key, Icon, ActiveIcon, title } = item;
 
           if (key === "openBrowser" && subtype !== "url") return null;
           if (key === "previewImage" && type !== "image") return null;
@@ -305,18 +304,21 @@ const Header: FC<HeaderProps> = (props) => {
           if (
             key === "push" &&
             (!transferStore.push.masterEnabled ||
-              (!transferStore.push.barkEnabled && !transferStore.push.webhookEnabled))
+              (!transferStore.push.barkEnabled &&
+                !transferStore.push.webhookEnabled))
           )
             return null;
 
           const isFavorite = key === "star" && favorite;
+          const OperationIcon = isFavorite ? (ActiveIcon ?? Icon) : Icon;
 
           return (
-            <UnoIcon
-              className={clsx({ "text-gold!": isFavorite })}
-              hoverable
+            <OperationIcon
+              className={clsx(
+                "cursor-pointer transition-colors hover:text-primary",
+                { "text-gold!": isFavorite },
+              )}
               key={key}
-              name={isFavorite ? activeIcon : icon}
               onClick={(event) => handleClick(event, key)}
               title={t(title)}
             />
