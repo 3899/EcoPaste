@@ -25,7 +25,7 @@
         "minWidth": 360,
         "skipTaskbar": true,
         "title": "EcoPaste",
-        "transparent": true,
+        "transparent": false,
         "url": "index.html/#/",
         "visible": false,
         "visibleOnAllWorkspaces": true,
@@ -42,7 +42,7 @@
         "minWidth": 700,
         "skipTaskbar": true,
         "titleBarStyle": "Overlay",
-        "transparent": true,
+        "transparent": false,
         "url": "index.html/#/preference",
         "visible": false,
         "width": 700,
@@ -76,10 +76,10 @@
   "identifier": "com.ayangweb.EcoPaste",
   "mainBinaryName": "EcoPaste",
   "plugins": {
+    "_updater_disabled": "Fork版本禁用自动更新，避免与官方版本冲突",
     "fs": {
       "requireLiteralLeadingDot": false
-    },
-    "_updater_disabled": "Fork版本禁用自动更新，避免与官方版本冲突"
+    }
   },
   "productName": "EcoPaste",
   "version": "../package.json"

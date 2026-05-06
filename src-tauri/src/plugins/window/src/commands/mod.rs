@@ -1,3 +1,4 @@
+use std::{thread, time::Duration};
 use tauri::{async_runtime::spawn, AppHandle, Manager, Runtime, WebviewWindow};
 
 // 主窗口的label
@@ -28,7 +29,12 @@ pub fn is_main_window<R: Runtime>(window: &WebviewWindow<R>) -> bool {
 fn shared_show_window<R: Runtime>(window: &WebviewWindow<R>) {
     let _ = window.show();
     let _ = window.unminimize();
-    let _ = window.set_focus();
+
+    let window = window.clone();
+    spawn(async move {
+        thread::sleep(Duration::from_millis(50));
+        let _ = window.set_focus();
+    });
 }
 
 // 共享隐藏窗口的方法
