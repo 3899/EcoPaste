@@ -116,7 +116,7 @@ fn focus_previous_window() {
     }
 }
 
-fn paste_with_delay(delay_ms: u64, restore_alt: bool) {
+fn paste_with_delay(delay_ms: u64) {
     fn dispatch(event_type: &EventType) {
         wait(20);
 
@@ -141,19 +141,16 @@ fn paste_with_delay(delay_ms: u64, restore_alt: bool) {
     dispatch(&EventType::KeyRelease(Key::Insert));
     dispatch(&EventType::KeyRelease(Key::ShiftLeft));
 
-    if restore_alt {
-        dispatch(&EventType::KeyPress(Key::Alt));
-    }
 }
 
 // 粘贴
 #[command]
 pub async fn paste() {
-    paste_with_delay(100, false);
+    paste_with_delay(100);
 }
 
 // 快速粘贴，用于快捷填充这种短文本路径
 #[command]
 pub async fn paste_fast() {
-    paste_with_delay(35, true);
+    paste_with_delay(35);
 }

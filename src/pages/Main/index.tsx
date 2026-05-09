@@ -74,6 +74,8 @@ const INITIAL_STATE: State = {
   quickPasteKeys: [],
 };
 
+const TEST_DATA_CHAIN_TIMEOUT = 1200;
+
 interface MainContextValue {
   rootState: State;
 }
@@ -89,6 +91,7 @@ const Main = () => {
   const testData = useSnapshot(testDataStore);
   const eventBus = useEventEmitter<EventBusPayload>();
   const audioRef = useRef<AudioRef>(null);
+  const testDataChainTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   useMount(() => {
     state.eventBus = eventBus;
@@ -207,43 +210,97 @@ const Main = () => {
   useEffect(() => {
     if (!testData.enabled) return;
 
-    const shortcuts = testDataProviders.map((provider) => ({
-      provider,
-      shortcut: `${testData.fillShortcutBase}+${provider.shortcutIndex}`,
-    }));
-
     const registeredShortcuts: string[] = [];
+    const chainShortcuts = testDataProviders.map((provider) =>
+      String(provider.shortcutIndex),
+    );
+    const registerShortcut = async (
+      shortcut: string,
+      handler: () => Promise<void>,
+    ) => {
+      try {
+        if (await isRegistered(shortcut)) {
+          await unregister(shortcut);
+        }
+
+        await register(shortcut, async (event) => {
+          if (event.state === "Released") return;
+
+          await handler();
+        });
+
+        registeredShortcuts.push(shortcut);
+        traceCrashEvent(`test data fill shortcut registered: ${shortcut}`);
+      } catch (error) {
+        traceCrashEvent(
+          `test data fill shortcut register failed: ${shortcut}, error=${String(error)}`,
+        );
+      }
+    };
+
+    const registerChainShortcuts = async () => {
+      for (const provider of testDataProviders) {
+        const chainShortcut = String(provider.shortcutIndex);
+
+        if (registeredShortcuts.includes(chainShortcut)) continue;
+
+        await registerShortcut(chainShortcut, () =>
+          fillProvider(provider, chainShortcut),
+        );
+      }
+    };
+
+    const unregisterChainShortcuts = () => {
+      for (const shortcut of chainShortcuts) {
+        unregister(shortcut).catch(() => {});
+      }
+      for (let index = registeredShortcuts.length - 1; index >= 0; index--) {
+        if (chainShortcuts.includes(registeredShortcuts[index])) {
+          registeredShortcuts.splice(index, 1);
+        }
+      }
+    };
+
+    const refreshChainWindow = async () => {
+      await registerChainShortcuts();
+
+      if (testDataChainTimerRef.current) {
+        clearTimeout(testDataChainTimerRef.current);
+      }
+
+      testDataChainTimerRef.current = setTimeout(() => {
+        unregisterChainShortcuts();
+      }, TEST_DATA_CHAIN_TIMEOUT);
+    };
+
+    const fillProvider = async (
+      provider: (typeof testDataProviders)[number],
+      shortcut: string,
+    ) => {
+      traceCrashEvent(`test data fill shortcut triggered: ${shortcut}`);
+      await refreshChainWindow();
+      await pasteField(provider.field);
+      saveStore();
+    };
 
     const setup = async () => {
-      for (const { provider, shortcut } of shortcuts) {
-        try {
-          if (await isRegistered(shortcut)) {
-            await unregister(shortcut);
-          }
+      for (const provider of testDataProviders) {
+        const modifiedShortcut = `${testData.fillShortcutBase}+${provider.shortcutIndex}`;
 
-          await register(shortcut, async (event) => {
-            if (event.state === "Released") return;
-
-            traceCrashEvent(
-              `test data fill shortcut triggered: ${event.shortcut}`,
-            );
-            await pasteField(provider.field);
-            saveStore();
-          });
-
-          registeredShortcuts.push(shortcut);
-          traceCrashEvent(`test data fill shortcut registered: ${shortcut}`);
-        } catch (error) {
-          traceCrashEvent(
-            `test data fill shortcut register failed: ${shortcut}, error=${String(error)}`,
-          );
-        }
+        await registerShortcut(modifiedShortcut, () =>
+          fillProvider(provider, modifiedShortcut),
+        );
       }
     };
 
     setup();
 
     return () => {
+      if (testDataChainTimerRef.current) {
+        clearTimeout(testDataChainTimerRef.current);
+      }
+      unregisterChainShortcuts();
+
       for (const shortcut of registeredShortcuts) {
         unregister(shortcut).catch((error) => {
           traceCrashEvent(

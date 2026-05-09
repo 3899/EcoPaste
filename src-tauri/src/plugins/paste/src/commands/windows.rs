@@ -99,7 +99,7 @@ fn focus_previous_window() {
     }
 }
 
-fn paste_with_delay(delay_ms: u64, restore_alt: bool) {
+fn paste_with_delay(delay_ms: u64) {
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
 
     focus_previous_window();
@@ -116,19 +116,16 @@ fn paste_with_delay(delay_ms: u64, restore_alt: bool) {
     enigo.key(Key::Other(0x2D), Click).unwrap();
     enigo.key(Key::Shift, Release).unwrap();
 
-    if restore_alt {
-        enigo.key(Key::Alt, Press).unwrap();
-    }
 }
 
 // 粘贴
 #[command]
 pub async fn paste() {
-    paste_with_delay(100, false);
+    paste_with_delay(100);
 }
 
 // 快速粘贴，用于快捷填充这种短文本路径
 #[command]
 pub async fn paste_fast() {
-    paste_with_delay(35, true);
+    paste_with_delay(35);
 }
