@@ -1,13 +1,14 @@
+import { listen } from "@tauri-apps/api/event";
 import {
   isRegistered,
   register,
   type ShortcutHandler,
   unregister,
 } from "@tauri-apps/plugin-global-shortcut";
-import { listen } from "@tauri-apps/api/event";
 import { useAsyncEffect, useUnmount } from "ahooks";
 import { castArray } from "es-toolkit/compat";
 import { useEffect, useState } from "react";
+import { traceCrashEvent } from "./useCrashTrace";
 
 export const useRegister = (
   handler: ShortcutHandler,
@@ -35,7 +36,8 @@ export const useRegister = (
         "double_modifier_trigger",
         ({ payload }) => {
           if (doubleShortcuts.includes(payload)) {
-            handler({ shortcut: payload, state: "Pressed", id: 0 });
+            traceCrashEvent(`double modifier shortcut triggered: ${payload}`);
+            handler({ id: 0, shortcut: payload, state: "Pressed" });
           }
         },
       );
@@ -62,7 +64,12 @@ export const useRegister = (
       }
     }
 
-    if (!shortcuts || (typeof shortcuts === 'string' ? shortcuts.startsWith("Double_") : shortcuts[0]?.startsWith("Double_"))) {
+    if (
+      !shortcuts ||
+      (typeof shortcuts === "string"
+        ? shortcuts.startsWith("Double_")
+        : shortcuts[0]?.startsWith("Double_"))
+    ) {
       setOldShortcuts(shortcuts);
       return;
     }
@@ -70,6 +77,7 @@ export const useRegister = (
     await register(shortcuts, (event) => {
       if (event.state === "Released") return;
 
+      traceCrashEvent(`global shortcut triggered: ${event.shortcut}`);
       handler(event);
     });
 
@@ -79,7 +87,13 @@ export const useRegister = (
   useUnmount(() => {
     const [shortcuts] = deps;
 
-    if (!shortcuts || (typeof shortcuts === 'string' ? shortcuts.startsWith("Double_") : shortcuts[0]?.startsWith("Double_"))) return;
+    if (
+      !shortcuts ||
+      (typeof shortcuts === "string"
+        ? shortcuts.startsWith("Double_")
+        : shortcuts[0]?.startsWith("Double_"))
+    )
+      return;
 
     unregister(shortcuts);
   });

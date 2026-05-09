@@ -29,6 +29,11 @@ fn expand_env_vars(input: String) -> String {
     result
 }
 
+#[tauri::command]
+fn append_crash_event(message: String) {
+    crash_log::append_event(format!("frontend: {message}"));
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     crash_log::install_panic_hook();
@@ -113,6 +118,11 @@ pub fn run() {
         .on_window_event(|window, event| match event {
             // 让 app 保持在后台运行：https://tauri.app/v1/guides/features/system-tray/#preventing-the-app-from-closing
             WindowEvent::CloseRequested { api, .. } => {
+                crash_log::append_event(format!(
+                    "window close requested: label={}",
+                    window.label()
+                ));
+
                 if let Err(error) = window.hide() {
                     log::error!("Failed to hide window on close request: {error}");
                     crash_log::append_event(format!(
@@ -122,12 +132,22 @@ pub fn run() {
 
                 api.prevent_close();
             }
+            WindowEvent::Focused(focused) => {
+                crash_log::append_event(format!(
+                    "window focus changed: label={}, focused={focused}",
+                    window.label()
+                ));
+            }
+            WindowEvent::Destroyed => {
+                crash_log::append_event(format!("window destroyed: label={}", window.label()));
+            }
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![
             crate::core::source_app::get_source_app_info,
             crate::core::source_app::get_clipboard_sequence_number,
-            expand_env_vars
+            expand_env_vars,
+            append_crash_event
         ])
         .build(generate_context!())
         .expect("error while running tauri application");

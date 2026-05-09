@@ -7,6 +7,7 @@ import { exit, relaunch } from "@tauri-apps/plugin-process";
 import { useBoolean, useUpdateEffect } from "ahooks";
 import { useTranslation } from "react-i18next";
 import { GITHUB_LINK, LISTEN_KEY } from "@/constants";
+import { traceCrashEvent } from "@/hooks/useCrashTrace";
 import { showWindow } from "@/plugins/window";
 import { globalStore } from "@/stores/global";
 import { isMac } from "@/utils/is";
@@ -65,6 +66,7 @@ export const useTray = () => {
         if (isMac) return;
 
         if (event.type === "Click" && event.button === "Left") {
+          traceCrashEvent("tray left click: show main window");
           showWindow("main");
         }
       },
@@ -86,11 +88,17 @@ export const useTray = () => {
     const items = await Promise.all([
       MenuItem.new({
         accelerator: isMac ? "Cmd+," : void 0,
-        action: () => showWindow("preference"),
+        action: () => {
+          traceCrashEvent("tray menu: show preference");
+          showWindow("preference");
+        },
         text: t("component.tray.label.preference"),
       }),
       MenuItem.new({
-        action: toggle,
+        action: () => {
+          traceCrashEvent("tray menu: toggle clipboard listening");
+          toggle();
+        },
         text: startListen
           ? t("component.tray.label.stop_listening")
           : t("component.tray.label.start_listening"),
@@ -98,6 +106,7 @@ export const useTray = () => {
       PredefinedMenuItem.new({ item: "Separator" }),
       MenuItem.new({
         action: () => {
+          traceCrashEvent("tray menu: check update");
           showWindow();
 
           emit(LISTEN_KEY.UPDATE_APP, true);
@@ -114,12 +123,18 @@ export const useTray = () => {
         text: `${t("component.tray.label.version")} ${appVersion}`,
       }),
       MenuItem.new({
-        action: relaunch,
+        action: () => {
+          traceCrashEvent("tray menu: relaunch");
+          relaunch();
+        },
         text: t("component.tray.label.relaunch"),
       }),
       MenuItem.new({
         accelerator: isMac ? "Cmd+Q" : void 0,
-        action: () => exit(0),
+        action: () => {
+          traceCrashEvent("tray menu: exit");
+          exit(0);
+        },
         text: t("component.tray.label.exit"),
       }),
     ]);

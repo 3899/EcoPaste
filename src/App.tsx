@@ -10,6 +10,7 @@ import { RouterProvider } from "react-router-dom";
 import { useSnapshot } from "valtio";
 import { LISTEN_KEY, PRESET_SHORTCUT, WINDOW_LABEL } from "./constants";
 import { destroyDatabase } from "./database";
+import { useCrashTrace } from "./hooks/useCrashTrace";
 import { useImmediateKey } from "./hooks/useImmediateKey";
 import { useTauriListen } from "./hooks/useTauriListen";
 import { useWindowState } from "./hooks/useWindowState";
@@ -31,6 +32,8 @@ const App = () => {
   const { restoreState } = useWindowState();
   const [ready, { toggle }] = useBoolean();
 
+  useCrashTrace();
+
   useMount(async () => {
     await restoreState();
 
@@ -38,7 +41,10 @@ const App = () => {
 
     const appWindow = getCurrentWebviewWindow();
 
-    if (appWindow.label === WINDOW_LABEL.MAIN && transferStore.receive.masterEnabled) {
+    if (
+      appWindow.label === WINDOW_LABEL.MAIN &&
+      transferStore.receive.masterEnabled
+    ) {
       try {
         const dbPath = await getSaveDatabasePath();
         const config = await invoke<{ receive_token?: string } | null>(
@@ -83,6 +89,9 @@ const App = () => {
 
     if (appWindow.label !== payload) return;
 
+    invoke("append_crash_event", {
+      message: `frontend received show window event: label=${payload}`,
+    }).catch(() => {});
     showWindow();
   });
 
