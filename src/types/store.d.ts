@@ -8,6 +8,7 @@ export interface Store {
   globalStore: GlobalStore;
   clipboardStore: ClipboardStore;
   transferStore: TransferStore;
+  testDataStore?: TestDataStore;
 }
 
 export interface GlobalStore {
@@ -190,4 +191,26 @@ export interface TransferStore {
     port: number;
     autoCopy: boolean; // 自动写入系统剪贴板
   };
+}
+
+export type TestDataField =
+  | "idCard"
+  | "phone"
+  | "name"
+  | "socialCreditCode"
+  | "bankCard";
+
+export interface TestDataBatch {
+  id: string;
+  createTime: string;
+  values: Record<TestDataField, string>;
+}
+
+export interface TestDataStore {
+  enabled: boolean;
+  toggleShortcut: string;
+  fillShortcutBase: string;
+  currentBatchId?: string;
+  batches: TestDataBatch[];
+  maxRecords: number;
 }

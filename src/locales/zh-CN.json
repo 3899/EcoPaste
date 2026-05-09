@@ -448,6 +448,7 @@
         "history": "存储空间",
         "shortcut": "快捷键",
         "storage": "存储空间",
+        "test_data": "测试数据",
         "transfer": "数据同步"
       }
     },

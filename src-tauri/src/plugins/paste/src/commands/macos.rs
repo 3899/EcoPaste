@@ -97,3 +97,8 @@ pub async fn paste<R: Runtime>(app_handle: AppHandle<R>, window: WebviewWindow<R
         .output()
         .expect("failed to execute process");
 }
+
+#[command]
+pub async fn paste_fast<R: Runtime>(app_handle: AppHandle<R>, window: WebviewWindow<R>) {
+    paste(app_handle, window).await;
+}

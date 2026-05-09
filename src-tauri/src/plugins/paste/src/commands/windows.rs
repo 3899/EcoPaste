@@ -99,14 +99,12 @@ fn focus_previous_window() {
     }
 }
 
-// 粘贴
-#[command]
-pub async fn paste() {
+fn paste_with_delay(delay_ms: u64, restore_alt: bool) {
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
 
     focus_previous_window();
 
-    wait(100);
+    wait(delay_ms);
 
     enigo.key(Key::Control, Release).unwrap();
     enigo.key(Key::Alt, Release).unwrap();
@@ -117,4 +115,20 @@ pub async fn paste() {
     // insert 的微软虚拟键码：https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
     enigo.key(Key::Other(0x2D), Click).unwrap();
     enigo.key(Key::Shift, Release).unwrap();
+
+    if restore_alt {
+        enigo.key(Key::Alt, Press).unwrap();
+    }
+}
+
+// 粘贴
+#[command]
+pub async fn paste() {
+    paste_with_delay(100, false);
+}
+
+// 快速粘贴，用于快捷填充这种短文本路径
+#[command]
+pub async fn paste_fast() {
+    paste_with_delay(35, true);
 }

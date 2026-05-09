@@ -11,14 +11,18 @@ import UpdateApp from "@/components/UpdateApp";
 import { LISTEN_KEY } from "@/constants";
 import { useRegister } from "@/hooks/useRegister";
 import { useSubscribe } from "@/hooks/useSubscribe";
+import { useTauriListen } from "@/hooks/useTauriListen";
 import { useTray } from "@/hooks/useTray";
 import { isAutostart } from "@/plugins/autostart";
 import { showWindow, toggleWindowVisible } from "@/plugins/window";
 import { clipboardStore } from "@/stores/clipboard";
 import { globalStore } from "@/stores/global";
+import { testDataStore } from "@/stores/testData";
 import { transferStore } from "@/stores/transfer";
+import type { Store } from "@/types/store";
 import { raf } from "@/utils/bom";
 import { isMac } from "@/utils/is";
+import { strictDeepAssign } from "@/utils/object";
 import { saveStore } from "@/utils/store";
 import About from "./components/About";
 import Backup from "./components/Backup";
@@ -26,6 +30,7 @@ import Clipboard from "./components/Clipboard";
 import General from "./components/General";
 import Shortcut from "./components/Shortcut";
 import Storage from "./components/Storage";
+import TestDataFill from "./components/TestDataFill";
 import Transfer from "./components/Transfer";
 
 const Preference = () => {
@@ -33,6 +38,7 @@ const Preference = () => {
   const { app, shortcut, appearance } = useSnapshot(globalStore);
   const [activeKey, setActiveKey] = useState("clipboard");
   const contentRef = useRef<HTMLElement>(null);
+  const suppressStoreChangedRef = useRef(false);
 
   const { createTray } = useTray();
 
@@ -55,12 +61,41 @@ const Preference = () => {
   // 监听互传配置项变化
   useSubscribe(transferStore, () => handleStoreChanged());
 
+  // 监听测试数据配置项变化
+  useSubscribe(testDataStore, () => handleStoreChanged());
+
   // 监听快捷键切换窗口显隐
   useRegister(toggleWindowVisible, [shortcut.preference]);
 
+  useTauriListen<Store & { source?: string }>(
+    LISTEN_KEY.STORE_CHANGED,
+    ({ payload }) => {
+      if (payload.source === "preference") return;
+
+      suppressStoreChangedRef.current = true;
+      strictDeepAssign(globalStore, payload.globalStore);
+      strictDeepAssign(clipboardStore, payload.clipboardStore);
+      if (payload.testDataStore) {
+        strictDeepAssign(testDataStore, payload.testDataStore);
+      }
+      if (payload.transferStore) {
+        strictDeepAssign(transferStore, payload.transferStore);
+      }
+      suppressStoreChangedRef.current = false;
+    },
+  );
+
   // 配置项变化通知其它窗口和本地存储
   const handleStoreChanged = () => {
-    emit(LISTEN_KEY.STORE_CHANGED, { clipboardStore, globalStore, transferStore });
+    if (suppressStoreChangedRef.current) return;
+
+    emit(LISTEN_KEY.STORE_CHANGED, {
+      clipboardStore,
+      globalStore,
+      source: "preference",
+      testDataStore,
+      transferStore,
+    });
 
     saveStore();
   };
@@ -102,6 +137,12 @@ const Preference = () => {
         icon: "i-lucide:refresh-cw",
         key: "transfer",
         label: t("preference.menu.title.transfer"),
+      },
+      {
+        content: <TestDataFill />,
+        icon: "i-lucide:badge-check",
+        key: "testData",
+        label: t("preference.menu.title.test_data", "测试数据"),
       },
       {
         content: <About />,

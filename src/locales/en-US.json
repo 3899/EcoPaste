@@ -436,6 +436,7 @@
         "history": "Storage",
         "shortcut": "Shortcuts",
         "storage": "Storage",
+        "test_data": "Test Data",
         "transfer": "Data Sync"
       }
     },

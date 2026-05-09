@@ -1,13 +1,20 @@
+import { emit } from "@tauri-apps/api/event";
+import {
+  isRegistered,
+  register,
+  unregister,
+} from "@tauri-apps/plugin-global-shortcut";
 import { useEventEmitter, useKeyPress, useMount, useReactive } from "ahooks";
 import type { EventEmitter } from "ahooks/lib/useEventEmitter";
 import { range } from "es-toolkit";
 import { find, last } from "es-toolkit/compat";
-import { createContext, useRef } from "react";
+import { createContext, useEffect, useRef } from "react";
 import { startListening, stopListening } from "tauri-plugin-clipboard-x-api";
 import { useSnapshot } from "valtio";
 import Audio, { type AudioRef } from "@/components/Audio";
 import { LISTEN_KEY, PRESET_SHORTCUT } from "@/constants";
 import { useClipboard } from "@/hooks/useClipboard";
+import { traceCrashEvent } from "@/hooks/useCrashTrace";
 import { useImmediateKey } from "@/hooks/useImmediateKey";
 import { useRegister } from "@/hooks/useRegister";
 import { useSubscribeKey } from "@/hooks/useSubscribeKey";
@@ -23,6 +30,7 @@ import {
 } from "@/plugins/window";
 import { clipboardStore } from "@/stores/clipboard";
 import { globalStore } from "@/stores/global";
+import { testDataStore } from "@/stores/testData";
 import { transferStore } from "@/stores/transfer";
 import type {
   DatabaseSchemaGroupId,
@@ -30,6 +38,12 @@ import type {
 } from "@/types/database";
 import type { Store } from "@/types/store";
 import { strictDeepAssign } from "@/utils/object";
+import { saveStore } from "@/utils/store";
+import {
+  createBatch,
+  pasteField,
+  testDataProviders,
+} from "@/utils/testDataFill";
 import DockMode from "./components/DockMode";
 import StandardMode from "./components/StandardMode";
 
@@ -72,6 +86,7 @@ const Main = () => {
   const state = useReactive<State>(INITIAL_STATE);
   const { shortcut } = useSnapshot(globalStore);
   const { window } = useSnapshot(clipboardStore);
+  const testData = useSnapshot(testDataStore);
   const eventBus = useEventEmitter<EventBusPayload>();
   const audioRef = useRef<AudioRef>(null);
 
@@ -92,12 +107,34 @@ const Main = () => {
   useTauriListen<Store>(LISTEN_KEY.STORE_CHANGED, ({ payload }) => {
     strictDeepAssign(globalStore, payload.globalStore);
     strictDeepAssign(clipboardStore, payload.clipboardStore);
+    if (payload.testDataStore) {
+      strictDeepAssign(testDataStore, payload.testDataStore);
+    }
     if (payload.transferStore) {
       strictDeepAssign(transferStore, payload.transferStore);
     }
   });
 
   useRegister(toggleWindowVisible, [shortcut.clipboard]);
+
+  useRegister(() => {
+    testDataStore.enabled = !testDataStore.enabled;
+
+    if (testDataStore.enabled) {
+      createBatch();
+    }
+
+    traceCrashEvent(`test data mode toggled: enabled=${testDataStore.enabled}`);
+
+    emit(LISTEN_KEY.STORE_CHANGED, {
+      clipboardStore,
+      globalStore,
+      source: "main",
+      testDataStore,
+      transferStore,
+    });
+    saveStore();
+  }, [testData.toggleShortcut]);
 
   useKeyPress(PRESET_SHORTCUT.OPEN_PREFERENCES, () => {
     showWindow("preference");
@@ -166,6 +203,56 @@ const Main = () => {
     },
     [state.quickPasteKeys],
   );
+
+  useEffect(() => {
+    if (!testData.enabled) return;
+
+    const shortcuts = testDataProviders.map((provider) => ({
+      provider,
+      shortcut: `${testData.fillShortcutBase}+${provider.shortcutIndex}`,
+    }));
+
+    const registeredShortcuts: string[] = [];
+
+    const setup = async () => {
+      for (const { provider, shortcut } of shortcuts) {
+        try {
+          if (await isRegistered(shortcut)) {
+            await unregister(shortcut);
+          }
+
+          await register(shortcut, async (event) => {
+            if (event.state === "Released") return;
+
+            traceCrashEvent(
+              `test data fill shortcut triggered: ${event.shortcut}`,
+            );
+            await pasteField(provider.field);
+            saveStore();
+          });
+
+          registeredShortcuts.push(shortcut);
+          traceCrashEvent(`test data fill shortcut registered: ${shortcut}`);
+        } catch (error) {
+          traceCrashEvent(
+            `test data fill shortcut register failed: ${shortcut}, error=${String(error)}`,
+          );
+        }
+      }
+    };
+
+    setup();
+
+    return () => {
+      for (const shortcut of registeredShortcuts) {
+        unregister(shortcut).catch((error) => {
+          traceCrashEvent(
+            `test data fill shortcut unregister failed: ${shortcut}, error=${String(error)}`,
+          );
+        });
+      }
+    };
+  }, [testData.enabled, testData.fillShortcutBase]);
 
   return (
     <MainContext.Provider

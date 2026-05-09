@@ -10,6 +10,7 @@ import { GITHUB_LINK, LISTEN_KEY } from "@/constants";
 import { traceCrashEvent } from "@/hooks/useCrashTrace";
 import { showWindow } from "@/plugins/window";
 import { globalStore } from "@/stores/global";
+import { testDataStore } from "@/stores/testData";
 import { isMac } from "@/utils/is";
 import { useSubscribeKey } from "./useSubscribeKey";
 
@@ -35,6 +36,10 @@ export const useTray = () => {
     updateTrayMenu();
   });
 
+  useSubscribeKey(testDataStore, "enabled", () => {
+    updateTrayIcon();
+  });
+
   useUpdateEffect(() => {
     updateTrayMenu();
 
@@ -58,8 +63,7 @@ export const useTray = () => {
 
     const menu = await getTrayMenu();
 
-    const iconPath = isMac ? "assets/tray-mac.ico" : "assets/tray.ico";
-    const icon = await resolveResource(iconPath);
+    const icon = await resolveResource(getTrayIconPath());
 
     const options: TrayIconOptions = {
       action: (event) => {
@@ -151,6 +155,24 @@ export const useTray = () => {
     const menu = await getTrayMenu();
 
     tray.setMenu(menu);
+  };
+
+  const getTrayIconPath = () => {
+    if (isMac) return "assets/tray-mac.ico";
+
+    return testDataStore.enabled
+      ? "assets/tray-test-data.ico"
+      : "assets/tray.ico";
+  };
+
+  const updateTrayIcon = async () => {
+    const tray = await getTrayById();
+
+    if (!tray) return;
+
+    const icon = await resolveResource(getTrayIconPath());
+
+    tray.setIcon(icon);
   };
 
   return {
