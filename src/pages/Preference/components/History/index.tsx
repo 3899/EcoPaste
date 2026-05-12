@@ -1,7 +1,11 @@
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ProList from "@/components/ProList";
-import { deleteHistory, selectHistory } from "@/database/history";
+import {
+  deleteHistories,
+  type HistoryDeleteTarget,
+  selectHistoryDeleteTargets,
+} from "@/database/history";
 import { useImmediate } from "@/hooks/useImmediate";
 import { clipboardStore } from "@/stores/clipboard";
 import type { Interval } from "@/types/shared";
@@ -24,9 +28,11 @@ const History = () => {
     const delay = 1000 * 60 * 30;
 
     timerRef.current = setInterval(async () => {
-      const list = await selectHistory((qb) => {
-        return qb.where("favorite", "=", false);
+      const list = await selectHistoryDeleteTargets((qb) => {
+        return qb.where("favorite", "=", false).orderBy("createTime", "desc");
       });
+
+      const deleteList: HistoryDeleteTarget[] = [];
 
       for (const [index, item] of list.entries()) {
         const { createTime } = item;
@@ -36,8 +42,10 @@ const History = () => {
 
         if (!isExpired && !isOverMaxCount) continue;
 
-        deleteHistory(item);
+        deleteList.push(item);
       }
+
+      await deleteHistories(deleteList);
     }, delay);
   });
 

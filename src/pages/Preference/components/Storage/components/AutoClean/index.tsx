@@ -1,15 +1,17 @@
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ProList from "@/components/ProList";
-import { deleteHistory, selectHistory } from "@/database/history";
+import {
+  deleteHistories,
+  type HistoryDeleteTarget,
+  selectHistoryDeleteTargets,
+} from "@/database/history";
 import { useImmediate } from "@/hooks/useImmediate";
 import { clipboardStore } from "@/stores/clipboard";
 import type { Interval } from "@/types/shared";
 import { dayjs } from "@/utils/dayjs";
 import Duration from "../../../History/components/Duration";
 import MaxCount from "../../../History/components/MaxCount";
-
-// import Delete from "../../../History/components/Delete";
 
 const AutoClean = () => {
   const { t } = useTranslation();
@@ -25,9 +27,11 @@ const AutoClean = () => {
     const delay = 1000 * 60 * 30;
 
     timerRef.current = setInterval(async () => {
-      const list = await selectHistory((qb) => {
-        return qb.where("favorite", "=", false);
+      const list = await selectHistoryDeleteTargets((qb) => {
+        return qb.where("favorite", "=", false).orderBy("createTime", "desc");
       });
+
+      const deleteList: HistoryDeleteTarget[] = [];
 
       for (const [index, item] of list.entries()) {
         const { createTime } = item;
@@ -37,8 +41,10 @@ const AutoClean = () => {
 
         if (!isExpired && !isOverMaxCount) continue;
 
-        deleteHistory(item);
+        deleteList.push(item);
       }
+
+      await deleteHistories(deleteList);
     }, delay);
   });
 
@@ -46,7 +52,6 @@ const AutoClean = () => {
     <ProList header={t("preference.storage.auto_clean.title", "自动清理设置")}>
       <Duration />
       <MaxCount />
-      {/* <Delete /> 已注释 */}
     </ProList>
   );
 };

@@ -42,7 +42,11 @@ import {
   getTypeDbCondition,
 } from "@/constants/contentTypes";
 import { getDatabase } from "@/database";
-import { deleteHistory, selectHistory } from "@/database/history";
+import {
+  deleteHistories,
+  type HistoryDeleteTarget,
+  selectHistoryDeleteTargets,
+} from "@/database/history";
 import { dayjs } from "@/utils/dayjs";
 
 const { RangePicker } = DatePicker;
@@ -341,10 +345,11 @@ const StorageStats = ({ refreshKey }: StorageStatsProps) => {
     try {
       setCleaning(true);
       const dateRange = getDateRangeStrings(timeRange, customRange);
+      const deleteList: HistoryDeleteTarget[] = [];
 
       for (const key of selectedKeys) {
         const tagKey = String(key);
-        const items = await selectHistory((qb) => {
+        const items = await selectHistoryDeleteTargets((qb) => {
           let q = qb.where("favorite", "=", scope === "favorites");
           q = q.where((eb: any) => {
             const cond = getTypeDbCondition(tagKey, eb);
@@ -361,10 +366,10 @@ const StorageStats = ({ refreshKey }: StorageStatsProps) => {
           return q;
         });
 
-        for (const item of items) {
-          await deleteHistory(item, deleteLocalFile);
-        }
+        deleteList.push(...items);
       }
+
+      await deleteHistories(deleteList, { deleteLocalFile });
 
       message.success(
         t("preference.storage.storage_stats.clean_success", "清理成功"),
@@ -678,7 +683,11 @@ const StorageStats = ({ refreshKey }: StorageStatsProps) => {
                           opacity: item.size > 0 ? 0.9 : 0.15,
                         }}
                       />
-                      <Flex align="center" className="mt-2 min-w-0 w-full" vertical>
+                      <Flex
+                        align="center"
+                        className="mt-2 w-full min-w-0"
+                        vertical
+                      >
                         <span
                           className="mb-1 font-bold text-xs leading-none"
                           style={{ color: item.color }}

@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import AdaptiveSelect from "@/components/AdaptiveSelect";
 import { LISTEN_KEY } from "@/constants";
-import { deleteHistory, selectHistory } from "@/database/history";
+import { deleteHistories, selectHistoryDeleteTargets } from "@/database/history";
 import { dayjs, formatDate } from "@/utils/dayjs";
 
 const { RangePicker } = DatePicker;
@@ -78,26 +78,26 @@ const Delete = () => {
         range = [dayjs().subtract(timeRange, "hour"), dayjs()];
       }
 
-      const formatRange = range.map((item) => formatDate(item));
+      const formatRange =
+        timeRange === 0 ? null : range.map((item) => formatDate(item));
 
-      const list = await selectHistory();
+      const list = await selectHistoryDeleteTargets((qb) => {
+        let nextQb = qb;
 
-      for await (const item of list) {
-        const { favorite, createTime } = item;
-
-        if (favorite && !deleteFavorite) continue;
-
-        const isBetween = dayjs(createTime).isBetween(
-          formatRange[0],
-          formatRange[1],
-          null,
-          "[]",
-        );
-
-        if (timeRange === 0 || isBetween) {
-          deleteHistory(item);
+        if (!deleteFavorite) {
+          nextQb = nextQb.where("favorite", "=", false);
         }
-      }
+
+        if (formatRange) {
+          nextQb = nextQb
+            .where("createTime", ">=", formatRange[0])
+            .where("createTime", "<=", formatRange[1]);
+        }
+
+        return nextQb;
+      });
+
+      await deleteHistories(list);
 
       toggle();
       message.success(t("preference.history.history.hints.delete_success"));

@@ -8,6 +8,7 @@ import { getSaveDatabasePath } from "@/utils/path";
 
 let db: Kysely<DatabaseSchema> | null = null;
 let historyColumns: string[] = [];
+let maintenancePromise: Promise<void> | null = null;
 
 export { historyColumns };
 
@@ -132,4 +133,32 @@ export const destroyDatabase = async () => {
   historyColumns = [];
 
   return instance.destroy();
+};
+
+export const maintainDatabaseAfterDelete = async (options?: {
+  vacuum?: boolean;
+}) => {
+  if (maintenancePromise) return maintenancePromise;
+
+  maintenancePromise = (async () => {
+    const instance = await getDatabase();
+
+    try {
+      await sql`PRAGMA optimize`.execute(instance);
+    } catch (error) {
+      console.warn("Failed to optimize database after delete:", error);
+    }
+
+    if (!options?.vacuum) return;
+
+    try {
+      await sql`VACUUM`.execute(instance);
+    } catch (error) {
+      console.warn("Failed to vacuum database after delete:", error);
+    }
+  })().finally(() => {
+    maintenancePromise = null;
+  });
+
+  return maintenancePromise;
 };
