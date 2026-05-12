@@ -9,8 +9,6 @@ import { dayjs } from "@/utils/dayjs";
 import Duration from "../../../History/components/Duration";
 import MaxCount from "../../../History/components/MaxCount";
 
-// import Delete from "../../../History/components/Delete";
-
 const AutoClean = () => {
   const { t } = useTranslation();
   const timerRef = useRef<Interval>();
@@ -46,7 +44,6 @@ const AutoClean = () => {
     <ProList header={t("preference.storage.auto_clean.title", "自动清理设置")}>
       <Duration />
       <MaxCount />
-      {/* <Delete /> 已注释 */}
     </ProList>
   );
 };
